@@ -3,6 +3,8 @@ package com.github.wallev.maidsoulkitchen.entity.data.inner.task;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 
 import java.util.Collections;
 import java.util.List;

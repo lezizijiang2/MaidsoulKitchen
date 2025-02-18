@@ -1,6 +1,6 @@
 package com.github.wallev.maidsoulkitchen.compat.kubejs.recipes;
 
-import com.github.tartaricacid.touhoulittlemaid.util.EntityCraftingHelper;
+import com.github.wallev.maidsoulkitchen.util.EntityCraftingHelper;
 import dev.latvian.mods.kubejs.item.InputItem;
 import dev.latvian.mods.kubejs.recipe.RecipeKey;
 import dev.latvian.mods.kubejs.recipe.component.ItemComponents;

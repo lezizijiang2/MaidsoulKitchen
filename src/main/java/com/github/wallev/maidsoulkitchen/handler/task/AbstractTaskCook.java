@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -23,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
-public abstract class AbstractTaskCook<MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends Container>>
+public abstract class AbstractTaskCook<MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends RecipeInput>>
         implements ILittleMaidTask, IDataTask<CookData> {
     //@FINAL
     private static List<AbstractCookBlockEntitySerializer<?, ?, ?>> SERIALIZER_RULES;
@@ -34,7 +35,7 @@ public abstract class AbstractTaskCook<MCB extends AbstractMaidCookBe<B, R>, B e
 
     @Override
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
-        return maid.level.isClientSide ? Collections.emptyList() : createTaskCookBrainTasks(maid);
+        return maid.level().isClientSide ? Collections.emptyList() : createTaskCookBrainTasks(maid);
     }
 
     /**

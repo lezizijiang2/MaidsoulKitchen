@@ -1,7 +1,7 @@
 package com.github.wallev.maidsoulkitchen.foundation.utility;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 
 public enum Mods {
     PATCHOULI("patchouli"),
@@ -69,7 +69,7 @@ public enum Mods {
     }
 
     public ResourceLocation create(String path) {
-        return new ResourceLocation(modId, path);
+        return ResourceLocation.fromNamespaceAndPath(modId, path);
     }
 
     public static boolean allLoaded(String... modIds) {

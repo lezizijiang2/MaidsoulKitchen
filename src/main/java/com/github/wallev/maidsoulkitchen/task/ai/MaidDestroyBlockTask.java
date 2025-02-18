@@ -65,7 +65,7 @@ public class MaidDestroyBlockTask extends Behavior<EntityMaid> {
     protected void stop(ServerLevel worldIn, EntityMaid maid, long gameTime) {
 //        maid.level().destroyBlockProgress(maid.getId(), this.breakPos, -1);
 //        maid.level().gameEvent(maid, GameEvent.BLOCK_DESTROY, this.breakPos);
-        maid.level.setBlock(this.breakPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        maid.level().setBlock(this.breakPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         maid.getBrain().eraseMemory(MkMemories.DESTROY_POS.get());
         maid.getBrain().eraseMemory(InitEntities.TARGET_POS.get());
         maid.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
@@ -81,7 +81,7 @@ public class MaidDestroyBlockTask extends Behavior<EntityMaid> {
 
     protected boolean canStart(EntityMaid maid) {
         if (this.breakPos != null &&
-                net.minecraftforge.common.ForgeHooks.canEntityDestroy(maid.level(), this.breakPos, maid)) {
+                net.neoforged.neoforge.common.CommonHooks.canEntityDestroy(maid.level(), this.breakPos, maid)) {
             return true;
         }
         return false;

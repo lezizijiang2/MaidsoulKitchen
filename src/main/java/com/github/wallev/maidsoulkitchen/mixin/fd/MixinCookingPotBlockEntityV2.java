@@ -1,8 +1,8 @@
 package com.github.wallev.maidsoulkitchen.mixin.fd;
 
 import com.github.wallev.maidsoulkitchen.handler.base.mkcontainer.ICookBeAccessor;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.wrapper.RecipeWrapper;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import vectorwing.farmersdelight.common.block.entity.CookingPotBlockEntity;

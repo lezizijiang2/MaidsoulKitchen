@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class AbstractCookRecInitializer<R extends Recipe<? extends Container>> {
+public abstract class AbstractCookRecInitializer<R extends Recipe<? extends RecipeInput>> {
     protected final RecipeType<R> recipeType;
     protected final List<R> recs = Lists.newArrayList();
     protected final Set<Item> validIngres = Sets.newHashSet();

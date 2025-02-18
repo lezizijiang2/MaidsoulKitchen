@@ -9,6 +9,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.StateSwitchingButton;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class RecButton extends StateSwitchingButton implements ITooltipButton {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
     private final EntityMaid maid;
     private final ICookTask<?, ?> cookTask;
     private final CookData cookData;
@@ -30,8 +31,9 @@ public class RecButton extends StateSwitchingButton implements ITooltipButton {
 
     @SuppressWarnings("all")
     public RecButton(EntityMaid maid, ICookTask<?, ?> cookTask, CookData cookData, Recipe<?> recipe, int pX, int pY) {
-        super(pX, pY, 20, 20, cookData.getRecs().contains(recipe.getId().toString()));
-        this.initTextureValues(179, 25, 22, 0, TEXTURE);
+
+        super(pX, pY, 20, 20, cookData.getRecs().contains(maid.level().getRecipeManager().getRecipes().stream().filter(r -> r.value().equals(recipe)).map(r -> r.id()).findFirst().orElse(null)));
+        this.initTextureValues(new WidgetSprites(TEXTURE, TEXTURE));
         this.maid = maid;
         this.cookTask = cookTask;
         this.recipe = recipe;
@@ -79,7 +81,7 @@ public class RecButton extends StateSwitchingButton implements ITooltipButton {
 
         if (mc.options.advancedItemTooltips) {
             stackTooltip.add(CommonComponents.SPACE);
-            stackTooltip.add(Component.literal(String.format("RecipeId: %s", recipe.getId().toString())).withStyle(ChatFormatting.DARK_GRAY));
+            stackTooltip.add(Component.literal(String.format("RecipeId: %s", recipe.toString())).withStyle(ChatFormatting.DARK_GRAY));
         }
 
         boolean modeRandom = !cookData.mode().equals(CookData.Mode.WHITELIST.name);

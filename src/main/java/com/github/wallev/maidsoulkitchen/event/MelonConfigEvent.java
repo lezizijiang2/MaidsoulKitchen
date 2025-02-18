@@ -2,13 +2,22 @@ package com.github.wallev.maidsoulkitchen.event;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.config.subconfig.TaskConfig;
+import com.github.wallev.maidsoulkitchen.util.EmptyLevelAccessor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.AttachedStemBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.config.ModConfigEvent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +25,7 @@ import java.util.Map;
 
 import static com.github.wallev.maidsoulkitchen.util.BlockUtil.getId;
 
-@Mod.EventBusSubscriber(modid = MaidsoulKitchen.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MaidsoulKitchen.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public final class MelonConfigEvent {
     public static final Map<String, String> MELON_STEM_MAP = new HashMap<>();
     private static final String CONFIG_NAME = MaidsoulKitchen.MOD_ID + "-common.toml";
@@ -36,9 +45,20 @@ public final class MelonConfigEvent {
     }
 
     private static void handleMelonStemList(Map<String, String> output) {
-        for (Block block : ForgeRegistries.BLOCKS.getValues()) {
+        for (Block block : BuiltInRegistries.BLOCK) {
             if (block instanceof AttachedStemBlock attachedStemBlock) {
-                output.put(getId(attachedStemBlock.fruit), getId(attachedStemBlock));
+                BlockState defaultState = attachedStemBlock.defaultBlockState();
+                Direction facing = defaultState.getValue(AttachedStemBlock.FACING);
+                BlockPos pos = BlockPos.ZERO;
+                BlockPos fruitPos = pos.relative(facing);
+
+                // Get the fruit block from the block update behavior
+                BlockState testState = defaultState.updateShape(facing, Blocks.AIR.defaultBlockState(),
+                        EmptyLevelAccessor.INSTANCE, pos, fruitPos);
+
+                if (testState != defaultState) {
+                    output.put(getId(testState.getBlock()), getId(attachedStemBlock));
+                }
             }
         }
     }
@@ -50,8 +70,8 @@ public final class MelonConfigEvent {
             String melonId = strings.get(0);
             String stemId = strings.get(1);
 
-            Block melonBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(melonId));
-            Block stemBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(stemId));
+            Block melonBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(melonId));
+            Block stemBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(stemId));
             if (melonBlock == null || stemBlock == null) continue;
 
             output.put(melonId, stemId);

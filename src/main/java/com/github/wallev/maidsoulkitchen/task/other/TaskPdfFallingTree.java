@@ -27,7 +27,7 @@ import java.util.Optional;
 public class TaskPdfFallingTree implements ILittleMaidTask {
     @Override
     public ResourceLocation getUid() {
-        return new ResourceLocation(MaidsoulKitchen.MOD_ID, "falling_tree");
+        return ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "falling_tree");
     }
 
     @Override

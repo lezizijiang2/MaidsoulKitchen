@@ -5,11 +5,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 
 public class CookBagConfigContainer extends CookBagAbstractContainer{
-    public static final MenuType<CookBagConfigContainer> TYPE = IForgeMenuType.create((windowId, inv, data) -> new CookBagConfigContainer(windowId, inv, data.readItem()));
+    public static final MenuType<CookBagConfigContainer> TYPE = IMenuTypeExtension.create((windowId, inv, data) -> new CookBagConfigContainer(windowId, inv, ItemStack.STREAM_CODEC.decode(data)));
     public CookBagConfigContainer(int id, Inventory inventory, ItemStack cookBag) {
         super(TYPE, id, inventory, cookBag);
     }

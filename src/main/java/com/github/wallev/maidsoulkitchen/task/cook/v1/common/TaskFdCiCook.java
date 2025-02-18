@@ -8,13 +8,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
 import java.util.*;
 
-public abstract class TaskFdCiCook<B extends BlockEntity, R extends Recipe<? extends Container>> extends TaskFdPot<B, R> {
+public abstract class TaskFdCiCook<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends TaskFdPot<B, R> {
 
     @Override
     public void insertInputsStack(ItemStackHandler beInv, IItemHandlerModifiable maidInv, B be, Pair<List<Integer>, List<List<ItemStack>>> ingredientPair) {

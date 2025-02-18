@@ -1,7 +1,12 @@
 package com.github.wallev.maidsoulkitchen.item;
 
+import com.github.tartaricacid.touhoulittlemaid.TouhouLittleMaid;
 import com.github.tartaricacid.touhoulittlemaid.api.bauble.IChestType;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.TabIndex;
+import com.github.tartaricacid.touhoulittlemaid.init.InitDataComponent;
 import com.github.tartaricacid.touhoulittlemaid.inventory.chest.ChestManager;
+import com.github.tartaricacid.touhoulittlemaid.inventory.container.config.MaidConfigContainer;
+import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagAbstractContainer;
@@ -11,12 +16,15 @@ import com.github.wallev.maidsoulkitchen.task.cook.compat.InventoryCompat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -31,20 +39,28 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.github.tartaricacid.touhoulittlemaid.init.InitDataComponent.STORAGE_DATA_TAG;
+import static net.minecraft.core.registries.Registries.DATA_COMPONENT_TYPE;
 
 public class ItemCulinaryHub extends Item implements MenuProvider {
     private static final int COOK_BAG_SIZE = getCookBagSize();
     private static final String CONTAINER_TAG = "CulinaryHubContainer";
     private static final String BIND_MODE_TAG = "CulinaryHubBindMode";
     private static final String BIND_POS_TAG = "CulinaryHubBindPos";
+    public static final String STORAGE_DATA_TAG_NAME = "storage_data";
+    public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(DATA_COMPONENT_TYPE, MaidsoulKitchen.MOD_ID);
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> STORAGE_DATA_TAG = DATA_COMPONENTS
+            .register(STORAGE_DATA_TAG_NAME, () -> DataComponentType.<CompoundTag>builder().persistent(CompoundTag.CODEC).networkSynchronized(ByteBufCodecs.COMPOUND_TAG).build());
     private static final int BIND_SIZE = 3;
 
     public ItemCulinaryHub() {
@@ -53,7 +69,7 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
 
     public static void removeModePoses(ItemStack stack) {
         if (stack.is(MkItems.CULINARY_HUB.get())) {
-            CompoundTag tag = stack.getOrCreateTag();
+            CompoundTag tag = stack.getOrDefault(STORAGE_DATA_TAG, new CompoundTag());
             CompoundTag compound = tag.getCompound(BIND_POS_TAG);
 
             for (BagType value : BagType.values()) {
@@ -66,12 +82,12 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
 
     public static void actionModePos(ItemStack stack, String mode, BlockPos blockPos) {
         if (stack.is(MkItems.CULINARY_HUB.get()) && !mode.isEmpty()) {
-            CompoundTag tag = stack.getOrCreateTag();
+            CompoundTag tag = stack.getOrDefault(STORAGE_DATA_TAG, new CompoundTag());
             CompoundTag compound = tag.getCompound(BIND_POS_TAG);
             ListTag list = compound.getList(mode, Tag.TAG_COMPOUND);
             AtomicBoolean remove = new AtomicBoolean(false);
             list.removeIf(tag1 -> {
-                if (NbtUtils.readBlockPos((CompoundTag) tag1).equals(blockPos)) {
+                if (NbtUtils.readBlockPos((CompoundTag) tag1, "ChunkPos").equals(blockPos)) {
                     remove.set(true);
                     return true;
                 }
@@ -83,16 +99,17 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
                 compound.put(mode, list);
             }
             tag.put(BIND_POS_TAG, compound);
+            stack.set(STORAGE_DATA_TAG, tag);
         }
     }
 
     public static List<BlockPos> getBindModePoses(ItemStack stack, String mode) {
         if (stack.is(MkItems.CULINARY_HUB.get())) {
-            CompoundTag tag = stack.getTag();
+            CompoundTag tag = stack.get(STORAGE_DATA_TAG);
             if (tag != null && tag.contains(BIND_POS_TAG, Tag.TAG_COMPOUND)) {
                 CompoundTag tag1 = tag.getCompound(BIND_POS_TAG);
                 ListTag list = tag1.getList(mode, Tag.TAG_COMPOUND);
-                return list.stream().map(tag2 -> NbtUtils.readBlockPos((CompoundTag) tag2)).toList();
+                return list.stream().map(tag2 -> NbtUtils.readBlockPos((CompoundTag) tag2, "ChunkPos").get()).toList();
             }
         }
         return Collections.emptyList();
@@ -100,14 +117,14 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
 
     public static Map<BagType, List<BlockPos>> getBindPoses(ItemStack stack) {
         if (stack.is(MkItems.CULINARY_HUB.get())) {
-            CompoundTag tag = stack.getTag();
+            CompoundTag tag = stack.get(STORAGE_DATA_TAG);
             if (tag != null && tag.contains(BIND_POS_TAG, Tag.TAG_COMPOUND)) {
                 CompoundTag tag1 = tag.getCompound(BIND_POS_TAG);
 
                 HashMap<BagType, List<BlockPos>> typeListHashMap = new HashMap<>();
                 for (BagType value : BagType.values()) {
                     ListTag list = tag1.getList(value.name, Tag.TAG_COMPOUND);
-                    List<BlockPos> poses = list.stream().map(tag2 -> NbtUtils.readBlockPos((CompoundTag) tag2)).toList();
+                    List<BlockPos> poses = list.stream().map(tag2 -> NbtUtils.readBlockPos((CompoundTag) tag2, "ChunkPos").get()).toList();
                     typeListHashMap.put(value, poses);
                 }
 
@@ -119,7 +136,7 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
 
     public static String getBindMode(ItemStack stack) {
         if (stack.is(MkItems.CULINARY_HUB.get())) {
-            CompoundTag tag = stack.getTag();
+            CompoundTag tag = stack.get(STORAGE_DATA_TAG);
             if (tag != null) {
                 return tag.getString(BIND_MODE_TAG);
             }
@@ -129,8 +146,9 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
 
     public static void setBindModeTag(ItemStack stack, String mode) {
         if (stack.is(MkItems.CULINARY_HUB.get())) {
-            CompoundTag tag = stack.getOrCreateTag();
+            CompoundTag tag = stack.getOrDefault(STORAGE_DATA_TAG, new CompoundTag());
             tag.putString(BIND_MODE_TAG, mode);
+            stack.set(STORAGE_DATA_TAG, tag);
         }
     }
 
@@ -142,10 +160,10 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
         return size;
     }
 
-    public static Map<BagType, ItemStackHandler> getContainers(ItemStack stack) {
+    public static Map<BagType, ItemStackHandler> getContainers(HolderLookup.Provider provider, ItemStack stack) {
         Map<BagType, ItemStackHandler> bagTypeItemStackHandlerHashMap = new HashMap<>();
         if (stack.is(MkItems.CULINARY_HUB.get())) {
-            CompoundTag tag = stack.getTag();
+            CompoundTag tag = stack.getOrDefault(STORAGE_DATA_TAG, new CompoundTag());
             if (tag == null || !tag.contains(CONTAINER_TAG, Tag.TAG_COMPOUND)) {
                 for (BagType value : BagType.values()) {
                     ItemStackHandler handler = new ItemStackHandler(value.size * 9);
@@ -156,7 +174,7 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
                 for (BagType value : BagType.values()) {
                     ItemStackHandler handler = new ItemStackHandler(value.size * 9);
                     if (compound.contains(value.name, Tag.TAG_COMPOUND)) {
-                        handler.deserializeNBT(compound.getCompound(value.name));
+                        handler.deserializeNBT(provider, compound.getCompound(value.name));
                     }
                     bagTypeItemStackHandlerHashMap.put(value, handler);
                 }
@@ -165,37 +183,40 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
         return bagTypeItemStackHandlerHashMap;
     }
 
-    public static void setContainer(ItemStack stack, Map<BagType, ItemStackHandler> handlers) {
+    public static void setContainer(HolderLookup.Provider provider, ItemStack stack, Map<BagType, ItemStackHandler> handlers) {
         if (stack.is(MkItems.CULINARY_HUB.get())) {
-            CompoundTag orCreateTag = stack.getOrCreateTag();
-            CompoundTag compound = orCreateTag.getCompound(CONTAINER_TAG);
+            CompoundTag tag = stack.getOrDefault(STORAGE_DATA_TAG, new CompoundTag());
+            CompoundTag compound = tag.getCompound(CONTAINER_TAG);
             handlers.forEach((bagType, itemStackHandler) -> {
-                compound.put(bagType.name, itemStackHandler.serializeNBT());
+                compound.put(bagType.name, itemStackHandler.serializeNBT(provider));
             });
-            orCreateTag.put(CONTAINER_TAG, compound);
+            tag.put(CONTAINER_TAG, compound);
+            stack.set(STORAGE_DATA_TAG, tag);
         }
     }
 
-    public static ItemStackHandler getContainer(ItemStack stack) {
+    public static ItemStackHandler getContainer(HolderLookup.Provider provider, ItemStack stack) {
         ItemStackHandler handler = new ItemStackHandler(COOK_BAG_SIZE);
         if (stack.is(MkItems.CULINARY_HUB.get())) {
-            CompoundTag tag = stack.getTag();
+            CompoundTag tag = stack.getOrDefault(STORAGE_DATA_TAG, new CompoundTag());
             if (tag != null && tag.contains(CONTAINER_TAG, Tag.TAG_COMPOUND)) {
-                handler.deserializeNBT(tag.getCompound(CONTAINER_TAG));
+                handler.deserializeNBT(provider, tag.getCompound(CONTAINER_TAG));
             }
         }
         return handler;
     }
 
-    public static void setContainer(ItemStack stack, ItemStackHandler itemStackHandler) {
+    public static void setContainer(HolderLookup.Provider provider, ItemStack stack, ItemStackHandler itemStackHandler) {
         if (stack.is(MkItems.CULINARY_HUB.get())) {
-            stack.getOrCreateTag().put(CONTAINER_TAG, itemStackHandler.serializeNBT());
+            CompoundTag tag = stack.getOrDefault(STORAGE_DATA_TAG, new CompoundTag());
+            tag.put(CONTAINER_TAG, itemStackHandler.serializeNBT(provider));
+            stack.set(STORAGE_DATA_TAG, tag);
         }
     }
 
     public static boolean openCookBagGuiFromSideTab(Player player, int tabIndex) {
         if (player instanceof ServerPlayer) {
-            NetworkHooks.openScreen((ServerPlayer) player, getGuiProviderFromSideTab(tabIndex), (buffer) -> buffer.writeItem(player.getMainHandItem()));
+            player.openMenu(getGuiProviderFromSideTab(tabIndex), buffer -> ItemStack.STREAM_CODEC.encode(buffer, player.getMainHandItem()));
         }
         return true;
     }
@@ -292,7 +313,7 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
     @Override
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         if (handIn == InteractionHand.MAIN_HAND && playerIn instanceof ServerPlayer) {
-            NetworkHooks.openScreen((ServerPlayer) playerIn, this, (buffer) -> buffer.writeItem(playerIn.getMainHandItem()));
+            playerIn.openMenu(this, buffer -> ItemStack.STREAM_CODEC.encode(buffer, playerIn.getMainHandItem()));
             return InteractionResultHolder.success(playerIn.getMainHandItem());
         }
         return super.use(worldIn, playerIn, handIn);
@@ -311,7 +332,7 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @javax.annotation.Nullable Item.TooltipContext worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         if (!Screen.hasShiftDown()) {
             tooltip.add(Component.empty());
             tooltip.add(Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.usage").withStyle(ChatFormatting.GREEN));

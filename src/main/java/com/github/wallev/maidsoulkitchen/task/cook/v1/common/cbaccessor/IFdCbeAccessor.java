@@ -2,11 +2,12 @@ package com.github.wallev.maidsoulkitchen.task.cook.v1.common.cbaccessor;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraftforge.items.wrapper.RecipeWrapper;
+import net.minecraft.world.item.crafting.RecipeInput;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
 import java.util.Optional;
 
-public interface IFdCbeAccessor<R extends Recipe<? extends Container>> {
+public interface IFdCbeAccessor<R extends Recipe<? extends RecipeInput>> {
 
     Optional<R> getMatchingRecipe$tlma(RecipeWrapper inventoryWrapper);
 

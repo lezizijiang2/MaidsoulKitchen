@@ -4,8 +4,6 @@ import com.github.tartaricacid.touhoulittlemaid.api.entity.ai.IExtraMaidBrain;
 import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.ExtraMaidBrainManager;
 import com.github.wallev.maidsoulkitchen.chest.FarmDelightCabinet;
 import com.github.wallev.maidsoulkitchen.chest.RandomizableCbeType;
-import com.github.wallev.maidsoulkitchen.client.renderer.geckolayer.GeckoLayerMaidLDBanner;
-import com.github.wallev.maidsoulkitchen.client.renderer.layer.LayerMaidLDBanner;
 import com.github.wallev.maidsoulkitchen.foundation.utility.Mods;
 import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.init.MkMemories;
@@ -28,8 +26,8 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.List;
 
@@ -81,14 +79,14 @@ public final class MaidPlugin implements ILittleMaid {
     @OnlyIn(Dist.CLIENT)
     public void addAdditionMaidLayer(EntityMaidRenderer renderer, EntityRendererProvider.Context context) {
         if (Mods.DAPI.isLoaded()) {
-            renderer.addLayer(new LayerMaidLDBanner(renderer, context.getModelSet()));
+//            renderer.addLayer(new LayerMaidLDBanner(renderer, context.getModelSet()));
         }
     }
 
     @OnlyIn(Dist.CLIENT)
     public void addAdditionGeckoMaidLayer(GeckoEntityMaidRenderer<? extends Mob> renderer, EntityRendererProvider.Context context) {
         if (Mods.DAPI.isLoaded()) {
-            renderer.addLayer(new GeckoLayerMaidLDBanner<>(renderer, context.getModelSet()));
+//            renderer.addLayer(new GeckoLayerMaidLDBanner<>(renderer, context.getModelSet()));
         }
     }
 

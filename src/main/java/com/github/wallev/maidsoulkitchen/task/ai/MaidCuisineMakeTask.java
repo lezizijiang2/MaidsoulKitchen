@@ -16,6 +16,8 @@ import dev.xkmc.cuisinedelight.content.recipe.BaseCuisineRecipe;
 import dev.xkmc.cuisinedelight.init.registrate.CDItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -26,14 +28,15 @@ import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import vectorwing.farmersdelight.common.registry.ModSounds;
 
 import javax.annotation.Nullable;
@@ -57,8 +60,11 @@ public class MaidCuisineMakeTask extends Behavior<EntityMaid> {
         this.maidRecipesManager = maidRecipesManager;
     }
 
-    private static int getReduction(ItemStack stack) {
-        return stack.getEnchantmentLevel(Enchantments.SILK_TOUCH) > 0 ? 20 : 0;
+    private static int getReduction(Level level, ItemStack stack) {
+        Holder<Enchantment> holder =
+                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT)
+                        .getOrThrow(Enchantments.SILK_TOUCH);
+        return stack.getEnchantmentLevel(holder) > 0 ? 20 : 0;
     }
 
     public static void playSound(EntityMaid maid, Level level, SoundEvent event) {
@@ -72,7 +78,7 @@ public class MaidCuisineMakeTask extends Behavior<EntityMaid> {
     private static void processV1(ServerLevel worldIn, EntityMaid maid, CuisineSkilletBlockEntity cuisineSkilletBlockEntity) {
         if (!cuisineSkilletBlockEntity.cookingData.contents.isEmpty()) {
             if (!worldIn.isClientSide()) {
-                cuisineSkilletBlockEntity.stir(worldIn.getGameTime(), getReduction(maid.getMainHandItem()));
+                cuisineSkilletBlockEntity.stir(worldIn.getGameTime(), getReduction(maid.level(), maid.getMainHandItem()));
             } else {
                 playSound(maid, worldIn, ModSounds.BLOCK_SKILLET_SIZZLE.get());
             }
@@ -194,7 +200,7 @@ public class MaidCuisineMakeTask extends Behavior<EntityMaid> {
 
                     CookingData data = cuisineSkilletBlockEntity.cookingData;
                     data.stir(worldIn.getGameTime(), 0);
-                    CookedFoodData food = new CookedFoodData(data);
+                    CookedFoodData food = CookedFoodData.of(data);
                     ItemStack foodStack = BaseCuisineRecipe.findBestMatch(worldIn, food);
                     plateItem.shrink(1);
                     ItemHandlerHelper.insertItemStacked(maidAvailableInv, foodStack, false);

@@ -51,6 +51,6 @@ public enum TaskInfo {
         this.uid = uid;
     }
     TaskInfo(String uid) {
-        this.uid = new ResourceLocation(MaidsoulKitchen.MOD_ID, uid);
+        this.uid = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, uid);
     }
 }

@@ -6,8 +6,8 @@ import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.handler.api.IMaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.handler.base.mkrecipe.AbstractCookRec;
 import com.github.wallev.maidsoulkitchen.handler.base.ingredient.AbstractCookRecIngredientSerializer;
-import com.github.wallev.maidsoulkitchen.handler.initializer.brewinandchewin.BrewinandchewinRecipeInitializer;
-import com.github.wallev.maidsoulkitchen.handler.initializer.crockpot.CrockPotRecipeInitializer;
+//import com.github.wallev.maidsoulkitchen.handler.initializer.brewinandchewin.BrewinandchewinRecipeInitializer;
+//import com.github.wallev.maidsoulkitchen.handler.initializer.crockpot.CrockPotRecipeInitializer;
 import com.github.wallev.maidsoulkitchen.handler.initializer.drinkbeer.DrinkBeerRecipeInitializer;
 import com.github.wallev.maidsoulkitchen.handler.initializer.farmersdelight.FarmersDelightRecipeInitializer;
 import com.github.wallev.maidsoulkitchen.handler.initializer.minecraft.MinecraftRecipeInitializer;
@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 
 import java.util.List;
@@ -38,11 +39,11 @@ public final class CookRecIngredientSerializerManager {
 
         MinecraftRecipeInitializer.registerIngredientSerializer(cookRecIngredientSerializerManager);
         FarmersDelightRecipeInitializer.registerIngredientSerializer(cookRecIngredientSerializerManager);
-        BrewinandchewinRecipeInitializer.registerIngredientSerializer(cookRecIngredientSerializerManager);
+//        BrewinandchewinRecipeInitializer.registerIngredientSerializer(cookRecIngredientSerializerManager);
         MinersDelightRecipeInitializer.registerIngredientSerializer(cookRecIngredientSerializerManager);
         YoukaisHomecomingRecipeInitializer.registerIngredientSerializer(cookRecIngredientSerializerManager);
 
-        CrockPotRecipeInitializer.registerIngredientSerializer(cookRecIngredientSerializerManager);
+//        CrockPotRecipeInitializer.registerIngredientSerializer(cookRecIngredientSerializerManager);
 
         DrinkBeerRecipeInitializer.registerIngredientSerializer(cookRecIngredientSerializerManager);
 
@@ -67,7 +68,7 @@ public final class CookRecIngredientSerializerManager {
     }
 
     @SuppressWarnings("unchecked")
-    public static <R extends Recipe<? extends Container>, S extends AbstractCookRecIngredientSerializer<R, AbstractCookRec<R>>> S getSerializer(RecipeType<R> recipeType) {
+    public static <R extends Recipe<? extends RecipeInput>, S extends AbstractCookRecIngredientSerializer<R, AbstractCookRec<R>>> S getSerializer(RecipeType<R> recipeType) {
         return (S) COOK_INGREDIENT_SERIALIZERS_MAP.get(recipeType);
     }
 }

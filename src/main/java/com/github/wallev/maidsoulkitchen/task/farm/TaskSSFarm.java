@@ -26,7 +26,7 @@ public class TaskSSFarm extends TaskNormalFarm implements ILittleMaidTask, IAddo
         boolean plantB = super.canPlant(maid, basePos, baseState, seed);
         if (plantB) {
             String lowerCase = SeasonHelper.getSeasonState(maid.level()).getSeason().name().toLowerCase(Locale.ENGLISH);
-            TagKey<Item> itemTagKey = ItemTags.create(new ResourceLocation("sereneseasons:" + lowerCase + "_crops"));
+            TagKey<Item> itemTagKey = ItemTags.create(ResourceLocation.parse("sereneseasons:" + lowerCase + "_crops"));
             return seed.getTags().anyMatch(itemTagKey::equals) ||
                     seed.getTags().noneMatch(tagKey -> tagKey.location().toString().matches("sereneseasons:.*_crops"));
         }

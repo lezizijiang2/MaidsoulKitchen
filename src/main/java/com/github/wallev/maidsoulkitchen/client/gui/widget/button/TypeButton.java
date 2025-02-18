@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class TypeButton extends NormalTooltipButton {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
     protected boolean isSelected;
     protected String modeUid;
 

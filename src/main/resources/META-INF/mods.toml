@@ -43,11 +43,11 @@ description='''${mod_description}'''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.${mod_id}]] #optional
     # the modid of the dependency
-    modId="forge" #mandatory
+    modId="neoforge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="${forge_version_range}" #mandatory
+    versionRange="${neoforge_version_range}" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the dependency is not mandatory
     # BEFORE - This mod is loaded BEFORE the dependency
     # AFTER - This mod is loaded AFTER the dependency
@@ -65,7 +65,28 @@ description='''${mod_description}'''
 [[dependencies.${mod_id}]]
     modId="touhou_little_maid"
     mandatory=true
-    versionRange="[1.1.13,)"
+    versionRange="[2.0.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="farmersdelight"
+    mandatory=false
+    versionRange="[3.0.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="youkaishomecoming"
+    mandatory=false
+    versionRange="[3.0.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="vinery"
+    mandatory=false
+    versionRange="[2.0.0,)"
     ordering="NONE"
     side="BOTH"
 
@@ -87,12 +108,6 @@ description='''${mod_description}'''
 #    versionRange="[1.20.1-1.2.3,)"
 #    ordering="NONE"
 #    side="BOTH"
-[[dependencies.${mod_id}]]
-    modId="youkaishomecoming"
-    mandatory=false
-    versionRange="[2.2.3,)"
-    ordering="NONE"
-    side="BOTH"
 #[[dependencies.${mod_id}]]
 #    modId="brewinandchewin"
 #    mandatory=false
@@ -106,12 +121,6 @@ description='''${mod_description}'''
 #    versionRange="[1.0.8,)"
 #    ordering="NONE"
 #    side="BOTH"
-[[dependencies.${mod_id}]]
-    modId="vinery"
-    mandatory=false
-    versionRange="[1.4.25,)"
-    ordering="NONE"
-    side="BOTH"
 #[[dependencies.${mod_id}]]
 #    modId="beachparty"
 #    mandatory=false

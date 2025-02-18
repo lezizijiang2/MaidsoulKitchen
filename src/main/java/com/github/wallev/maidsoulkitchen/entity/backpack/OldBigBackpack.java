@@ -12,14 +12,14 @@
 //import net.minecraft.client.model.geom.EntityModelSet;
 //import net.minecraft.resources.ResourceLocation;
 //import net.minecraft.world.item.Item;
-//import net.minecraftforge.api.distmarker.Dist;
-//import net.minecraftforge.api.distmarker.OnlyIn;
+//import net.neoforged.api.distmarker.Dist;
+//import net.neoforged.api.distmarker.OnlyIn;
 //
 //import javax.annotation.Nullable;
 //
 //
 //public class OldBigBackpack extends BigBackpack implements ILittleMaidBackpack {
-//    public static final ResourceLocation ID = new ResourceLocation(MaidsoulKitchen.MOD_ID, "old_big_backpack");
+//    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "old_big_backpack");
 //
 //    @Nullable
 //    @Override
@@ -32,7 +32,7 @@
 //    @Override
 //    @OnlyIn(Dist.CLIENT)
 //    public ResourceLocation getBackpackTexture() {
-//        return new ResourceLocation(TouhouLittleMaid.MOD_ID, "textures/entity/old_maid_backpack_big.png");
+//        return ResourceLocation.fromNamespaceAndPath(TouhouLittleMaid.MOD_ID, "textures/entity/old_maid_backpack_big.png");
 //    }
 //
 //    @OnlyIn(Dist.CLIENT)

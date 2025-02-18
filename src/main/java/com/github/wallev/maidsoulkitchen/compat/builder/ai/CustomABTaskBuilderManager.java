@@ -26,7 +26,7 @@ public class CustomABTaskBuilderManager {
     }
 
     private ResourceLocation createResourceLocation(String name) {
-        return new ResourceLocation("touhoulittlemaid", "custom_abtask." + name);
+        return ResourceLocation.fromNamespaceAndPath("touhoulittlemaid", "custom_abtask." + name);
     }
 
 }

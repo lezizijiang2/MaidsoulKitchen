@@ -1,6 +1,6 @@
 package com.github.wallev.maidsoulkitchen.entity.passive;
 
-import net.minecraftforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.util.FakePlayer;
 
 import java.lang.ref.WeakReference;
 

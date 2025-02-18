@@ -6,10 +6,11 @@ import com.github.wallev.maidsoulkitchen.handler.base.mkcontainer.MkContainerHel
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class InsertMealContainerSerializer<MCB extends AbstractMaidCookBe<B, R> & IOutputAddition.NeedOutputContainer,
-        B extends BlockEntity, R extends Recipe<? extends Container>> extends AbstractCookBlockEntitySerializer<MCB, B, R> {
+        B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends AbstractCookBlockEntitySerializer<MCB, B, R> {
     @Override
     public boolean canDoMaidCookBe(MCB maidCookBe) {
         return !this.hasMealStack(maidCookBe) && !this.isMealContainerItem(maidCookBe)

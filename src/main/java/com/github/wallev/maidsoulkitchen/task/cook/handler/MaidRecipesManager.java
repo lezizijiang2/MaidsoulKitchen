@@ -13,26 +13,28 @@ import com.github.wallev.maidsoulkitchen.task.cook.compat.InventoryCompat;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class MaidRecipesManager<R extends Recipe<? extends Container>> {
+public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     protected final List<R> rec = new ArrayList<>();
     protected final List<R> currentRecs = new ArrayList<>();
     private final EntityMaid maid;
@@ -54,7 +56,7 @@ public class MaidRecipesManager<R extends Recipe<? extends Container>> {
 
     public MaidRecipesManager(EntityMaid maid, ICookTask<?, R> task, boolean single, boolean createRecIng) {
         this.maid = maid;
-        this.level = maid.level;
+        this.level = maid.level();
         this.single = single;
         this.task = task;
 
@@ -85,7 +87,7 @@ public class MaidRecipesManager<R extends Recipe<? extends Container>> {
 
     private ICookInventory initCookInv() {
         ItemStack culinaryHub = this.findCulinaryHub();
-        return culinaryHub.isEmpty() ? new MaidInventory(maid) : new CookBagInventory(culinaryHub);
+        return culinaryHub.isEmpty() ? new MaidInventory(maid) : new CookBagInventory(maid.registryAccess(), culinaryHub);
     }
 
     public ItemStack findCulinaryHub() {
@@ -109,15 +111,16 @@ public class MaidRecipesManager<R extends Recipe<? extends Container>> {
             for (BlockPos ingredientPo : ingredientPos) {
                 if (isPosZone(ingredientPo)) continue;
 
-                BlockEntity blockEntity = maid.level.getBlockEntity(ingredientPo);
+                BlockEntity blockEntity = maid.level().getBlockEntity(ingredientPo);
                 if (blockEntity == null) continue;
                 if (stack.isEmpty()) break;
 
                 // 原版
                 for (IChestType type : ChestManager.getAllChestTypes()) {
                     if (!type.isChest(blockEntity)) continue;
-                    if (type.getOpenCount(maid.level, ingredientPo, blockEntity) > 0) continue;
-                    blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(beInv -> {
+                    if (type.getOpenCount(maid.level(), ingredientPo, blockEntity) > 0) continue;
+                    IItemHandler iItemHandler = maid.level().getCapability(Capabilities.ItemHandler.BLOCK, blockEntity.getBlockPos(), null);
+                    Optional.ofNullable(iItemHandler).ifPresent(beInv -> {
                         ItemStack leftStack = ItemHandlerHelper.insertItemStacked(beInv, stack.copy(), false);
                         stack.shrink(stack.getCount() - leftStack.getCount());
                     });
@@ -203,9 +206,10 @@ public class MaidRecipesManager<R extends Recipe<? extends Container>> {
     private List<R> getValidRecipesFor() {
         List<R> allRecipesFor;
         if (this.lastTaskRule.equals(CookData.Mode.WHITELIST.name)) {
-            allRecipesFor = task.getRecipes(level).stream().filter(r -> recipeIds.contains(r.getId().toString())).toList();
+
+            allRecipesFor = task.getRecipes(level).stream().filter(r -> recipeIds.stream().anyMatch(key -> level.getRecipeManager().getRecipes().stream().anyMatch(holder -> holder.id().equals(ResourceLocation.parse(key))))).toList();
         } else {
-            allRecipesFor = task.getRecipes(level).stream().filter(r -> !recipeIds.contains(r.getId().toString())).toList();
+            allRecipesFor = task.getRecipes(level).stream().filter(r -> recipeIds.stream().noneMatch(key -> level.getRecipeManager().getRecipes().stream().anyMatch(holder -> holder.id().equals(ResourceLocation.parse(key))))).toList();
         }
         return allRecipesFor;
     }
@@ -264,9 +268,10 @@ public class MaidRecipesManager<R extends Recipe<? extends Container>> {
 
             // 原版
             for (IChestType type : ChestManager.getAllChestTypes()) {
-                if (!type.isChest(blockEntity) || type.getOpenCount(maid.level, ingredientPo, blockEntity) > 0)
+                if (!type.isChest(blockEntity) || type.getOpenCount(maid.level(), ingredientPo, blockEntity) > 0)
                     continue;
-                blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(beInv -> {
+                IItemHandler iItemHandler = level.getCapability(Capabilities.ItemHandler.BLOCK, blockEntity.getBlockPos(), null);
+                Optional.ofNullable(iItemHandler).ifPresent(beInv -> {
                     for (int i = 0; i < beInv.getSlots(); i++) {
                         ItemStack stackInSlot = beInv.getStackInSlot(i);
                         Item item = stackInSlot.getItem();
@@ -371,7 +376,7 @@ public class MaidRecipesManager<R extends Recipe<? extends Container>> {
         this.tranUnIngre2Chest();
         // 获取原料箱子配方原料并置入CookBag
         this.mapChestIngredient();
-        this.cookInv.refreshInv();
+        this.cookInv.refreshInv(maid.registryAccess());
         this.createIngres(true);
         this.currentRecs.clear();
 
@@ -645,10 +650,10 @@ public class MaidRecipesManager<R extends Recipe<? extends Container>> {
             BlockEntity blockEntity = level.getBlockEntity(bindModePose);
 
             if (blockEntity != null) {
-                LazyOptional<IItemHandler> capability = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, null);
+                Optional<IItemHandler> capability = Optional.ofNullable(level.getCapability(Capabilities.ItemHandler.BLOCK, blockEntity.getBlockPos(), null));
 
                 if (capability.isPresent()) {
-                    IItemHandler beInv = capability.resolve().get();
+                    IItemHandler beInv = capability.get();
                     return ItemsUtil.findStackSlot(beInv, stack -> stack.is(findItem.getItem())) > -1;
                 }
 
@@ -665,10 +670,10 @@ public class MaidRecipesManager<R extends Recipe<? extends Container>> {
             BlockEntity blockEntity = level.getBlockEntity(bindModePose);
 
             if (blockEntity != null) {
-                LazyOptional<IItemHandler> capability = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, null);
+                Optional<IItemHandler> capability = Optional.ofNullable(level.getCapability(Capabilities.ItemHandler.BLOCK, blockEntity.getBlockPos(), null));
 
                 if (capability.isPresent()) {
-                    IItemHandler beInv = capability.resolve().get();
+                    IItemHandler beInv = capability.get();
 
                     int stackSlot = ItemsUtil.findStackSlot(beInv, stack -> stack.is(findItem.getItem()));
 
@@ -691,10 +696,10 @@ public class MaidRecipesManager<R extends Recipe<? extends Container>> {
             BlockEntity blockEntity = level.getBlockEntity(bindModePose);
 
             if (blockEntity != null) {
-                LazyOptional<IItemHandler> capability = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, null);
+                Optional<IItemHandler> capability = Optional.ofNullable(level.getCapability(Capabilities.ItemHandler.BLOCK, blockEntity.getBlockPos(), null));
 
                 if (capability.isPresent()) {
-                    IItemHandler beInv = capability.resolve().get();
+                    IItemHandler beInv = capability.get();
 
                     int stackSlot = ItemsUtil.findStackSlot(beInv, stack -> stack.is(findItem.getItem()));
 
@@ -718,10 +723,10 @@ public class MaidRecipesManager<R extends Recipe<? extends Container>> {
             BlockEntity blockEntity = level.getBlockEntity(bindModePose);
 
             if (blockEntity != null) {
-                LazyOptional<IItemHandler> capability = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, null);
+                Optional<IItemHandler> capability = Optional.ofNullable(level.getCapability(Capabilities.ItemHandler.BLOCK, blockEntity.getBlockPos(), null));
 
                 if (capability.isPresent()) {
-                    IItemHandler beInv = capability.resolve().get();
+                    IItemHandler beInv = capability.get();
 
                     int stackSlot = ItemsUtil.findStackSlot(beInv, stack -> stack.is(findItem.getItem()));
 

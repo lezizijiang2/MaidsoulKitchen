@@ -27,7 +27,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -82,7 +82,7 @@ public class TaskCuisineSkillet implements ICookTask<CuisineSkilletBlockEntity, 
 
     @Override
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
-        if (maid.level.isClientSide) {
+        if (maid.level().isClientSide) {
             return Collections.emptyList();
         }
 

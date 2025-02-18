@@ -29,6 +29,7 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -39,10 +40,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Container>> extends ILittleMaidTask, IDataTask<CookData> {
+public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends ILittleMaidTask, IDataTask<CookData> {
 
+    @Override
     default List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
-        if (maid.level.isClientSide) {
+        if (maid.level().isClientSide) {
             return Collections.emptyList();
         }
 

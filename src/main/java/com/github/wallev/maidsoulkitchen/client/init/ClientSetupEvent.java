@@ -2,15 +2,18 @@ package com.github.wallev.maidsoulkitchen.client.init;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.client.overlay.MaidTipsOverlay;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 
-import static net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.CROSSHAIR;
+import static com.github.tartaricacid.touhoulittlemaid.util.ResourceLocationUtil.getResourceLocation;
+import static net.neoforged.neoforge.client.gui.VanillaGuiLayers.CROSSHAIR;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT, modid = MaidsoulKitchen.MOD_ID)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT, modid = MaidsoulKitchen.MOD_ID)
 public final class ClientSetupEvent {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
@@ -18,7 +21,7 @@ public final class ClientSetupEvent {
     }
 
     @SubscribeEvent
-    public static void onRegisterGuiOverlays(RegisterGuiOverlaysEvent event) {
-        event.registerAbove(CROSSHAIR.id(), "tlma_maid_tips", new MaidTipsOverlay());
+    public static void onRegisterGuiOverlays(RegisterGuiLayersEvent event) {
+        event.registerAbove(CROSSHAIR, getResourceLocation("tlma_maid_tips"), new MaidTipsOverlay());
     }
 }

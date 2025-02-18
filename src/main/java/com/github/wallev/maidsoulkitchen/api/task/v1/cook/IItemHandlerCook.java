@@ -7,14 +7,15 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
 import java.util.List;
 
-public interface IItemHandlerCook<B extends BlockEntity, R extends Recipe<? extends Container>> extends IMaidAction {
+public interface IItemHandlerCook<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends IMaidAction {
 
     int getOutputSlot();
     default int getInputStartSlot() {

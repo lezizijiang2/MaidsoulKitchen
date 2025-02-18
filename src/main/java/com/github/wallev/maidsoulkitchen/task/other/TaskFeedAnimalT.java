@@ -127,7 +127,10 @@ public class TaskFeedAnimalT implements IAttackTask, ILittleMaidTask {
     }
 
     private boolean hasAssaultWeapon(EntityMaid maid) {
-        return maid.getMainHandItem().getAttributeModifiers(EquipmentSlot.MAINHAND).containsKey(Attributes.ATTACK_DAMAGE);
+        return maid.getMainHandItem().getAttributeModifiers().modifiers()
+                .stream()
+                .anyMatch(modifier -> modifier.attribute().is(Attributes.ATTACK_DAMAGE));
+
     }
 
     private boolean farAway(LivingEntity target, EntityMaid maid) {

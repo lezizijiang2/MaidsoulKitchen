@@ -3,8 +3,6 @@ package com.github.wallev.maidsoulkitchen.handler.initializer;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.handler.api.IMaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.handler.base.recipe.AbstractCookRecInitializer;
-import com.github.wallev.maidsoulkitchen.handler.initializer.brewinandchewin.BrewinandchewinRecipeInitializer;
-import com.github.wallev.maidsoulkitchen.handler.initializer.crockpot.CrockPotRecipeInitializer;
 import com.github.wallev.maidsoulkitchen.handler.initializer.drinkbeer.DrinkBeerRecipeInitializer;
 import com.github.wallev.maidsoulkitchen.handler.initializer.farmersdelight.FarmersDelightRecipeInitializer;
 import com.github.wallev.maidsoulkitchen.handler.initializer.minecraft.MinecraftRecipeInitializer;
@@ -16,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
@@ -37,7 +36,7 @@ public final class CookRecRecipeInitializerManager {
 
         MinecraftRecipeInitializer.registerRecipeInitializer(cookRecRecipeInitializerManager);
         FarmersDelightRecipeInitializer.registerRecipeInitializer(cookRecRecipeInitializerManager);
-        BrewinandchewinRecipeInitializer.registerRecipeInitializer(cookRecRecipeInitializerManager);
+//        BrewinandchewinRecipeInitializer.registerRecipeInitializer(cookRecRecipeInitializerManager);
         MinersDelightRecipeInitializer.registerRecipeInitializer(cookRecRecipeInitializerManager);
         YoukaisHomecomingRecipeInitializer.registerRecipeInitializer(cookRecRecipeInitializerManager);
 //        CrockPotRecipeInitializer.registerRecipeInitializer(cookRecRecipeInitializerManager);
@@ -68,7 +67,7 @@ public final class CookRecRecipeInitializerManager {
     }
 
     @SuppressWarnings("unchecked")
-    public static <R extends Recipe<? extends Container>, S extends AbstractCookRecInitializer<R>> S getInitializer(RecipeType<R> recipeType) {
+    public static <R extends Recipe<? extends RecipeInput>, S extends AbstractCookRecInitializer<R>> S getInitializer(RecipeType<R> recipeType) {
         return (S) COOK_REC_SERIALIZERS_MAP.get(recipeType);
     }
 

@@ -7,9 +7,10 @@ import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-public abstract class TaskFdPot<B extends BlockEntity, R extends Recipe<? extends Container>> implements ICookTask<B, R>, IFdPotCook<B, R> {
+public abstract class TaskFdPot<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> implements ICookTask<B, R>, IFdPotCook<B, R> {
     @Override
     public boolean shouldMoveTo(ServerLevel level, EntityMaid maid, B be, MaidRecipesManager<R> manager) {
         return maidShouldMoveTo(level, maid, be, manager);

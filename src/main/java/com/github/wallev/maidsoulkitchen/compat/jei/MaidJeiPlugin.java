@@ -13,7 +13,7 @@ import java.util.List;
 
 @JeiPlugin
 public class MaidJeiPlugin implements IModPlugin {
-    private static final ResourceLocation UID = new ResourceLocation(MaidsoulKitchen.MOD_ID, "jei");
+    private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "jei");
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {

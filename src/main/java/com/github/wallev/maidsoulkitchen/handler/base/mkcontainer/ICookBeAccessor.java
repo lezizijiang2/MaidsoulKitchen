@@ -2,9 +2,10 @@ package com.github.wallev.maidsoulkitchen.handler.base.mkcontainer;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-public interface ICookBeAccessor<B extends BlockEntity, R extends Recipe<? extends Container>> {
+public interface ICookBeAccessor<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> {
 
     /**
      * 判断厨具内部的原料是否可以烹饪

@@ -5,15 +5,16 @@ import com.github.wallev.maidsoulkitchen.handler.task.handler.MaidRecipesManager
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 /**
  * 用于建立女仆烹饪厨具，便于管理
  * <br>应该在createBrain的时候就建立
  * <br>并传进MaidCookMoveTask和MaidCookMakeTask
  */
-public abstract class AbstractMaidCookBe<B extends BlockEntity, R extends Recipe<? extends Container>> {
+public abstract class AbstractMaidCookBe<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> {
     protected final EntityMaid maid;
     protected final MaidRecipesManager<?, B, R> recipesManager;
     protected B cookBe;

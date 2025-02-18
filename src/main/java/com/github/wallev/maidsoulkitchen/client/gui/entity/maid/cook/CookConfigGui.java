@@ -1,13 +1,14 @@
 package com.github.wallev.maidsoulkitchen.client.gui.entity.maid.cook;
 
+import com.github.tartaricacid.touhoulittlemaid.client.gui.widget.button.TouhouImageButton;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.MaidTaskConfigGui;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CookConfigContainer;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
-import com.github.wallev.maidsoulkitchen.network.message.ActionCookDataRecMessage;
-import com.github.wallev.maidsoulkitchen.network.message.SetCookDataModeMessage;
+import com.github.wallev.maidsoulkitchen.network.message.ActionCookDataRecPackage;
+import com.github.wallev.maidsoulkitchen.network.message.SetCookDataPackage;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.button.*;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
@@ -42,7 +43,7 @@ import java.util.Objects;
 @IPNGuiHint(button = IPNButton.SHOW_EDITOR, horizontalOffset = -5)
 @IPNGuiHint(button = IPNButton.SETTINGS, horizontalOffset = -5)
 public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
     protected final Zone taskDisplay = new Zone(6, 20, 70, 20);
     // 需要特殊处理
     protected final Zone typeDisplay = new Zone(-4, 22, 18, 18);
@@ -84,7 +85,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     private void initRecipeList() {
         this.recipeList.clear();
         List<Recipe> recipes;
-        Level level = maid.level;
+        Level level = maid.level();
         RegistryAccess registryAccess = level.registryAccess();
         if (searchBox != null && StringUtils.isNotBlank(searchBox.getValue())) {
             String search = this.searchBox.getValue().toLowerCase(Locale.US);
@@ -136,24 +137,24 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY) {
         // 176, 137
         boolean isCookSettingMainZone = mouseX >= visualZone.startX() && mouseY >= visualZone.startY() && mouseX < visualZone.startX() + visualZone.width() && mouseY < visualZone.startY() + visualZone.height();
-        if (delta != 0 && isCookSettingMainZone) {
+        if (deltaY != 0 && isCookSettingMainZone) {
             // 向上滚
-            if (delta > 0 && solIndex > 0) {
+            if (deltaX > 0 && solIndex > 0) {
                 solIndex--;
                 this.init();
                 return true;
             }
             // 向下滚
-            if (delta < 0 && solIndex < (this.recipeList.size() - 1) / (ref.col() * ref.row())) {
+            if (deltaY < 0 && solIndex < (this.recipeList.size() - 1) / (ref.col() * ref.row())) {
                 solIndex++;
                 this.init();
                 return true;
             }
         }
-        return super.mouseScrolled(mouseX, mouseY, delta);
+        return super.mouseScrolled(mouseX, mouseY, deltaX, deltaY);
     }
 
     @Override
@@ -166,7 +167,6 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     @Override
     protected void containerTick() {
         super.containerTick();
-        this.searchBox.tick();
     }
 
     @Override
@@ -307,7 +307,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
                     this.setX(finalStartX - searchTextDisplay.width());
                     searchBox.setVisible(true);
                     searchBox.setFocused(true);
-                    searchBox.moveCursorToEnd();
+                    searchBox.moveCursorToEnd(false);
                     init();
                 } else {
                     this.setX(finalStartX);
@@ -340,7 +340,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
 
     private void setAndSyncMode(String mode) {
         cookData.setMode(mode);
-        NetworkHandler.sendToServer(new SetCookDataModeMessage(maid.getId(), cookTask.getCookDataKey().getKey(), mode));
+        NetworkHandler.sendToNearby(maid, new SetCookDataPackage(maid.getId(), cookTask.getCookDataKey().getKey(), mode));
     }
 
     private void setAndSyncMode(boolean isSelected) {
@@ -366,7 +366,9 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
                 RecButton recButton = new RecButton(maid, (ICookTask<?, ?>) task, cookData, recipe, x, y) {
                     @Override
                     public void onClick(double pMouseX, double pMouseY) {
-                        arAndSyncRec(getRecipe().getId().toString());
+                        maid.level().getRecipeManager().getRecipes().stream().filter(r -> recipe.equals(r.value())).findFirst().ifPresent(r -> {
+                            arAndSyncRec(r.id().toString());
+                        });
                         updateRecButtonsState(this::toggleState);
                     }
                 };
@@ -418,20 +420,20 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
 
     private void arAndSyncRec(String rec) {
         cookData.addOrRemoveRec(rec, this.cookData.mode());
-        NetworkHandler.sendToServer(new ActionCookDataRecMessage(maid.getId(), cookTask.getCookDataKey().getKey(), rec, this.cookData.mode()));
+        NetworkHandler.sendToNearby(maid, new ActionCookDataRecPackage(maid.getId(), cookTask.getCookDataKey().getKey(), rec, this.cookData.mode()));
     }
 
     // 161, 25 189, 74
     private void addScrollButton() {
         int startX = visualZone.startX() + scrollDisplay.startX();
         int startY = visualZone.startY() + scrollDisplay.startY();
-        Button upButton = new ImageButton(startX, startY, 9, 7, 199, 74, 14, TEXTURE, b -> {
+        Button upButton = new TouhouImageButton(startX, startY, 9, 7, 199, 74, 14, TEXTURE, b -> {
             if (this.solIndex > 0) {
                 this.solIndex--;
                 this.init();
             }
         });
-        Button downButton = new ImageButton(startX, startY + 8 + 1 + 70, 9, 7, 208, 74, 14, TEXTURE, b -> {
+        Button downButton = new TouhouImageButton(startX, startY + 8 + 1 + 70, 9, 7, 208, 74, 14, TEXTURE, b -> {
             if (this.solIndex < (this.recipeList.size() - 1) / (ref.col() * ref.row())) {
                 this.solIndex++;
                 this.init();

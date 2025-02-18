@@ -1,11 +1,11 @@
 package com.github.wallev.maidsoulkitchen.config.subconfig;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class RenderConfig {
-    public static ForgeConfigSpec.BooleanValue LD_BANNER_RENDER_ENABLED;
+    public static ModConfigSpec.BooleanValue LD_BANNER_RENDER_ENABLED;
 
-    public static void init(ForgeConfigSpec.Builder builder) {
+    public static void init(ModConfigSpec.Builder builder) {
         builder.push("Render");
 
         builder.comment("Maid can render LdBanner.");

@@ -4,7 +4,7 @@ import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.handler.api.IMaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.handler.base.container.AbstractCookBlockEntitySerializer;
 import com.github.wallev.maidsoulkitchen.handler.base.rule.MaidCookBeActionType;
-import com.github.wallev.maidsoulkitchen.handler.initializer.brewinandchewin.BrewinandchewinRecipeInitializer;
+//import com.github.wallev.maidsoulkitchen.handler.initializer.brewinandchewin.BrewinandchewinRecipeInitializer;
 import com.github.wallev.maidsoulkitchen.handler.initializer.drinkbeer.DrinkBeerRecipeInitializer;
 import com.github.wallev.maidsoulkitchen.handler.initializer.farmersdelight.FarmersDelightRecipeInitializer;
 import com.google.common.collect.ImmutableMap;
@@ -25,7 +25,7 @@ public final class CookContainerSerializerRulesManager {
     public static void register() {
         CookContainerSerializerRulesManager cookContainerSerializerRulesManager = new CookContainerSerializerRulesManager();
         FarmersDelightRecipeInitializer.registerContainerSerializerRule(cookContainerSerializerRulesManager);
-        BrewinandchewinRecipeInitializer.registerContainerSerializerRule(cookContainerSerializerRulesManager);
+//        BrewinandchewinRecipeInitializer.registerContainerSerializerRule(cookContainerSerializerRulesManager);
         DrinkBeerRecipeInitializer.registerContainerSerializerRule(cookContainerSerializerRulesManager);
 
         for (IMaidsoulKitchen maidsoulKitchen : MaidsoulKitchen.EXTENSIONS) {

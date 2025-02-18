@@ -3,10 +3,11 @@ package com.github.wallev.maidsoulkitchen.task.cook.handler;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import com.github.wallev.maidsoulkitchen.item.ItemCulinaryHub;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,16 +19,18 @@ public class CookBagInventory implements ICookInventory {
     private final Map<Item, Integer> inventoryItem = new HashMap<>();
     private final Map<Item, List<ItemStack>> inventoryStack = new HashMap<>();
     private final List<ItemStack> lastInvStack = new ArrayList<>();
+    private final HolderLookup.Provider provider;
     private Map<BagType, ItemStackHandler> containers;
 
-    public CookBagInventory(ItemStack stack) {
+    public CookBagInventory(HolderLookup.Provider provider, ItemStack stack) {
         this.stack = stack;
-        this.refreshInv();
+        this.refreshInv(provider);
+        this.provider = provider;
     }
 
-    public void refreshInv() {
+    public void refreshInv(HolderLookup.Provider provider) {
         clearCacheStackInfo();
-        containers = ItemCulinaryHub.getContainers(stack);
+        containers = ItemCulinaryHub.getContainers(provider, stack);
         ItemStackHandler availableInv = containers.getOrDefault(BagType.INGREDIENT, new ItemStackHandler(BagType.INGREDIENT.size * 9));
         List<Integer> blackSlots = getBlackSlots();
         for (int i = 0; i < availableInv.getSlots(); i++) {
@@ -105,6 +108,6 @@ public class CookBagInventory implements ICookInventory {
 
     @Override
     public void syncInv() {
-        ItemCulinaryHub.setContainer(stack, containers);
+        ItemCulinaryHub.setContainer(provider,  stack, containers);
     }
 }

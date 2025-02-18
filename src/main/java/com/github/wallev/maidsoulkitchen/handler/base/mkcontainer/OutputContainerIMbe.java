@@ -5,9 +5,10 @@ import com.github.wallev.maidsoulkitchen.handler.task.handler.MaidRecipesManager
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-public abstract class OutputContainerIMbe<B extends BlockEntity, R extends Recipe<? extends Container>> extends ItemHandlerMaidCookBe<B, R> implements IOutputAddition.NeedOutputContainer {
+public abstract class OutputContainerIMbe<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends ItemHandlerMaidCookBe<B, R> implements IOutputAddition.NeedOutputContainer {
     // @final
     protected int outputContainerSlot;
     // @final

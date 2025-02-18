@@ -6,8 +6,8 @@
 //import net.minecraft.world.item.Item;
 //import net.minecraft.world.level.Level;
 //import net.minecraft.world.level.block.Block;
-//import net.minecraftforge.eventbus.api.SubscribeEvent;
-//import net.minecraftforge.fml.common.Mod;
+//import net.neoforged.bus.api.SubscribeEvent;
+//import net.neoforged.fml.common.Mod;
 //import sereneseasons.api.season.Season;
 //import sereneseasons.api.season.SeasonChangedEvent;
 //import sereneseasons.init.ModTags;
@@ -16,7 +16,7 @@
 //import java.util.List;
 //import java.util.Map;
 //
-//@Mod.EventBusSubscriber
+//@EventBusSubscribe
 //public final class SeasonEvent {
 //
 //    public static Map<Level, List<TagKey<?>>> LevelSeasonData = new HashMap<>();

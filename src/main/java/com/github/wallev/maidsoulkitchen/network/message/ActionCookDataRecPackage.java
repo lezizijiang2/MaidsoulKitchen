@@ -1,0 +1,53 @@
+package com.github.wallev.maidsoulkitchen.network.message;
+
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
+import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
+import com.github.tartaricacid.touhoulittlemaid.entity.data.TaskDataRegister;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
+
+
+import static com.github.tartaricacid.touhoulittlemaid.util.ResourceLocationUtil.getResourceLocation;
+
+public record ActionCookDataRecPackage(int entityId, ResourceLocation dataKey, String rec, String mode) implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<ActionCookDataRecPackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("cook_data_rec"));
+    public static final StreamCodec<ByteBuf, ActionCookDataRecPackage> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT,
+            ActionCookDataRecPackage::entityId,
+            ResourceLocation.STREAM_CODEC,
+            ActionCookDataRecPackage::dataKey,
+            ByteBufCodecs.STRING_UTF8,
+            ActionCookDataRecPackage::rec,
+            ByteBufCodecs.STRING_UTF8,
+            ActionCookDataRecPackage::mode,
+            ActionCookDataRecPackage::new
+    );
+
+    @Override
+    public @NotNull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
+    public static void handle(ActionCookDataRecPackage message, IPayloadContext context) {
+        if (context.flow().isServerbound()) {
+            context.enqueueWork(() -> {
+                ServerPlayer sender = (ServerPlayer) context.player();
+                Entity entity = sender.level().getEntity(message.entityId);
+                if (entity instanceof EntityMaid maid && maid.isOwnedBy(sender)) {
+                    TaskDataKey<CookData> value = TaskDataRegister.getValue(message.dataKey);
+                    CookData cookData = maid.getOrCreateData(value, new CookData());
+                    cookData.addOrRemoveRec(message.rec, message.mode);
+                    maid.setAndSyncData(value, cookData);
+                }
+            });
+        }
+    }
+}

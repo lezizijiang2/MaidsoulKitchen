@@ -1,14 +1,16 @@
 package com.github.wallev.maidsoulkitchen.client.gui.widget.button;
 
-import com.github.tartaricacid.touhoulittlemaid.client.gui.mod.ClothConfigScreen;
+import com.github.tartaricacid.touhoulittlemaid.TouhouLittleMaid;
 import com.github.tartaricacid.touhoulittlemaid.compat.cloth.ClothConfigCompat;
 import com.github.tartaricacid.touhoulittlemaid.init.registry.CompatRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 
 import java.awt.*;
 import java.util.function.Supplier;
@@ -19,7 +21,12 @@ public class NavCompatMelonConfigButton extends Button {
             if (ModList.get().isLoaded(CompatRegistry.CLOTH_CONFIG)) {
                 ClothConfigCompat.openConfigScreen();
             } else {
-                ClothConfigScreen.open();
+                ModList.get().getModContainerById(TouhouLittleMaid.MOD_ID).ifPresent(modContainer -> {
+                    Screen parent = Minecraft.getInstance().screen;
+                    if (parent != null) {
+                        Minecraft.getInstance().setScreen(new ConfigurationScreen(modContainer, parent));
+                    }
+                });
             }
         }, Supplier::get);
     }

@@ -6,7 +6,7 @@ import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.task.MaidCheckRa
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.google.common.collect.ImmutableMap;
 import dev.ghen.thirst.foundation.common.capability.IThirst;
-import dev.ghen.thirst.foundation.common.capability.ModCapabilities;
+import dev.ghen.thirst.foundation.common.capability.ModAttachment;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.server.level.ServerLevel;
@@ -17,7 +17,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 public class MaidFeedAndDrinkOwnerTask extends MaidCheckRateTask {
     private static final int MAX_DELAY_TIME = 20;
@@ -126,13 +126,9 @@ public class MaidFeedAndDrinkOwnerTask extends MaidCheckRateTask {
     @Override
     protected void start(ServerLevel worldIn, EntityMaid maid, long gameTimeIn) {
         LivingEntity owner = maid.getOwner();
-        if (owner instanceof Player && owner.isAlive()) {
-            Player player = (Player) owner;
+        if (owner instanceof Player player && owner.isAlive()) {
 
-            IThirst iThirst = owner.getCapability(ModCapabilities.PLAYER_THIRST).orElse(null);
-            if (iThirst == null) {
-                return;
-            }
+            IThirst iThirst = owner.getData(ModAttachment.PLAYER_THIRST);
             boolean thirstDying = iThirst.getThirst() < 20;
             if (thirstDying) {
                 startDrink(worldIn, maid, player, thirstDying);

@@ -1,11 +1,27 @@
 package com.github.wallev.maidsoulkitchen.compat.kubejs.recipes;
 
-import com.github.tartaricacid.touhoulittlemaid.util.EntityCraftingHelper;
+import com.github.tartaricacid.touhoulittlemaid.crafting.AltarRecipe;
+import com.github.tartaricacid.touhoulittlemaid.crafting.AltarRecipeSerializer;
+import com.github.wallev.maidsoulkitchen.util.EntityCraftingHelper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.latvian.mods.kubejs.recipe.RecipeJS;
 import dev.latvian.mods.kubejs.recipe.component.RecipeComponent;
 import dev.latvian.mods.kubejs.util.MapJS;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Ingredient;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class TlmOutputComponent implements RecipeComponent<EntityCraftingHelper.Output> {
     public static final RecipeComponent<EntityCraftingHelper.Output> INSTANCE = new TlmOutputComponent();

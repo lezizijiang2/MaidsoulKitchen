@@ -9,12 +9,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.List;
 
-public interface IBaseContainerPotCook<B extends BlockEntity, R extends Recipe<? extends Container>> extends IBaseCookContainerBe<B, R>, IHeatBe<B>, IContainerCookBe<B>, IContainerCook {
+public interface IBaseContainerPotCook<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends IBaseCookContainerBe<B, R>, IHeatBe<B>, IContainerCookBe<B>, IContainerCook {
 
     default boolean maidShouldMoveTo(ServerLevel serverLevel, EntityMaid entityMaid, B blockEntity, MaidRecipesManager<R> maidRecipesManager) {
 

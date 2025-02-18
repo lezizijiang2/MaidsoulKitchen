@@ -2,7 +2,7 @@ package com.github.wallev.maidsoulkitchen.mixin.md;
 
 import com.github.wallev.maidsoulkitchen.task.cook.v1.common.cbaccessor.IFdCbeAccessor;
 import com.sammy.minersdelight.content.block.copper_pot.CopperPotBlockEntity;
-import net.minecraftforge.items.wrapper.RecipeWrapper;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import vectorwing.farmersdelight.common.crafting.CookingPotRecipe;

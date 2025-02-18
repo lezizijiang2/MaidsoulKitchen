@@ -4,11 +4,12 @@ import com.google.common.collect.Sets;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractCookRec<R extends Recipe<? extends Container>> {
+public abstract class AbstractCookRec<R extends Recipe<? extends RecipeInput>> {
     protected final R rec;
     protected final List<List<Item>> ingres;
     protected final List<Item> result;

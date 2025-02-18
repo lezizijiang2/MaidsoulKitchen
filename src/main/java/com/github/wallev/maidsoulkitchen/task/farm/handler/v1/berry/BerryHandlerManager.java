@@ -6,8 +6,6 @@ import com.github.wallev.maidsoulkitchen.task.farm.handler.v1.IFarmHandlerManage
 public enum BerryHandlerManager implements IFarmHandlerManager<BerryHandler> {
 
     MINECRAFT(new VanillaBerryHandler()),
-    SIMPLE_FARMING(new SimpleFarmingBerryHandler()),
-    VINERY(new VineryBerryHandler()),
     COMPAT(new CompatBerryHandler());
 
     private final BerryHandler berryHandler;

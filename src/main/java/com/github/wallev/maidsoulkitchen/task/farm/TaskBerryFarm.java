@@ -52,7 +52,7 @@ public class TaskBerryFarm implements ICompatFarm<BerryHandler, BerryData>, IFak
 
     @Override
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
-        if (maid.level.isClientSide) return Lists.newArrayList();
+        if (maid.level().isClientSide) return Lists.newArrayList();
         MaidCompatFarmMoveTask<BerryHandler> maidFarmMoveTask = new MaidCompatFarmMoveTask<>(maid, this, 0.6F) {
             @Override
             public boolean checkPathReach(EntityMaid maid, BlockPos pos) {

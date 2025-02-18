@@ -3,15 +3,15 @@ package com.github.wallev.maidsoulkitchen.event;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.handler.initializer.CookRecRecipeInitializerManager;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 
 
-@Mod.EventBusSubscriber(modid = MaidsoulKitchen.MOD_ID)
+@EventBusSubscriber(modid = MaidsoulKitchen.MOD_ID)
 public class AddReloadCookRecSerializerEvent {
 
     @SubscribeEvent

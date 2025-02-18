@@ -13,7 +13,7 @@ import com.mojang.datafixers.util.Pair;
 import dev.ghen.thirst.api.ThirstHelper;
 import dev.ghen.thirst.content.purity.WaterPurity;
 import dev.ghen.thirst.foundation.common.capability.IThirst;
-import dev.ghen.thirst.foundation.common.capability.ModCapabilities;
+import dev.ghen.thirst.foundation.common.capability.ModAttachment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -25,19 +25,22 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionBrewing;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
+import net.neoforged.neoforge.common.EffectCures;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class TaskFeedAndDrinkOwner implements ILittleMaidTask, IFeedTask, IDrinkTask {
     @Override
     public ItemStack getIcon() {
-        return PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER);
+        return PotionContents.createItemStack(Items.POTION, Potions.WATER);
     }
 
     @Nullable
@@ -79,7 +82,7 @@ public class TaskFeedAndDrinkOwner implements ILittleMaidTask, IFeedTask, IDrink
     public IDrinkTask.Priority getDrinkPriority(ItemStack stack, Player owner) {
 
         if (ThirstHelper.itemRestoresThirst(stack) && ThirstHelper.isDrink(stack)) {
-            IThirst iThirst = owner.getCapability(ModCapabilities.PLAYER_THIRST).orElse(null);
+            IThirst iThirst = owner.getData(ModAttachment.PLAYER_THIRST);
             if (iThirst != null) {
                 int heal = ThirstHelper.getThirst(stack);
 
@@ -107,14 +110,14 @@ public class TaskFeedAndDrinkOwner implements ILittleMaidTask, IFeedTask, IDrink
     @Override
     public ItemStack drink(ItemStack stack, Player owner) {
         if (stack.getUseAnimation() == UseAnim.DRINK) {
-            owner.level.playSound(null, owner, stack.getDrinkingSound(), SoundSource.NEUTRAL,
-                    0.5f, owner.level.getRandom().nextFloat() * 0.1f + 0.9f);
+            owner.level().playSound(null, owner, stack.getDrinkingSound(), SoundSource.NEUTRAL,
+                    0.5f, owner.level().getRandom().nextFloat() * 0.1f + 0.9f);
         }
 
         AtomicBoolean canDrink = new AtomicBoolean(false);
-        owner.getCapability(ModCapabilities.PLAYER_THIRST).ifPresent((cap) -> {
+        Optional.of(owner.getData(ModAttachment.PLAYER_THIRST)).ifPresent((cap) -> {
             if (WaterPurity.givePurityEffects(owner, stack)) {
-                cap.drink(owner, ThirstHelper.getThirst(stack), ThirstHelper.getQuenched(stack));
+                cap.drink(ThirstHelper.getThirst(stack), ThirstHelper.getQuenched(stack));
                 canDrink.set(true);
             }
         });
@@ -129,7 +132,7 @@ public class TaskFeedAndDrinkOwner implements ILittleMaidTask, IFeedTask, IDrink
     public boolean isFood(ItemStack stack, Player owner) {
         if (stack.getItem() == Items.MILK_BUCKET) {
             for (MobEffectInstance effect : owner.getActiveEffects()) {
-                if (isHarmfulEffect(effect) && effect.getDuration() > 60 && effect.isCurativeItem(stack)) {
+                if (isHarmfulEffect(effect) && effect.getDuration() > 60 && effect.getCures().contains(EffectCures.MILK)) {
                     return true;
                 }
             }
@@ -137,9 +140,9 @@ public class TaskFeedAndDrinkOwner implements ILittleMaidTask, IFeedTask, IDrink
         }
         if (stack.getItem().getFoodProperties(stack, owner) != null) {
             FoodProperties food = stack.getItem().getFoodProperties(stack, owner);
-            if (food != null && food.getNutrition() > 0) {
-                return food.getEffects().isEmpty() ||
-                        food.getEffects().stream().noneMatch(pair -> isHarmfulEffect(pair.getFirst()));
+            if (food != null && food.nutrition() > 0) {
+                return food.effects().isEmpty() ||
+                        food.effects().stream().noneMatch(pair -> isHarmfulEffect(pair.effect()));
             }
         }
         return false;
@@ -163,7 +166,7 @@ public class TaskFeedAndDrinkOwner implements ILittleMaidTask, IFeedTask, IDrink
             FoodProperties food = stack.getItem().getFoodProperties(stack, owner);
             int heal = 0;
             if (food != null) {
-                heal = food.getNutrition();
+                heal = food.nutrition();
             }
             int hunger = 20 - owner.getFoodData().getFoodLevel();
             if (heal == hunger) {
@@ -181,13 +184,13 @@ public class TaskFeedAndDrinkOwner implements ILittleMaidTask, IFeedTask, IDrink
     @Override
     public ItemStack feed(ItemStack stack, Player owner) {
         if (stack.getUseAnimation() == UseAnim.DRINK) {
-            owner.level.playSound(null, owner, stack.getDrinkingSound(), SoundSource.NEUTRAL,
-                    0.5f, owner.level.getRandom().nextFloat() * 0.1f + 0.9f);
+            owner.level().playSound(null, owner, stack.getDrinkingSound(), SoundSource.NEUTRAL,
+                    0.5f, owner.level().getRandom().nextFloat() * 0.1f + 0.9f);
         }
         return stack.getItem().finishUsingItem(stack, owner.level(), owner);
     }
 
     private boolean isHarmfulEffect(MobEffectInstance effect) {
-        return effect.getEffect().getCategory() == MobEffectCategory.HARMFUL;
+        return effect.getEffect().value().getCategory() == MobEffectCategory.HARMFUL;
     }
 }

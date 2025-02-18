@@ -9,17 +9,17 @@ import com.github.wallev.maidsoulkitchen.handler.task.handler.MaidRecipesManager
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.ai.behavior.BlockPosTracker;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import static com.github.wallev.maidsoulkitchen.util.EntityMaidUtil.*;
 
 @SuppressWarnings("unchecked")
-public class MaidCookMoveTask<MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends Container>>
+public class MaidCookMoveTask<MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends RecipeInput>>
         extends MaidCheckRateTask {
     private static final int MAX_DELAY_TIME = 120;
     private final float movementSpeed;

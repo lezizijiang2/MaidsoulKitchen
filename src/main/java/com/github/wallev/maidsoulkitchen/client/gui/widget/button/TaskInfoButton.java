@@ -18,7 +18,7 @@ import java.util.List;
 
 // 防止覆盖tooltip的部分区域
 public class TaskInfoButton extends NormalTooltipButton {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
 
     private IMaidTask task;
 

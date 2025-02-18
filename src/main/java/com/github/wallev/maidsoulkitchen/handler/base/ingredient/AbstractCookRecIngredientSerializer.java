@@ -8,12 +8,13 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 
 import java.util.*;
 
 @SuppressWarnings("deprecation")
-public abstract class AbstractCookRecIngredientSerializer<R extends Recipe<? extends Container>, CR extends AbstractCookRec<R>> {
+public abstract class AbstractCookRecIngredientSerializer<R extends Recipe<? extends RecipeInput>, CR extends AbstractCookRec<R>> {
     protected final RecipeType<R> recipeType;
 
     public AbstractCookRecIngredientSerializer(RecipeType<R> recipeType) {
@@ -61,7 +62,7 @@ public abstract class AbstractCookRecIngredientSerializer<R extends Recipe<? ext
             maxCount = 1;
         } else {
             for (Item item : itemTimes.keySet()) {
-                maxCount = Math.min(maxCount, item.getMaxStackSize());
+                maxCount = Math.min(maxCount, item.getDefaultMaxStackSize());
                 maxCount = Math.min(maxCount, available.get(item) / itemTimes.get(item));
             }
         }
@@ -183,7 +184,7 @@ public abstract class AbstractCookRecIngredientSerializer<R extends Recipe<? ext
                 if (recIngre.contains(item)) {
                     invIngredient.add(item);
                     hasIngredient = true;
-                    if (item.getMaxStackSize() == 1) {
+                    if (item.getDefaultMaxStackSize() == 1) {
                         single[0] = true;
                         itemTimes.put(item, 1);
                     } else {

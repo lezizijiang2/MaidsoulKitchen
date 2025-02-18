@@ -75,6 +75,6 @@ public class CustomTaskBuilderManager {
     }
 
     private ResourceLocation createResourceLocation(String name) {
-        return new ResourceLocation("touhoulittlemaid", "custom_task." + name);
+        return ResourceLocation.fromNamespaceAndPath("touhoulittlemaid", "custom_task." + name);
     }
 }

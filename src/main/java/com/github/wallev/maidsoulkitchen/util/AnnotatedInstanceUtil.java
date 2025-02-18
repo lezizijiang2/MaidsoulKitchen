@@ -3,8 +3,8 @@ package com.github.wallev.maidsoulkitchen.util;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.handler.api.IMaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.handler.api.TLMKPlugin;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 
 import java.util.*;

@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class OutputContainerCookRecSerializer<R extends Recipe<? extends Container>> extends AbstractCookRecInitializer<R> {
+public abstract class OutputContainerCookRecSerializer<R extends Recipe<? extends RecipeInput>> extends AbstractCookRecInitializer<R> {
     protected final Set<Item> validContainers = Sets.newHashSet();
     public OutputContainerCookRecSerializer(RecipeType<R> recipeType) {
         super(recipeType);

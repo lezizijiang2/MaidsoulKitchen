@@ -4,10 +4,11 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
 import java.util.List;
 
@@ -15,14 +16,14 @@ public class MkContainerHelper {
     /**
      * 从厨具的输出格子中提取出烹饪好的食物
      */
-    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends Container>> void extractOutputStack(MCB maidCookBe) {
+    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends RecipeInput>> void extractOutputStack(MCB maidCookBe) {
         extractStackInSlot(maidCookBe, maidCookBe.getOutputSlot());
     }
 
     /**
      * 从厨具的输入格子中提取出原料
      */
-    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends Container>> void extractInputsStack(MCB maidCookBe) {
+    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends RecipeInput>> void extractInputsStack(MCB maidCookBe) {
         int inputStartSlot = maidCookBe.getInputStartSlot();
         int inputSlotSize = maidCookBe.getInputSlotSize();
         IItemHandlerModifiable ingredientInv = maidCookBe.getIngredientInv();
@@ -44,7 +45,7 @@ public class MkContainerHelper {
      *
      * @param ingredientPair 原料
      */
-    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends Container>> void insertInputsStack(MCB maidCookBe, Pair<List<Integer>, List<List<ItemStack>>> ingredientPair) {
+    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends RecipeInput>> void insertInputsStack(MCB maidCookBe, Pair<List<Integer>, List<List<ItemStack>>> ingredientPair) {
         List<Integer> amounts = ingredientPair.getFirst();
         List<List<ItemStack>> ingredients = ingredientPair.getSecond();
 
@@ -64,7 +65,7 @@ public class MkContainerHelper {
      * @param ingredientIndex 原料索引
      * @param slotIndex       厨具格子索引
      */
-    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends Container>> void insertAndShrink(MCB maidCookBe, Integer amount, List<List<ItemStack>> ingredient, int ingredientIndex, int slotIndex) {
+    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends RecipeInput>> void insertAndShrink(MCB maidCookBe, Integer amount, List<List<ItemStack>> ingredient, int ingredientIndex, int slotIndex) {
         for (ItemStack itemStack : ingredient.get(ingredientIndex)) {
             if (itemStack.isEmpty()) continue;
             int count = itemStack.getCount();
@@ -89,7 +90,7 @@ public class MkContainerHelper {
      *
      * @return 是否有原料
      */
-    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends Container>> void insertItemInSlot(MCB maidCookBe, int slot, ItemStack itemStack) {
+    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends RecipeInput>> void insertItemInSlot(MCB maidCookBe, int slot, ItemStack itemStack) {
         ItemStack copy = itemStack.copy();
         ItemStack leftStack = maidCookBe.insertItem(slot, copy, false);
         itemStack.shrink(itemStack.getCount() - leftStack.getCount());
@@ -100,7 +101,7 @@ public class MkContainerHelper {
      *
      * @return 是否有原料
      */
-    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends Container>> boolean hasInputs(MCB maidCookBe) {
+    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends RecipeInput>> boolean hasInputs(MCB maidCookBe) {
         for (int i = maidCookBe.inputStartSlot; i < maidCookBe.inputStartSlot + maidCookBe.inputSlotSize; i++) {
             if (hasItemInSlot(maidCookBe, i)) {
                 return true;
@@ -115,7 +116,7 @@ public class MkContainerHelper {
      *
      * @return 是否有原料
      */
-    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends Container>> boolean hasOutput(MCB maidCookBe) {
+    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends RecipeInput>> boolean hasOutput(MCB maidCookBe) {
         return hasItemInSlot(maidCookBe, maidCookBe.getOutputSlot());
     }
 
@@ -124,14 +125,14 @@ public class MkContainerHelper {
      *
      * @return 是否有原料
      */
-    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends Container>> boolean hasItemInSlot(MCB maidCookBe, int slot) {
+    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends RecipeInput>> boolean hasItemInSlot(MCB maidCookBe, int slot) {
         return !maidCookBe.getStackInSlot(slot).isEmpty();
     }
 
     /**
      * 从给定的厨具的格子中提取出烹饪好的食物
      */
-    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends Container>> void extractStackInSlot(MCB maidCookBe, int slot) {
+    public static <MCB extends AbstractMaidCookBe<B, R>, B extends BlockEntity, R extends Recipe<? extends RecipeInput>> void extractStackInSlot(MCB maidCookBe, int slot) {
         ItemStack stackInSlot = maidCookBe.getStackInSlot(slot);
         ItemStack copy = stackInSlot.copy();
 
