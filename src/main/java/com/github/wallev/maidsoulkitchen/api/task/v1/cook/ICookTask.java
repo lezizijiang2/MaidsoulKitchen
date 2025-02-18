@@ -27,10 +27,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeInput;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
@@ -60,7 +57,7 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Rec
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     default List<R> getRecipes(Level level) {
-        return level.getRecipeManager().getAllRecipesFor((RecipeType) getRecipeType());
+        return level.getRecipeManager().getAllRecipesFor((RecipeType) getRecipeType()).stream().map(r -> ((RecipeHolder)r).value()).toList();
     }
 
     @Nullable

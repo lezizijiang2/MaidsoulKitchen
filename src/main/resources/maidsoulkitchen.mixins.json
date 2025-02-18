@@ -11,15 +11,11 @@
   "server": [
   ],
   "mixins": [
-    "bnc.KegBlockEntityAccessor",
-    "bnc.MixinKegBlockEntityV2",
     "drinkbeer.MixinBeerBarrelBlockEntityV2",
     "fd.MixinCookingPotBlockEntity",
     "fd.MixinCookingPotBlockEntityV2",
-    "kitchkarrot.AirCompressorBlockEntityAccessor",
     "mc.AbstractFurnaceAccessor",
     "mc.MixinMinecraftServer",
-    "md.MixinCopperPotBlockEntity",
     "tlm.MixinEntityMaid",
     "tlm.MixinMaidRunOne",
     "yhc.KettleBlockAccessor",

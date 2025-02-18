@@ -18,6 +18,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.config.ModConfigEvent;
+import vectorwing.farmersdelight.common.registry.ModItems;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,22 +46,22 @@ public final class MelonConfigEvent {
     }
 
     private static void handleMelonStemList(Map<String, String> output) {
-        for (Block block : BuiltInRegistries.BLOCK) {
-            if (block instanceof AttachedStemBlock attachedStemBlock) {
-                BlockState defaultState = attachedStemBlock.defaultBlockState();
-                Direction facing = defaultState.getValue(AttachedStemBlock.FACING);
-                BlockPos pos = BlockPos.ZERO;
-                BlockPos fruitPos = pos.relative(facing);
+        // todo: 找到更好的方式获取瓜和瓜藤的对应关系
+//        for (Block block : BuiltInRegistries.BLOCK) {
+//            if (block instanceof AttachedStemBlock attachedStemBlock) {
+//                BlockState defaultState = attachedStemBlock.defaultBlockState();
+//                Direction facing = defaultState.getValue(AttachedStemBlock.FACING);
+//                BlockPos pos = BlockPos.ZERO;
+//                BlockPos fruitPos = pos.relative(facing);
+//
+//                // Get the fruit block from the block update behavior
+//                BlockState testState = defaultState.updateShape(facing, Blocks.AIR.defaultBlockState(),
+//                        EmptyLevelAccessor.INSTANCE, pos, fruitPos);
 
-                // Get the fruit block from the block update behavior
-                BlockState testState = defaultState.updateShape(facing, Blocks.AIR.defaultBlockState(),
-                        EmptyLevelAccessor.INSTANCE, pos, fruitPos);
-
-                if (testState != defaultState) {
-                    output.put(getId(testState.getBlock()), getId(attachedStemBlock));
-                }
-            }
-        }
+                    output.put(getId(Blocks.MELON), getId(Blocks.ATTACHED_MELON_STEM));
+                    output.put(getId(Blocks.PUMPKIN), getId(Blocks.ATTACHED_PUMPKIN_STEM));
+//            }
+//        }
     }
 
     private static void handleMelonAndStemList(List<List<String>> config, Map<String, String> output) {

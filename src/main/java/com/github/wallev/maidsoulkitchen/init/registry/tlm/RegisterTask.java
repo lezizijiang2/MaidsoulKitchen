@@ -97,7 +97,9 @@ public final class RegisterTask {
         if (Mods.YHCD.isLoaded() && RegisterConfig.YHC_FERMENTATION_TANK_TASK_ENABLED.get()) {
             manager.add(new TaskFermentationTank());
         }
-        manager.add(new TaskCuisineSkillet());
+        if (Mods.CD.isLoaded() ) {
+            manager.add(new TaskCuisineSkillet());
+        }
 
 
 //        if (Mods.CP.isLoaded() && RegisterConfig.CP_CROk_POT_TASK_ENABLED.get()) {

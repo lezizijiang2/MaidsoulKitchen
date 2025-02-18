@@ -231,9 +231,9 @@ dependencies {
     runtimeOnly "curse.maven:libipn-679177:${libipn_id}"
     implementation "curse.maven:inventory-profiles-next-495267:${ipn_id}"
 
-    implementation "dev.latvian.mods:kubejs-forge:${kubejs_version}"
-    implementation "dev.latvian.mods:rhino-forge:${rhino_version}"
-    implementation "curse.maven:probejs-585406:5227399"
+    implementation "curse.maven:kubejs-238086:5810100"
+    implementation "curse.maven:rhino-416294:6000610"
+    implementation "curse.maven:probejs-585406:5820894"
 }
 
 // Core Dependencies
@@ -295,10 +295,7 @@ dependencies {
 }
 
 
-// This block of code expands all declared replace properties in the specified resource targets.
-// A missing property will result in an error. Properties are expanded using ${} Groovy notation.
-// When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.
-// See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
+
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
             minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
@@ -309,8 +306,8 @@ tasks.named('processResources', ProcessResources).configure {
     ]
     inputs.properties replaceProperties
 
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
-        expand replaceProperties + [project: project]
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties
     }
 }
 
@@ -327,9 +324,9 @@ tasks.named('jar', Jar).configure {
                 'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
-
     // This is the preferred method to reobfuscate your j//
 }
+
 
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing:
 // tasks.named('publish').configure {

@@ -7,10 +7,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeInput;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -77,7 +74,7 @@ public abstract class AbstractCookRecInitializer<R extends Recipe<? extends Reci
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected List<R> getRecipes(Level level) {
-        return level.getRecipeManager().getAllRecipesFor((RecipeType) getRecipeType());
+        return level.getRecipeManager().getAllRecipesFor((RecipeType) getRecipeType()).stream().map( r -> ((RecipeHolder) r).value()).toList();
     }
 
     public List<R> getRecipes() {

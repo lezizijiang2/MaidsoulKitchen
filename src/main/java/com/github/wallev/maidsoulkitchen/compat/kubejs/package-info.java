@@ -1,1 +1,0 @@
-package com.github.wallev.maidsoulkitchen.compat.kubejs;
