@@ -73,3 +73,56 @@
     - [x] Thirst
 - [ ] Backpack Renderer
     - [x] let'do banner
+
+## 1.21 迁移进度
+- [ ] Cook
+    - [x] Farmer's Delight
+        - [x] Cooking Pot 配方不显示……
+        - [x] Cutting Board 配方配置界面无法选择，背景图片错误.工作正常
+    - [ ] Miner's Delight
+        - [ ] Copper Pot 不兼容 1.21
+    - [ ] Brewin' And Chewin'
+        - [ ] Key 不兼容 1.21
+    - [x] Youkai's Homecoming
+        - [x] Moka Pot 配方配置界面无法选择，背景图片错误
+        - [x] Kettle 配方配置界面无法选择，背景图片错误
+        - [x] Fermentation Tank 配方配置界面无法选择，背景图片错误
+        - [x] Drying Rack 配方配置界面无法选择，背景图片错误
+    - [ ] Cuisine Delight 未测试
+    - [ ] My Nether's Delight 未测试
+    - [ ] Vinery
+        - [ ] Fermentation Barrel 不兼容 1.21
+    - [x] Candelight
+        - [x] Cooking Pot 不兼容 1.21
+        - [x] Cooking Pan 不兼容 1.21
+    - [x] Beach Party
+        - [x] Mini Fridge 不兼容 1.21
+        - [x] Cabinet 不兼容 1.21
+    - [x] Bakery
+        - [x] Small Cooking Pot 不兼容 1.21
+        - [x] Stove 不兼容 1.21
+    - [x] Herbalbrews
+        - [x] Tea Kettle 不兼容 1.21
+        - [x] Cauldron 不兼容 1.21
+    - [x] DrinkBeer 未测试
+        - [x] Beer Barrel 未测试
+    - [x] Crock Pot 不兼容 1.21
+        - [x] Crock Pot 不兼容 1.21
+    - [ ] Fruit Stack 有这玩意？
+    - [x] Kitchen Karrot
+        - [x] Air Compressor 不兼容 1.21
+        - [x] Brewing Barrel 不兼容 1.21
+    - [ ] Minecraft
+        - [x] Furnace 未测试是
+        - [ ] Brewing Stand
+- [ ] Farm
+    - [x] Berry
+        - [x] Simple Farming 不兼容 1.21
+        - [x] Vinery 不兼容 1.21
+    - [x] Fruit
+        - [x] Simple Farming 不兼容 1.21
+        - [x] Fruit Stack 不兼容 1.21
+        - [x] Vinery 不兼容 1.21
+- [ ] Other
+    - [ ] Serene Seasons
+    - [ ] Thirst 未测试
