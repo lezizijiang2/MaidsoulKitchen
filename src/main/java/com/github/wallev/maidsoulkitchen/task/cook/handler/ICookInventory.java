@@ -2,16 +2,17 @@ package com.github.wallev.maidsoulkitchen.task.cook.handler;
 
 import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 import java.util.Map;
 
 public interface ICookInventory {
 
-    void refreshInv();
+    void refreshInv(HolderLookup.Provider provider);
 
     void proseLastInvStack(int index, ItemStack invStack);
 

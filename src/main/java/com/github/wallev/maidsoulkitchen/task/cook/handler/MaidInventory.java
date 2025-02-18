@@ -1,9 +1,10 @@
 package com.github.wallev.maidsoulkitchen.task.cook.handler;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +39,11 @@ public class MaidInventory implements ICookInventory{
             if (stack.isEmpty()) continue;
             add(stack);
         }
+    }
+
+    @Override
+    public void refreshInv(HolderLookup.Provider provider) {
+        refreshInv();
     }
 
     public void proseLastInvStack(int index, ItemStack invStack) {

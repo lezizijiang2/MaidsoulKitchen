@@ -1,7 +1,7 @@
 package com.github.wallev.maidsoulkitchen.task.ai;
 
 import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
-import com.github.wallev.maidsoulkitchen.init.MkEntities;
+import com.github.wallev.maidsoulkitchen.init.MkMemories;
 import com.github.wallev.maidsoulkitchen.task.cook.handler.MaidRecipesManager;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitEntities;
@@ -15,12 +15,13 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
 
-public class MaidCookMakeTask<B extends BlockEntity, R extends Recipe<? extends Container>> extends Behavior<EntityMaid> {
+public class MaidCookMakeTask<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends Behavior<EntityMaid> {
     private final ICookTask<B, R> task;
     private final MaidRecipesManager<R> maidRecipesManager;
 
@@ -39,7 +40,7 @@ public class MaidCookMakeTask<B extends BlockEntity, R extends Recipe<? extends 
                 Optional<WalkTarget> walkTarget = brain.getMemory(MemoryModuleType.WALK_TARGET);
                 if (walkTarget.isEmpty() || !walkTarget.get().getTarget().currentPosition().equals(targetV3d)) {
                     brain.eraseMemory(InitEntities.TARGET_POS.get());
-                    brain.eraseMemory(MkEntities.WORK_POS.get());
+                    brain.eraseMemory(MkMemories.DESTROY_POS.get());
                 }
                 return false;
             }
@@ -62,7 +63,7 @@ public class MaidCookMakeTask<B extends BlockEntity, R extends Recipe<? extends 
                 this.maidRecipesManager.tranOutput2Chest();
                 this.maidRecipesManager.getCookInv().syncInv();
             }
-            maid.getBrain().eraseMemory(MkEntities.WORK_POS.get());
+            maid.getBrain().eraseMemory(MkMemories.DESTROY_POS.get());
             maid.getBrain().eraseMemory(InitEntities.TARGET_POS.get());
             maid.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
         });

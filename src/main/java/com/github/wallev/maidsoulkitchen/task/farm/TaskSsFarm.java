@@ -15,7 +15,7 @@ import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import sereneseasons.api.season.SeasonHelper;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class TaskSsFarm extends TaskNormalFarm implements IMaidsoulKitchenTask, 
         boolean plantB = super.canPlant(maid, basePos, baseState, seed);
         if (plantB) {
             String lowerCase = SeasonHelper.getSeasonState(maid.level()).getSeason().name().toLowerCase(Locale.ENGLISH);
-            TagKey<Item> itemTagKey = ItemTags.create(new ResourceLocation("sereneseasons:" + lowerCase + "_crops"));
+            TagKey<Item> itemTagKey = ItemTags.create(ResourceLocation.parse("sereneseasons:" + lowerCase + "_crops"));
             return seed.getTags().anyMatch(itemTagKey::equals) ||
                     seed.getTags().noneMatch(tagKey -> tagKey.location().toString().matches("sereneseasons:.*_crops"));
         }
@@ -44,7 +44,7 @@ public class TaskSsFarm extends TaskNormalFarm implements IMaidsoulKitchenTask, 
     @Override
     public boolean isEnable(EntityMaid maid) {
         MaidMkTaskEnableEvent maidMkTaskEnableEvent = new MaidMkTaskEnableEvent(maid, this);
-        MinecraftForge.EVENT_BUS.post(maidMkTaskEnableEvent);
+        NeoForge.EVENT_BUS.post(maidMkTaskEnableEvent);
         return maidMkTaskEnableEvent.isEnable();
     }
 

@@ -4,14 +4,14 @@ import com.github.tartaricacid.touhoulittlemaid.client.gui.entity.maid.AbstractM
 import com.github.tartaricacid.touhoulittlemaid.client.gui.entity.maid.backpack.IBackpackContainerScreen;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.inventory.container.AbstractMaidContainer;
-import com.github.tartaricacid.touhoulittlemaid.network.NetworkHandler;
-import com.github.tartaricacid.touhoulittlemaid.network.message.RefreshMaidBrainMessage;
+import com.github.tartaricacid.touhoulittlemaid.network.message.RefreshMaidBrainPackage;
 import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.init.MkItems;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.world.inventory.Slot;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,7 +37,7 @@ public abstract class AbstractMaidContainerGuiMixin<T extends AbstractMaidContai
     public void onClose() {
         if (((AbstractMaidContainerGui<?>) (Object) (this)) instanceof IBackpackContainerScreen && this.maid.getTask() instanceof ICookTask<?, ?>) {
             if (this.maid != null) {
-                NetworkHandler.CHANNEL.sendToServer(new RefreshMaidBrainMessage(maid.getId()));
+                PacketDistributor.sendToServer(new RefreshMaidBrainPackage(maid.getId()));
             }
         }
         super.onClose();

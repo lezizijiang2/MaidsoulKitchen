@@ -8,9 +8,9 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -18,12 +18,12 @@ import java.util.List;
 import java.util.Map;
 
 public class CookBagContainer extends CookBagAbstractContainer {
-    public static final MenuType<CookBagContainer> TYPE = IForgeMenuType.create((windowId, inv, data) -> new CookBagContainer(windowId, inv, data.readItem()));
+    public static final MenuType<CookBagContainer> TYPE = IMenuTypeExtension.create((windowId, inv, data) -> new CookBagContainer(windowId, inv, ItemStack.STREAM_CODEC.decode(data)));
     public final Map<BagType, ItemStackHandler> handlers;
 
     public CookBagContainer(int id, Inventory inventory, ItemStack cookBag) {
         super(TYPE, id, inventory, cookBag);
-        this.handlers = ItemCulinaryHub.getContainers(cookBag);
+        this.handlers = ItemCulinaryHub.getContainers(inventory.player.registryAccess(), cookBag);
         this.addBagTypeSlots(handlers);
     }
 
@@ -37,13 +37,13 @@ public class CookBagContainer extends CookBagAbstractContainer {
             return;
         }
         super.clicked(slotId, button, clickTypeIn, player);
-        setContainer(slotId - 36, this.handlers);
+        setContainer(player,slotId - 36, this.handlers);
     }
 
-    protected void setContainer(int slotId, Map<BagType, ItemStackHandler> handlers) {
+    protected void setContainer(Player player, int slotId, Map<BagType, ItemStackHandler> handlers) {
         for (BagType value : BagType.values()) {
             if (slotId >= value.startIndex && slotId < value.endIndex) {
-                ItemCulinaryHub.setContainer(cookBag, handlers);
+                ItemCulinaryHub.setContainer(player.registryAccess(), cookBag, handlers);
                 break;
             }
         }
@@ -107,7 +107,7 @@ public class CookBagContainer extends CookBagAbstractContainer {
             } else {
                 slot.setChanged();
             }
-            setContainer(index, this.handlers);
+            setContainer(playerIn, index, this.handlers);
         }
         return stack1;
     }

@@ -1,5 +1,6 @@
 package com.github.wallev.maidsoulkitchen.client.gui.entity.maid.farm;
 
+import com.github.tartaricacid.touhoulittlemaid.client.gui.widget.button.TouhouImageButton;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarm;
 import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarmHandler;
@@ -11,7 +12,7 @@ import com.github.wallev.maidsoulkitchen.client.gui.widget.button.Zone;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.BerryData;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.BerryFarmConfigContainer;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
-import com.github.wallev.maidsoulkitchen.network.message.ActionBerryFarmRuleMessage;
+import com.github.wallev.maidsoulkitchen.network.message.ActionBerryFarmRulePackage;
 import com.github.wallev.maidsoulkitchen.task.farm.TaskBerryFarm;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.v1.IFarmHandlerManager;
 import net.minecraft.ChatFormatting;
@@ -37,7 +38,7 @@ import java.util.List;
 @IPNGuiHint(button = IPNButton.SHOW_EDITOR, horizontalOffset = -5)
 @IPNGuiHint(button = IPNButton.SETTINGS, horizontalOffset = -5)
 public class BerryFarmConfigGui extends MaidTaskConfigGui<BerryFarmConfigContainer> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(MaidsoulKitchen.MOD_ID, "textures/gui/farm_guide.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/farm_guide.png");
     protected final Zone scrollDisplay = new Zone(161, 20, 9, 110);
     protected final Zone ruleDisplay = new Zone(6, 20, 152, 110);
     protected final ResultInfo ref = new ResultInfo(4, 1, 152, 24, 0, 5);
@@ -75,24 +76,24 @@ public class BerryFarmConfigGui extends MaidTaskConfigGui<BerryFarmConfigContain
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY) {
         // 176, 137
         boolean isCookSettingMainZone = mouseX >= visualZone.startX() && mouseY >= visualZone.startY() && mouseX < visualZone.startX() + visualZone.width() && mouseY < visualZone.startY() + visualZone.height();
-        if (delta != 0 && isCookSettingMainZone) {
+        if (deltaY != 0 && isCookSettingMainZone) {
             // 向上滚
-            if (delta > 0 && solIndex > 0) {
+            if (deltaY > 0 && solIndex > 0) {
                 solIndex--;
                 this.init();
                 return true;
             }
             // 向下滚
-            if (delta < 0 && solIndex < (this.handlers.size() - 1) / limitSize) {
+            if (deltaY < 0 && solIndex < (this.handlers.size() - 1) / limitSize) {
                 solIndex++;
                 this.init();
                 return true;
             }
         }
-        return super.mouseScrolled(mouseX, mouseY, delta);
+        return super.mouseScrolled(mouseX, mouseY, deltaX, deltaY);
     }
 
     private void addRuleButton() {
@@ -110,7 +111,7 @@ public class BerryFarmConfigGui extends MaidTaskConfigGui<BerryFarmConfigContain
                 public void onClick(double pMouseX, double pMouseY) {
                     this.isSelected = !this.isSelected;
                     farmTaskInfo.addOrRemoveRule(this.handlerInfo.getUid().toString());
-                    NetworkHandler.sendToServer(new ActionBerryFarmRuleMessage(maid.getId(), ((TaskBerryFarm) task).getCookDataKey().getKey(), this.handlerInfo.getUid().toString()));
+                    NetworkHandler.sendToNearby(maid, new ActionBerryFarmRulePackage(maid.getId(), ((TaskBerryFarm) task).getCookDataKey().getKey(), this.handlerInfo.getUid().toString()));
                 }
             };
             this.addRenderableWidget(cfRuleButton);
@@ -122,13 +123,13 @@ public class BerryFarmConfigGui extends MaidTaskConfigGui<BerryFarmConfigContain
     private void addScrollButton() {
         int startX = visualZone.startX() + scrollDisplay.startX();
         int startY = visualZone.startY() + scrollDisplay.startY();
-        ImageButton upButton = new ImageButton(startX, startY, 9, 7, 228, 10, 14, TEXTURE, b -> {
+        TouhouImageButton upButton = new TouhouImageButton(startX, startY, 9, 7, 228, 10, 14, TEXTURE, b -> {
             if (this.solIndex > 0) {
                 this.solIndex--;
                 this.init();
             }
         });
-        Button downButton = new ImageButton(startX, startY + 8 + 1 + 95, 9, 7, 237, 10, 14, TEXTURE, b -> {
+        Button downButton = new TouhouImageButton(startX, startY + 8 + 1 + 95, 9, 7, 237, 10, 14, TEXTURE, b -> {
             if (this.solIndex < (this.handlers.size() - 1) / limitSize) {
                 this.solIndex++;
                 this.init();

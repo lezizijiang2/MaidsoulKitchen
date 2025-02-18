@@ -3,7 +3,7 @@ package com.github.wallev.maidsoulkitchen.compat.cloth.event;
 import com.github.wallev.maidsoulkitchen.compat.cloth.MenuIntegration;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 public class AddClothConfigEvent {
 

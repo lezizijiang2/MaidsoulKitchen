@@ -1,13 +1,17 @@
 package com.github.wallev.maidsoulkitchen.client.gui.item;
 
+import com.github.tartaricacid.touhoulittlemaid.client.gui.widget.button.TouhouImageButton;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.tartaricacid.touhoulittlemaid.inventory.container.AbstractMaidContainer;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.button.CookBagModeButton;
+import com.github.wallev.maidsoulkitchen.client.gui.widget.button.TImageButton;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagConfigContainer;
 import com.github.wallev.maidsoulkitchen.item.ItemCulinaryHub;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
-import com.github.wallev.maidsoulkitchen.network.message.ClearCookBagBindPosesMessage;
-import com.github.wallev.maidsoulkitchen.network.message.SetCookBagBindModeMessage;
+import com.github.wallev.maidsoulkitchen.network.message.ClearCookBagBindPosesPackage;
+import com.github.wallev.maidsoulkitchen.network.message.SetCookBagBindModePackage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -31,7 +35,7 @@ import java.util.Objects;
 
 @IPNIgnore
 public class CookBagConfigContainerGui extends CookBagAbstractContainerGui<CookBagConfigContainer> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
 
     protected String bindMode;
 
@@ -64,7 +68,7 @@ public class CookBagConfigContainerGui extends CookBagAbstractContainerGui<CookB
                 public void onClick(double pMouseX, double pMouseY) {
                     super.onClick(pMouseX, pMouseY);
                     bindMode = value.name;
-                    NetworkHandler.sendToServer(new SetCookBagBindModeMessage(bindMode));
+                    NetworkHandler.sendToServer(new SetCookBagBindModePackage(bindMode));
                 }
 
                 @Override
@@ -84,7 +88,7 @@ public class CookBagConfigContainerGui extends CookBagAbstractContainerGui<CookB
         }
 
         Button clearButton = Button.builder(Component.translatable("gui.maidsoulkitchen.culinary_hub.config.clear_bind_poses").withStyle(ChatFormatting.YELLOW), b -> {
-                    NetworkHandler.sendToServer(new ClearCookBagBindPosesMessage());
+                    NetworkHandler.sendToServer(new ClearCookBagBindPosesPackage(0));
                     onClose();
                 })
                 .bounds(x, y += 22, 100, 20)
@@ -96,7 +100,7 @@ public class CookBagConfigContainerGui extends CookBagAbstractContainerGui<CookB
     private void addInfoButton() {
         int x = leftPos + imageWidth;
         int y = topPos + 5;
-        ImageButton infoButton = new ImageButton(x - 15, y, 9, 9, 237 - 10, 212, 10, TEXTURE, (b) -> {
+        TouhouImageButton infoButton = new TouhouImageButton(x - 15, y, 9, 9, 237 - 10, 212, 10, TEXTURE, (b) -> {
         });
         MutableComponent mutableComponent = Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.usage").withStyle(ChatFormatting.GREEN);
         mutableComponent.append(CommonComponents.NEW_LINE);
@@ -120,7 +124,7 @@ public class CookBagConfigContainerGui extends CookBagAbstractContainerGui<CookB
             mutableComponent1.append(CommonComponents.NEW_LINE);
             mutableComponent1.append(Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.warn.empty").withStyle(ChatFormatting.GRAY));
 
-            ImageButton warnButton = new ImageButton(x - 15 - 10, y, 9, 9, 237, 212, 10, TEXTURE, (b) -> {
+            TouhouImageButton warnButton = new TouhouImageButton(x - 15 - 10, y, 9, 9, 237, 212, 10, TEXTURE, (b) -> {
             });
             warnButton.setTooltip(Tooltip.create(mutableComponent1));
             this.addRenderableWidget(warnButton);
@@ -141,7 +145,7 @@ public class CookBagConfigContainerGui extends CookBagAbstractContainerGui<CookB
             mutableComponent1.append(CommonComponents.NEW_LINE);
             mutableComponent1.append(Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.warn.left", leftComponent).withStyle(ChatFormatting.GRAY));
 
-            ImageButton warnButton = new ImageButton(x - 15 - 10, y, 9, 9, 237, 212, 10, TEXTURE, (b) -> {
+            TouhouImageButton warnButton = new TouhouImageButton(x - 15 - 10, y, 9, 9, 237, 212, 10, TEXTURE, (b) -> {
             });
             warnButton.setTooltip(Tooltip.create(mutableComponent1));
             this.addRenderableWidget(warnButton);

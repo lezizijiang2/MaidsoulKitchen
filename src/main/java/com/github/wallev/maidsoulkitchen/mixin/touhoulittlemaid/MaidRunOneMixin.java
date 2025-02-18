@@ -2,7 +2,7 @@ package com.github.wallev.maidsoulkitchen.mixin.touhoulittlemaid;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.task.MaidRunOne;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.wallev.maidsoulkitchen.init.MkEntities;
+import com.github.wallev.maidsoulkitchen.init.MkMemories;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
@@ -23,7 +23,7 @@ public abstract class MaidRunOneMixin extends RunOne<EntityMaid> {
 
     @Inject(at = @At("HEAD"), cancellable = true, method = "tryStart(Lnet/minecraft/server/level/ServerLevel;Lcom/github/tartaricacid/touhoulittlemaid/entity/passive/EntityMaid;J)Z")
     private void tlmk$tryStart(ServerLevel pLevel, EntityMaid maid, long pGameTime, CallbackInfoReturnable<Boolean> cir) {
-        if (maid.getBrain().hasMemoryValue(MkEntities.WORK_POS.get())) {
+        if (maid.getBrain().hasMemoryValue(MkMemories.DESTROY_POS.get())) {
             cir.setReturnValue(false);
         }
     }

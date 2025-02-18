@@ -14,7 +14,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import java.util.List;
 
 public class NormalAmountTooltip implements ClientAmountTooltip {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
     private final MutableComponent titleTip = Component.translatable("tooltips.maidsoulkitchen.amount.title");
     private final MutableComponent randomTip = Component.translatable("gui.maidsoulkitchen.btn.cook_guide.warn.not_select").withStyle(ChatFormatting.YELLOW);
 //    private final MutableComponent overSizeTip = Component.translatable("gui.maidsoulkitchen.btn.cook_guide.warn.over_size", TaskConfig.COOK_SELECTED_RECIPES.get()).withStyle(ChatFormatting.YELLOW);

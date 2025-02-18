@@ -3,7 +3,7 @@ package com.github.wallev.maidsoulkitchen.api.event;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
 import com.mojang.datafixers.util.Pair;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
 import java.util.Collections;
 import java.util.List;

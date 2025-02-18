@@ -1,10 +1,10 @@
 package com.github.wallev.maidsoulkitchen.compat.patchouli.event;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
-import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
 import com.github.tartaricacid.touhoulittlemaid.TouhouLittleMaid;
+import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 import vazkii.patchouli.api.PatchouliAPI;
 
 public class OpenPatchouliBookEvent {

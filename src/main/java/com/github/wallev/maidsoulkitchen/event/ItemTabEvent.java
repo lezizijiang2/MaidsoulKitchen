@@ -3,19 +3,19 @@ package com.github.wallev.maidsoulkitchen.event;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.tartaricacid.touhoulittlemaid.init.InitCreativeTabs;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
-@Mod.EventBusSubscriber(modid = MaidsoulKitchen.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+
+@EventBusSubscriber(modid = MaidsoulKitchen.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ItemTabEvent {
     @SubscribeEvent
     public static void buildContents(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == InitCreativeTabs.MAIN_TAB.getKey()){
             MkItems.ITEMS.getEntries().stream()
-                    .filter(RegistryObject::isPresent)
+                    .filter(entry -> entry.asOptional().isPresent())
                     .forEach(entry -> event.accept(entry.get()));
         }
     }

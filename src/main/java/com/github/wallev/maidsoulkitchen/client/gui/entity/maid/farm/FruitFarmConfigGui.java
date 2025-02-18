@@ -1,5 +1,6 @@
 package com.github.wallev.maidsoulkitchen.client.gui.entity.maid.farm;
 
+import com.github.tartaricacid.touhoulittlemaid.client.gui.widget.button.TouhouImageButton;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarm;
 import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarmHandler;
@@ -7,12 +8,13 @@ import com.github.wallev.maidsoulkitchen.api.task.v1.farm.IHandlerInfo;
 import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.MaidTaskConfigGui;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.button.CFRuleButton;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.button.ResultInfo;
+import com.github.wallev.maidsoulkitchen.client.gui.widget.button.TImageButton;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.button.Zone;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.FruitFarmConfigContainer;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
-import com.github.wallev.maidsoulkitchen.network.message.ActionFruitFarmRuleMessage;
-import com.github.wallev.maidsoulkitchen.network.message.SetFruitFarmSearchYOffsetMessage;
+import com.github.wallev.maidsoulkitchen.network.message.ActionFruitFarmRulePackage;
+import com.github.wallev.maidsoulkitchen.network.message.SetFruitFarmSearchYOffsetPackage;
 import com.github.wallev.maidsoulkitchen.task.farm.TaskFruitFarm;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.v1.IFarmHandlerManager;
 import net.minecraft.ChatFormatting;
@@ -39,7 +41,7 @@ import java.util.List;
 @IPNGuiHint(button = IPNButton.SHOW_EDITOR, horizontalOffset = -5)
 @IPNGuiHint(button = IPNButton.SETTINGS, horizontalOffset = -5)
 public class FruitFarmConfigGui extends MaidTaskConfigGui<FruitFarmConfigContainer> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(MaidsoulKitchen.MOD_ID, "textures/gui/farm_guide.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/farm_guide.png");
     protected final Zone scrollDisplay = new Zone(161, 47, 9, 110);
     protected final Zone ruleDisplay = new Zone(6, 47, 152, 110);
     protected final ResultInfo ref = new ResultInfo(3, 1, 152, 24, 0, 5);
@@ -83,19 +85,19 @@ public class FruitFarmConfigGui extends MaidTaskConfigGui<FruitFarmConfigContain
         int x = font.width(literal);
         int startX = visualZone.startX() + 6 + 26 + x;
         int startY = visualZone.startY() + 22 + 2;
-        ImageButton addButton = new ImageButton(startX, startY, 17, 18, 80, 238, 0, TEXTURE, b -> {
+        Button addButton = new TouhouImageButton(startX, startY, 17, 18, 80, 238, 0, TEXTURE, b -> {
             if (this.farmTaskInfo.searchYOffset() >= 5) {
                 return;
             }
             this.farmTaskInfo.increaseYOffset();
-            NetworkHandler.sendToServer(new SetFruitFarmSearchYOffsetMessage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.farmTaskInfo.searchYOffset()));
+            NetworkHandler.sendToNearby(maid, new SetFruitFarmSearchYOffsetPackage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.farmTaskInfo.searchYOffset()));
         });
-        Button downButton = new ImageButton(startX + 17, startY, 17, 18, 80 + 17, 238, 0, TEXTURE, b -> {
+        Button downButton = new TouhouImageButton(startX + 17, startY, 17, 18, 80 + 17, 238, 0, TEXTURE, b -> {
             if (this.farmTaskInfo.searchYOffset() <= -5) {
                 return;
             }
             this.farmTaskInfo.decreaseYOffset();
-            NetworkHandler.sendToServer(new SetFruitFarmSearchYOffsetMessage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.farmTaskInfo.searchYOffset()));
+            NetworkHandler.sendToNearby(maid, new SetFruitFarmSearchYOffsetPackage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.farmTaskInfo.searchYOffset()));
         });
         this.addRenderableWidget(addButton);
         this.addRenderableWidget(downButton);
@@ -133,24 +135,24 @@ public class FruitFarmConfigGui extends MaidTaskConfigGui<FruitFarmConfigContain
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY) {
         // 176, 137
         boolean isCookSettingMainZone = mouseX >= visualZone.startX() && mouseY >= visualZone.startY() && mouseX < visualZone.startX() + visualZone.width() && mouseY < visualZone.startY() + visualZone.height();
-        if (delta != 0 && isCookSettingMainZone) {
+        if (deltaX != 0 && isCookSettingMainZone) {
             // 向上滚
-            if (delta > 0 && solIndex > 0) {
+            if (deltaX > 0 && solIndex > 0) {
                 solIndex--;
                 this.init();
                 return true;
             }
             // 向下滚
-            if (delta < 0 && solIndex < (this.handlers.size() - 1) / limitSize) {
+            if (deltaX < 0 && solIndex < (this.handlers.size() - 1) / limitSize) {
                 solIndex++;
                 this.init();
                 return true;
             }
         }
-        return super.mouseScrolled(mouseX, mouseY, delta);
+        return super.mouseScrolled(mouseX, mouseY, deltaX, deltaY);
     }
 
     private void addRuleButton() {
@@ -168,7 +170,7 @@ public class FruitFarmConfigGui extends MaidTaskConfigGui<FruitFarmConfigContain
                 public void onClick(double pMouseX, double pMouseY) {
                     this.isSelected = !this.isSelected;
                     farmTaskInfo.addOrRemoveRule(this.handlerInfo.getUid().toString());
-                    NetworkHandler.sendToServer(new ActionFruitFarmRuleMessage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.handlerInfo.getUid().toString()));
+                    NetworkHandler.sendToNearby(maid, new ActionFruitFarmRulePackage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.handlerInfo.getUid().toString()));
                 }
             };
             this.addRenderableWidget(cfRuleButton);
@@ -180,13 +182,13 @@ public class FruitFarmConfigGui extends MaidTaskConfigGui<FruitFarmConfigContain
     private void addScrollButton() {
         int startX = visualZone.startX() + scrollDisplay.startX();
         int startY = visualZone.startY() + scrollDisplay.startY();
-        ImageButton upButton = new ImageButton(startX, startY, 9, 7, 228, 10, 14, TEXTURE, b -> {
+        TouhouImageButton upButton = new TouhouImageButton(startX, startY, 9, 7, 228, 10, 14, TEXTURE, b -> {
             if (this.solIndex > 0) {
                 this.solIndex--;
                 this.init();
             }
         });
-        Button downButton = new ImageButton(startX, startY + 8 + 1 + 66, 9, 7, 237, 10, 14, TEXTURE, b -> {
+        Button downButton = new TouhouImageButton(startX, startY + 8 + 1 + 66, 9, 7, 237, 10, 14, TEXTURE, b -> {
             if (this.solIndex < (this.handlers.size() - 1) / limitSize) {
                 this.solIndex++;
                 this.init();

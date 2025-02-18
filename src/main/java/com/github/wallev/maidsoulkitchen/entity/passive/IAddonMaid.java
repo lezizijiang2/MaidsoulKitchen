@@ -8,8 +8,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
@@ -30,7 +30,7 @@ public interface IAddonMaid {
                 InteractionResult interactionResult = FakePlayerUtil.interactUseOnBlock(fakePlayer$tlma, maid.level(), blockPos, InteractionHand.MAIN_HAND, null);
 
                 if (interactionResult == InteractionResult.PASS) {
-                    BlockState blockState = maid.level.getBlockState(blockPos);
+                    BlockState blockState = maid.level().getBlockState(blockPos);
                     Block block = blockState.getBlock();
                     LOGGER.warn("FakePlayerUtil.interactUseOnBlock PASS: blockState:{} block: {}", blockState, block);
                     BLACK_LIST.add(block);
@@ -64,7 +64,7 @@ public interface IAddonMaid {
                 InteractionResult interactionResult = FakePlayerUtil.interactUseOnBlock(fakePlayer$tlma, maid.level(), blockPos, InteractionHand.MAIN_HAND, null);
 
                 if (interactionResult == InteractionResult.PASS) {
-                    BlockState blockState = maid.level.getBlockState(blockPos);
+                    BlockState blockState = maid.level().getBlockState(blockPos);
                     Block block = blockState.getBlock();
                     LOGGER.warn("FakePlayerUtil.interactUseOnBlock PASS: items:{} blockstate: {}", blockState, block);
                     BLACK_LIST.add(block);

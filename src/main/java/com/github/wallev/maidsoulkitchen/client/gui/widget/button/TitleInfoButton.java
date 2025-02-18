@@ -18,10 +18,4 @@ public class TitleInfoButton extends Button {
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
         return false;
     }
-
-    @Override
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        Minecraft mc = Minecraft.getInstance();
-        pGuiGraphics.drawString(mc.font, this.getMessage(), this.getX(), this.getY(), 0xFFFFFF, false);
-    }
 }

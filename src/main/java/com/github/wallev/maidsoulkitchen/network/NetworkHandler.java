@@ -1,53 +1,46 @@
 package com.github.wallev.maidsoulkitchen.network;
 
-import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
+import com.github.tartaricacid.touhoulittlemaid.network.message.*;
 import com.github.wallev.maidsoulkitchen.network.message.*;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-import java.util.Optional;
-
-public final class NetworkHandler {
+public class NetworkHandler {
     private static final String VERSION = "1.0.0";
 
-    private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(MaidsoulKitchen.MOD_ID, "network"),
-            () -> VERSION, it -> it.equals(VERSION), it -> it.equals(VERSION));
+    public static void registerPacket(final RegisterPayloadHandlersEvent event) {
+        final PayloadRegistrar registrar = event.registrar(VERSION).optional();
 
-    public static void init() {
-        int i = 0;
-        // Server
-        CHANNEL.registerMessage(i++, ToggleCookBagGuiSideTabMessage.class, ToggleCookBagGuiSideTabMessage::encode, ToggleCookBagGuiSideTabMessage::decode, ToggleCookBagGuiSideTabMessage::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER));
-        CHANNEL.registerMessage(i++, SetCookBagBindModeMessage.class, SetCookBagBindModeMessage::encode, SetCookBagBindModeMessage::decode, SetCookBagBindModeMessage::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER));
-        CHANNEL.registerMessage(i++, SetCookDataModeMessage.class, SetCookDataModeMessage::encode, SetCookDataModeMessage::decode, SetCookDataModeMessage::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER));
-        CHANNEL.registerMessage(i++, ActionCookDataRecMessage.class, ActionCookDataRecMessage::encode, ActionCookDataRecMessage::decode, ActionCookDataRecMessage::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER));
-        CHANNEL.registerMessage(i++, SetFruitFarmSearchYOffsetMessage.class, SetFruitFarmSearchYOffsetMessage::encode, SetFruitFarmSearchYOffsetMessage::decode, SetFruitFarmSearchYOffsetMessage::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER));
-        CHANNEL.registerMessage(i++, ActionBerryFarmRuleMessage.class, ActionBerryFarmRuleMessage::encode, ActionBerryFarmRuleMessage::decode, ActionBerryFarmRuleMessage::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER));
-        CHANNEL.registerMessage(i++, ActionFruitFarmRuleMessage.class, ActionFruitFarmRuleMessage::encode, ActionFruitFarmRuleMessage::decode, ActionFruitFarmRuleMessage::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER));
-        CHANNEL.registerMessage(i++, ClearCookBagBindPosesMessage.class, ClearCookBagBindPosesMessage::encode, ClearCookBagBindPosesMessage::decode, ClearCookBagBindPosesMessage::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER));
-        // Server && Client
-
-        // Client
-
+        registrar.playToServer(ActionBerryFarmRulePackage.TYPE, ActionBerryFarmRulePackage.STREAM_CODEC, ActionBerryFarmRulePackage::handle);
+        registrar.playToServer(ActionCookDataRecPackage.TYPE, ActionCookDataRecPackage.STREAM_CODEC, ActionCookDataRecPackage::handle);
+        registrar.playToServer(ClearCookBagBindPosesPackage.TYPE, ClearCookBagBindPosesPackage.STREAM_CODEC, ClearCookBagBindPosesPackage::handle);
+        registrar.playToServer(ActionFruitFarmRulePackage.TYPE, ActionFruitFarmRulePackage.STREAM_CODEC, ActionFruitFarmRulePackage::handle);
+        registrar.playToServer(SetCookBagBindModePackage.TYPE, SetCookBagBindModePackage.STREAM_CODEC, SetCookBagBindModePackage::handle);
+        registrar.playToServer(SetCookDataPackage.TYPE, SetCookDataPackage.STREAM_CODEC, SetCookDataPackage::handle);
+        registrar.playToServer(SetFruitFarmSearchYOffsetPackage.TYPE, SetFruitFarmSearchYOffsetPackage.STREAM_CODEC, SetFruitFarmSearchYOffsetPackage::handle);
+        registrar.playToServer(ToggleCookBagGuiSideTabPackage.TYPE, ToggleCookBagGuiSideTabPackage.STREAM_CODEC, ToggleCookBagGuiSideTabPackage::handle);
     }
 
-    public static void sendToServer(Object message) {
-        CHANNEL.sendToServer(message);
+    public static void sendToNearby(Entity entity, CustomPacketPayload toSend) {
+        if (entity.level() instanceof ServerLevel) {
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, toSend);
+        }
     }
 
-    public static void sendToClientPlayer(Object message, Player player) {
-        CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), message);
+    public static void sendToServer(CustomPacketPayload toSend) {
+
+            PacketDistributor.sendToServer(toSend);
+    }
+
+    public static void sendToNearby(Entity entity, CustomPacketPayload toSend, int distance) {
+        if (entity.level() instanceof ServerLevel serverLevel) {
+            BlockPos pos = entity.blockPosition();
+            PacketDistributor.sendToPlayersNear(serverLevel, null, pos.getX(), pos.getY(), pos.getZ(), distance, toSend);
+        }
     }
 }

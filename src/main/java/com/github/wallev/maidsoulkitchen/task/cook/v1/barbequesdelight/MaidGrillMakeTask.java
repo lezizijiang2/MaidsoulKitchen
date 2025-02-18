@@ -2,7 +2,7 @@ package com.github.wallev.maidsoulkitchen.task.cook.v1.barbequesdelight;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitEntities;
-import com.github.wallev.maidsoulkitchen.init.MkEntities;
+import com.github.wallev.maidsoulkitchen.init.MkMemories;
 import com.github.wallev.maidsoulkitchen.task.cook.handler.MaidRecipesManager;
 import com.google.common.collect.ImmutableMap;
 import com.mao.barbequesdelight.content.block.GrillBlockEntity;
@@ -18,8 +18,8 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,7 +129,7 @@ public class MaidGrillMakeTask extends Behavior<EntityMaid> {
         super.stop(worldIn, maid, pGameTime);
         maid.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
         maid.getBrain().eraseMemory(InitEntities.TARGET_POS.get());
-        maid.getBrain().eraseMemory(MkEntities.WORK_POS.get());
+        maid.getBrain().eraseMemory(MkMemories.DESTROY_POS.get());
         grillStacks.clear();
     }
 }

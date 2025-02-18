@@ -18,7 +18,7 @@ import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.List;
 
@@ -43,7 +43,7 @@ public class TaskEsFarm extends TaskNormalFarm implements IMaidsoulKitchenTask, 
     @Override
     public boolean isEnable(EntityMaid maid) {
         MaidMkTaskEnableEvent maidMkTaskEnableEvent = new MaidMkTaskEnableEvent(maid, this);
-        MinecraftForge.EVENT_BUS.post(maidMkTaskEnableEvent);
+        NeoForge.EVENT_BUS.post(maidMkTaskEnableEvent);
         return maidMkTaskEnableEvent.isEnable();
     }
 

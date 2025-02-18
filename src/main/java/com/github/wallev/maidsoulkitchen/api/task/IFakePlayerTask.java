@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.util.FakePlayer;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -39,7 +39,7 @@ public interface IFakePlayerTask {
 //            LOGGER.info("FakePlayerUtil.interactUseOnBlock ");
             InteractionResult interactionResult = interactUseOnBlock(maid, targetPos, hand, null);
             if (interactionResult == InteractionResult.PASS) {
-                BlockState blockState = maid.level.getBlockState(targetPos);
+                BlockState blockState = maid.level().getBlockState(targetPos);
                 Block block = blockState.getBlock();
                 LOGGER.warn("FakePlayerUtil.interactUseOnBlock PASS: items:{} blockstate: {}", blockState, block);
                 blackList.add(block);

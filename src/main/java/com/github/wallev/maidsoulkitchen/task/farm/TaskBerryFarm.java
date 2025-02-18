@@ -29,7 +29,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ public class TaskBerryFarm implements ICompatFarm<BerryHandler, BerryData>, IFak
 
     @Override
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
-        if (maid.level.isClientSide) return Lists.newArrayList();
+        if (maid.level().isClientSide) return Lists.newArrayList();
         MaidCompatFarmMoveTask<BerryHandler> maidFarmMoveTask = new MaidCompatFarmMoveTask<>(maid, this, 0.6F) {
             @Override
             public boolean checkPathReach(EntityMaid maid, BlockPos pos) {
@@ -98,7 +98,7 @@ public class TaskBerryFarm implements ICompatFarm<BerryHandler, BerryData>, IFak
     @Override
     public boolean isEnable(EntityMaid maid) {
         MaidMkTaskEnableEvent maidMkTaskEnableEvent = new MaidMkTaskEnableEvent(maid, this);
-        MinecraftForge.EVENT_BUS.post(maidMkTaskEnableEvent);
+        NeoForge.EVENT_BUS.post(maidMkTaskEnableEvent);
         return maidMkTaskEnableEvent.isEnable();
     }
 

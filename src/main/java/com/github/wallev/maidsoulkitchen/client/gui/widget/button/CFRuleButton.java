@@ -7,18 +7,18 @@ import com.github.tartaricacid.touhoulittlemaid.api.client.gui.ITooltipButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
 public class CFRuleButton extends Button implements ITooltipButton {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(MaidsoulKitchen.MOD_ID, "textures/gui/farm_guide.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/farm_guide.png");
     protected final IHandlerInfo handlerInfo;
     protected final ICompatFarmHandler handler;
     private final List<ItemStack> blockItems = new ArrayList<>();
@@ -33,7 +33,7 @@ public class CFRuleButton extends Button implements ITooltipButton {
         this.isSelected = isSelected;
 
         int i = 0;
-        for (Block block : ForgeRegistries.BLOCKS) {
+        for (Block block : BuiltInRegistries.BLOCK) {
             if (i > 9) break;
             if (handler.isFarmBlock(block)) {
                 blockItems.add(new ItemStack(block));

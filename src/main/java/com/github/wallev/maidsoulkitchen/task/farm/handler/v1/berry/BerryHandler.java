@@ -9,7 +9,6 @@ import com.github.wallev.maidsoulkitchen.task.farm.FarmType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.HashSet;
 import java.util.Set;

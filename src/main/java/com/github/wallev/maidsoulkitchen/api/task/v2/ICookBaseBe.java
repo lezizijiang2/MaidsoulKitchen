@@ -2,11 +2,12 @@ package com.github.wallev.maidsoulkitchen.api.task.v2;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 
-public interface ICookBaseBe<B extends BlockEntity, R extends Recipe<? extends Container>> {
+public interface ICookBaseBe<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> {
 
     /**
      * 判断厨具是否在烹任

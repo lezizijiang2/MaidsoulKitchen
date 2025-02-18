@@ -31,23 +31,22 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.fluids.FluidActionResult;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.capabilities.Capabilities;
 
 import java.util.List;
 import java.util.Optional;
 
 import static dev.xkmc.youkaishomecoming.content.pot.ferment.FermentationTankBlock.OPEN;
-import static net.minecraftforge.fluids.FluidUtil.*;
+import static net.neoforged.neoforge.fluids.FluidUtil.*;
 
 public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockEntity, FermentationRecipe<?>>, IMaidAction {
     public static boolean interactWithFluidHandler(@NotNull EntityMaid maid, ItemStack fluidStack, @NotNull Level level, @NotNull BlockPos pos, @Nullable Direction side) {
@@ -111,7 +110,7 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
 
         if (!blockEntity.items.isEmpty()) {
             FermentationDummyContainer cont = new FermentationDummyContainer(blockEntity.items, blockEntity.fluids);
-            Optional<FermentationRecipe<?>> opt = maid.level.getRecipeManager().getRecipeFor((RecipeType) YHBlocks.FERMENT_RT.get(), cont, maid.level);
+            Optional<FermentationRecipe<?>> opt = maid.level().getRecipeManager().getRecipeFor((RecipeType) YHBlocks.FERMENT_RT.get(), cont, maid.level());
             if (opt.isEmpty()) {
                 return true;
             }
@@ -122,8 +121,8 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
             for (int i = 0; i < maidInv.getSlots(); i++) {
                 ItemStack stackInSlot = maidInv.getStackInSlot(i);
                 if (stackInSlot.isEmpty() || stackInSlot.is(Items.BUCKET)) continue;
-                LazyOptional<IFluidHandlerItem> opt = stackInSlot.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
-                if (opt.resolve().isPresent()) {
+                Optional<IFluidHandlerItem> opt = Optional.ofNullable(stackInSlot.getCapability(Capabilities.FluidHandler.ITEM));
+                if (opt.isPresent()) {
                     return true;
                 }
             }
@@ -166,8 +165,8 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
         if (blockEntity.fluids.isEmpty()) {
             for (int i = 0; i < maidInv.getSlots(); i++) {
                 ItemStack stackInSlot = maidInv.getStackInSlot(i);
-                LazyOptional<IFluidHandlerItem> opt = stackInSlot.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
-                if (opt.resolve().isPresent()) {
+                Optional<IFluidHandlerItem> opt = Optional.ofNullable(stackInSlot.getCapability(Capabilities.FluidHandler.ITEM));
+                if (opt.isPresent()) {
                     if (interactWithFluidHandler(maid, stackInSlot, serverLevel, blockEntity.getBlockPos(), null)) {
                         blockEntity.notifyTile();
                     }
@@ -177,7 +176,7 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
 
         if (!blockEntity.items.isEmpty()) {
             FermentationDummyContainer cont = new FermentationDummyContainer(blockEntity.items, blockEntity.fluids);
-            Optional<FermentationRecipe<?>> opt = maid.level.getRecipeManager().getRecipeFor((RecipeType) YHBlocks.FERMENT_RT.get(), cont, maid.level);
+            Optional<FermentationRecipe<?>> opt = maid.level().getRecipeManager().getRecipeFor((RecipeType) YHBlocks.FERMENT_RT.get(), cont, maid.level());
             if (opt.isEmpty()) {
                 blockEntity.dumpInventory();
             }

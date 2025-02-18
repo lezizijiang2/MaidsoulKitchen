@@ -4,17 +4,11 @@ import com.github.wallev.maidsoulkitchen.config.subconfig.RegisterConfig;
 import com.github.wallev.maidsoulkitchen.foundation.utility.Mods;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.barbequesdelight.TaskBdBasin;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.barbequesdelight.TaskBdGrill;
-import com.github.wallev.maidsoulkitchen.task.cook.v1.brewinandchewin.TaskBncKeg;
-import com.github.wallev.maidsoulkitchen.task.cook.v1.crokckpot.TaskCpCrockPot;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.cuisine.TaskCdCuisineSkillet;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.drinkbeer.TaskDbBeerBarrel;
-import com.github.wallev.maidsoulkitchen.task.cook.v1.farmersrespite.TaskFrKettle;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.farmersdelight.TaskFdCookPot;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.farmersdelight.TaskFdCuttingBoard;
-import com.github.wallev.maidsoulkitchen.task.cook.v1.kitchencarrot.TaskKkAirCompressor;
-import com.github.wallev.maidsoulkitchen.task.cook.v1.kitchencarrot.TaskKkBrewingBarrel;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.minecraft.TaskFurnace;
-import com.github.wallev.maidsoulkitchen.task.cook.v1.minersdelight.TaskMdCopperPot;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.youkaishomecoming.TaskYhcDryingRack;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.youkaishomecoming.TaskYhcFermentationTank;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.youkaishomecoming.TaskYhcMoka;
@@ -62,15 +56,12 @@ public final class RegisterTask {
         if (Mods.CD.isLoaded() && RegisterConfig.CD_CUISINE_SKILLET_TASK_ENABLED.get()) {
             manager.add(new TaskCdCuisineSkillet());
         }
-        if (Mods.MD.isLoaded() && RegisterConfig.MD_COOK_POT_TASK_ENABLED.get()) {
-            manager.add(new TaskMdCopperPot());
-        }
-        if (Mods.FRD.isLoaded() && RegisterConfig.FR_KETTLE_TASK_ENABLED.get()) {
-            manager.add(new TaskFrKettle());
-        }
-        if (Mods.BNCD.isLoaded() && RegisterConfig.BNC_KEY_TASK_ENABLED.get()) {
-            manager.add(new TaskBncKeg());
-        }
+//        if (Mods.FRD.isLoaded() && RegisterConfig.FR_KETTLE_TASK_ENABLED.get()) {
+//            manager.add(new TaskFrKettle());
+//        }
+//        if (Mods.BNCD.isLoaded() && RegisterConfig.BNC_KEY_TASK_ENABLED.get()) {
+//            manager.add(new TaskBncKeg());
+//        }
         if (Mods.BD.isLoaded() && RegisterConfig.BD_BASIN_TASK_ENABLED.get()) {
             manager.add(new TaskBdBasin());
         }
@@ -90,18 +81,9 @@ public final class RegisterTask {
             manager.add(new TaskYhcFermentationTank());
         }
 
-
-        if (Mods.CP.isLoaded() && RegisterConfig.CP_CROk_POT_TASK_ENABLED.get()) {
-            manager.add(new TaskCpCrockPot());
-        }
         if (Mods.DB.isLoaded() && RegisterConfig.DB_BEER_TASK_ENABLED.get()) {
             manager.add(new TaskDbBeerBarrel());
         }
-        if (Mods.KK.isLoaded() && RegisterConfig.KK_BREW_BARREL.get()) {
-            manager.add(new TaskKkBrewingBarrel());
-        }
-        if (Mods.KK.isLoaded() && RegisterConfig.KK_AIR_COMPRESSOR.get()) {
-            manager.add(new TaskKkAirCompressor());
-        }
+
     }
 }

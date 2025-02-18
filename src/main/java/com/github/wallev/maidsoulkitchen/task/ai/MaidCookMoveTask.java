@@ -4,7 +4,7 @@ import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.task.MaidCheckRa
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitEntities;
 import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
-import com.github.wallev.maidsoulkitchen.init.MkEntities;
+import com.github.wallev.maidsoulkitchen.init.MkMemories;
 import com.github.wallev.maidsoulkitchen.task.cook.handler.MaidRecipesManager;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
@@ -16,9 +16,10 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-public class MaidCookMoveTask<B extends BlockEntity, R extends Recipe<? extends Container>> extends MaidCheckRateTask {
+public class MaidCookMoveTask<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends MaidCheckRateTask {
     private static final int MAX_DELAY_TIME = 120;
     private final float movementSpeed;
     private final int verticalSearchRange;
@@ -45,7 +46,7 @@ public class MaidCookMoveTask<B extends BlockEntity, R extends Recipe<? extends 
         pLivingEntity.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, new BlockPosTracker(lookPos));
         
         pLivingEntity.getBrain().setMemory(InitEntities.TARGET_POS.get(), new BlockPosTracker(lookPos));
-        pLivingEntity.getBrain().setMemory(MkEntities.WORK_POS.get(), new BlockPosTracker(lookPos));
+        pLivingEntity.getBrain().setMemory(MkMemories.DESTROY_POS.get(), new BlockPosTracker(lookPos));
     }
 
     private static BlockPos getSearchPos(EntityMaid maid) {

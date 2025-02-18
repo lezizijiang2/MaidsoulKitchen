@@ -28,12 +28,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -41,10 +39,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Container>> extends IMaidsoulKitchenTask, IDataTask<CookData> {
+public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends IMaidsoulKitchenTask, IDataTask<CookData> {
 
+    @Override
     default List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
-        if (maid.level.isClientSide) {
+        if (maid.level().isClientSide) {
             return Collections.emptyList();
         }
 
@@ -60,7 +59,7 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Con
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     default List<R> getRecipes(Level level) {
-        return level.getRecipeManager().getAllRecipesFor((RecipeType) getRecipeType());
+        return level.getRecipeManager().getAllRecipesFor((RecipeType) getRecipeType()).stream().map(r -> ((RecipeHolder)r).value()).toList();
     }
 
     @Nullable
@@ -75,7 +74,7 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Con
 
     default List<Pair<String, Predicate<EntityMaid>>> getEnableConditionDesc(EntityMaid maid) {
         MaidMkTaskEnableEvent maidMkTaskEnableEvent = new MaidMkTaskEnableEvent(maid, this);
-        MinecraftForge.EVENT_BUS.post(maidMkTaskEnableEvent);
+        NeoForge.EVENT_BUS.post(maidMkTaskEnableEvent);
         if (!maidMkTaskEnableEvent.isEnable()) {
             return maidMkTaskEnableEvent.getEnableConditionDesc();
         }
@@ -86,7 +85,7 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Con
     @Override
     default boolean isEnable(EntityMaid maid) {
         MaidMkTaskEnableEvent maidMkTaskEnableEvent = new MaidMkTaskEnableEvent(maid, this);
-        MinecraftForge.EVENT_BUS.post(maidMkTaskEnableEvent);
+        NeoForge.EVENT_BUS.post(maidMkTaskEnableEvent);
         if (!maidMkTaskEnableEvent.isEnable()) {
             return false;
         }

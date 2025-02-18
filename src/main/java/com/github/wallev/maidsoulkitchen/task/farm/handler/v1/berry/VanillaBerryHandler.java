@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class VanillaBerryHandler extends BerryHandler{
-    public static final ResourceLocation UID = new ResourceLocation(MaidsoulKitchen.MOD_ID, "berry_minecraft");
+    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "berry_minecraft");
 
     @Override
     protected ActionState processCanHarvest(EntityMaid maid, BlockPos cropPos, BlockState cropState) {

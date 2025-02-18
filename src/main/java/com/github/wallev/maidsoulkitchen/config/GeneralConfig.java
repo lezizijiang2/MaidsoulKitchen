@@ -2,11 +2,11 @@ package com.github.wallev.maidsoulkitchen.config;
 
 import com.github.wallev.maidsoulkitchen.config.subconfig.RegisterConfig;
 import com.github.wallev.maidsoulkitchen.config.subconfig.TaskConfig;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class GeneralConfig {
-    public static ForgeConfigSpec init() {
-        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+    public static ModConfigSpec init() {
+        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
         TaskConfig.init(builder);
         RegisterConfig.init(builder);
         return builder.build();

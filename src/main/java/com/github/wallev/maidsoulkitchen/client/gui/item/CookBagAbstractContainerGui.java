@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class CookBagAbstractContainerGui<T extends CookBagAbstractContainer> extends AbstractContainerScreen<T> {
-    protected static final ResourceLocation CONTAINER_BACKGROUND = new ResourceLocation(MaidsoulKitchen.MOD_ID, "textures/gui/culinary_hub_container.png");
-    protected static final ResourceLocation CONFIG_BACKGROUND = new ResourceLocation(MaidsoulKitchen.MOD_ID, "textures/gui/culinary_hub_config.png");
+    protected static final ResourceLocation CONTAINER_BACKGROUND = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/culinary_hub_container.png");
+    protected static final ResourceLocation CONFIG_BACKGROUND = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/culinary_hub_config.png");
     protected final Component titleComponent;
 
     public CookBagAbstractContainerGui(T container, Inventory inv, Component titleIn) {
@@ -50,7 +50,7 @@ public abstract class CookBagAbstractContainerGui<T extends CookBagAbstractConta
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }

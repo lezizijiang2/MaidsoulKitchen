@@ -5,7 +5,6 @@ import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.ExtraMaidBrainMa
 import com.github.wallev.maidsoulkitchen.chest.FarmDelightCabinet;
 import com.github.wallev.maidsoulkitchen.entity.ai.brain.MaidBrain;
 import com.github.wallev.maidsoulkitchen.foundation.utility.Mods;
-import com.github.wallev.maidsoulkitchen.init.MkEntities;
 import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.RegisterData;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.RegisterTask;
@@ -26,8 +25,8 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.List;
 

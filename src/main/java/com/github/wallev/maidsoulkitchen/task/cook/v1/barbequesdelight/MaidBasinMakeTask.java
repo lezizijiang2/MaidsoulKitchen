@@ -2,10 +2,11 @@ package com.github.wallev.maidsoulkitchen.task.cook.v1.barbequesdelight;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitEntities;
-import com.github.wallev.maidsoulkitchen.init.MkEntities;
+import com.github.wallev.maidsoulkitchen.init.MkMemories;
 import com.github.wallev.maidsoulkitchen.task.cook.handler.MaidRecipesManager;
 import com.google.common.collect.ImmutableMap;
 import com.mao.barbequesdelight.content.block.BasinBlockEntity;
+import com.mao.barbequesdelight.content.recipe.SkeweringInput;
 import com.mao.barbequesdelight.content.recipe.SkeweringRecipe;
 import com.mao.barbequesdelight.init.registrate.BBQDRecipes;
 import com.mojang.datafixers.util.Pair;
@@ -17,10 +18,11 @@ import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import java.util.List;
 
@@ -104,7 +106,7 @@ public class MaidBasinMakeTask extends Behavior<EntityMaid> {
             if (blockEntity instanceof BasinBlockEntity basinBlockEntity) {
                 IItemHandlerModifiable outputInv = maidRecipesManager.getOutputInv();
 
-                var cont = new SimpleContainer(tool, container, side);
+                var cont = new SkeweringInput(tool, container, side);
                 var optional = worldIn.getRecipeManager().getRecipeFor(BBQDRecipes.RT_SKR.get(), cont, worldIn);
                 if (optional.isEmpty()) {
                     this.stop(worldIn, maid, pGameTime);
@@ -115,7 +117,7 @@ public class MaidBasinMakeTask extends Behavior<EntityMaid> {
                     this.side = ItemStack.EMPTY;
                     return;
                 }
-                SkeweringRecipe<?> recipe = optional.get();
+                SkeweringRecipe<?> recipe = (SkeweringRecipe<?>) optional.get().value();
                 ItemStack ret = recipe.assemble(cont, worldIn.registryAccess());
                 ItemHandlerHelper.insertItemStacked(outputInv, ret, false);
                 maid.swing(InteractionHand.MAIN_HAND);
@@ -132,6 +134,6 @@ public class MaidBasinMakeTask extends Behavior<EntityMaid> {
         super.stop(worldIn, maid, pGameTime);
         maid.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
         maid.getBrain().eraseMemory(InitEntities.TARGET_POS.get());
-        maid.getBrain().eraseMemory(MkEntities.WORK_POS.get());
+        maid.getBrain().eraseMemory(MkMemories.DESTROY_POS.get());
     }
 }

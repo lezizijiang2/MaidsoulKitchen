@@ -8,17 +8,18 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-import net.minecraftforge.items.wrapper.RecipeWrapper;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
 import java.util.List;
 import java.util.Optional;
 
-//public interface IBaseCook<B extends BlockEntity, R extends Recipe<? extends Container>> extends ICookBaseBe<B, R>, IMaidAction {
-public interface IBaseCook<B extends BlockEntity, R extends Recipe<? extends Container>> extends IMaidAction {
+//public interface IBaseCook<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends ICookBaseBe<B, R>, IMaidAction {
+public interface IBaseCook<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends IMaidAction {
 
     /**
      * 获取最终物品的格子

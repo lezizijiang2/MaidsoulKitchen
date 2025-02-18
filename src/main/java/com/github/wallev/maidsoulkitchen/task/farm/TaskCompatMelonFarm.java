@@ -1,5 +1,6 @@
 package com.github.wallev.maidsoulkitchen.task.farm;
 
+import com.github.tartaricacid.touhoulittlemaid.datagen.EnchantmentKeys;
 import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
 import com.github.wallev.maidsoulkitchen.api.task.IAddonFarmTask;
 import com.github.wallev.maidsoulkitchen.api.event.MaidMkTaskEnableEvent;
@@ -12,21 +13,24 @@ import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.util.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 
 import static com.github.wallev.maidsoulkitchen.util.BlockUtil.getId;
 
@@ -34,7 +38,7 @@ public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTa
     @Override
     public boolean isEnable(EntityMaid maid) {
         MaidMkTaskEnableEvent maidMkTaskEnableEvent = new MaidMkTaskEnableEvent(maid, this);
-        MinecraftForge.EVENT_BUS.post(maidMkTaskEnableEvent);
+        NeoForge.EVENT_BUS.post(maidMkTaskEnableEvent);
         return maidMkTaskEnableEvent.isEnable();
     }
 
@@ -49,7 +53,7 @@ public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTa
         if (MelonConfigEvent.MELON_STEM_MAP.containsKey(BlockUtil.getId(block))) {
             String stemBlockId = MelonConfigEvent.MELON_STEM_MAP.get(BlockUtil.getId(block));
             for (Direction direction : Direction.Plane.HORIZONTAL) {
-                BlockState offsetState = maid.level.getBlockState(cropPos.relative(direction));
+                BlockState offsetState = maid.level().getBlockState(cropPos.relative(direction));
                 if (BlockUtil.getId(offsetState).equals(stemBlockId)) {
                     return true;
                 }
@@ -61,13 +65,12 @@ public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTa
     @Override
     public void harvest(EntityMaid maid, BlockPos cropPos, BlockState cropState) {
         Block block = cropState.getBlock();
-        if (MelonConfigEvent.MELON_STEM_MAP.containsKey(BlockUtil.getId(block))) {
+        if (cropState.is(Blocks.MELON)) {
             ItemStack mainHandItem = maid.getMainHandItem();
-            if (EnchantmentHelper.hasSilkTouch(mainHandItem)) {
+            RegistryAccess access = maid.level().registryAccess();
+            if (EnchantmentKeys.getEnchantmentLevel(access, Enchantments.SILK_TOUCH, mainHandItem) > 0) {
                 if (this.destroyBlockByHandItem(maid, cropPos)) {
-                    mainHandItem.hurtAndBreak(1, maid, (e) -> {
-                        e.broadcastBreakEvent(InteractionHand.MAIN_HAND);
-                    });
+                    mainHandItem.hurtAndBreak(1, maid, EquipmentSlot.MAINHAND);
                 }
             } else {
                 maid.destroyBlock(cropPos);
@@ -82,7 +85,7 @@ public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTa
     }
 
     public boolean destroyBlockByHandItem(EntityMaid maid, BlockPos pos, boolean dropBlock) {
-        return maid.canDestroyBlock(pos) && this.destroyBlockByHandItem(maid, maid.level, pos, dropBlock);
+        return maid.canDestroyBlock(pos) && this.destroyBlockByHandItem(maid, maid.level(), pos, dropBlock);
     }
 
     private boolean destroyBlockByHandItem(EntityMaid maid, Level level, BlockPos blockPos, boolean dropBlock) {

@@ -15,6 +15,7 @@ import dev.xkmc.youkaishomecoming.init.registrate.YHBlocks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -56,7 +57,7 @@ public class TaskYhcDryingRack implements ICookTask<DryingRackBlockEntity, Dryin
         Pair<List<Integer>, List<List<ItemStack>>> recipeIngredient = recManager.getRecipeIngredient();
         if (blockEntity.getItems().stream().allMatch(ItemStack::isEmpty) && !recipeIngredient.getFirst().isEmpty()) {
             ItemStack itemStack = recipeIngredient.getSecond().get(0).get(0);
-            Optional<DryingRackRecipe> cookableRecipe = blockEntity.getCookableRecipe(itemStack);
+            Optional<DryingRackRecipe> cookableRecipe = blockEntity.getCookableRecipe(itemStack).map(RecipeHolder::value);
             if (cookableRecipe.isPresent()) {
                 for (int i = 0; i < Math.min(4, itemStack.getCount()); i++) {
                     blockEntity.placeFood(itemStack, cookableRecipe.get().getCookingTime());

@@ -1,40 +1,40 @@
 package com.github.wallev.maidsoulkitchen.config.subconfig;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class RegisterConfig {
 
-    public static ForgeConfigSpec.BooleanValue BERRY_FARM_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue FRUIT_FARM_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue FEED_ANIMAL_T_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue COMPAT_MELON_FARM_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue BERRY_FARM_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue FRUIT_FARM_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue FEED_ANIMAL_T_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue COMPAT_MELON_FARM_TASK_ENABLED;
 
-    public static ForgeConfigSpec.BooleanValue SERENESEASONS_FARM_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue ECLIPTICSEASONS_FARM_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue SERENESEASONS_FARM_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue ECLIPTICSEASONS_FARM_TASK_ENABLED;
 
-    public static ForgeConfigSpec.BooleanValue FEED_AND_DRINK_OWNER_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue FEED_AND_DRINK_OWNER_TASK_ENABLED;
 
-    public static ForgeConfigSpec.BooleanValue FURNACE_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue FURNACE_TASK_ENABLED;
 
-    public static ForgeConfigSpec.BooleanValue FD_COOK_POT_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue FD_CUTTING_BOARD_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue CD_CUISINE_SKILLET_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue MD_COOK_POT_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue BNC_KEY_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue BD_BASIN_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue BD_GRILL_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue FR_KETTLE_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue YHC_MOKA_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue YHC_TEA_KETTLE_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue YHC_DRYING_RACK_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue YHC_FERMENTATION_TANK_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue FD_COOK_POT_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue FD_CUTTING_BOARD_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue CD_CUISINE_SKILLET_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue MD_COOK_POT_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue BNC_KEY_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue YHC_MOKA_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue YHC_TEA_KETTLE_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue YHC_DRYING_RACK_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue YHC_FERMENTATION_TANK_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue BD_BASIN_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue BD_GRILL_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue FR_KETTLE_TASK_ENABLED;
 
-    public static ForgeConfigSpec.BooleanValue KK_BREW_BARREL;
-    public static ForgeConfigSpec.BooleanValue KK_AIR_COMPRESSOR;
-    public static ForgeConfigSpec.BooleanValue DB_BEER_TASK_ENABLED;
-    public static ForgeConfigSpec.BooleanValue CP_CROk_POT_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue KK_BREW_BARREL;
+    public static ModConfigSpec.BooleanValue KK_AIR_COMPRESSOR;
+    public static ModConfigSpec.BooleanValue DB_BEER_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue CP_CROk_POT_TASK_ENABLED;
 
-    public static void init(ForgeConfigSpec.Builder builder) {
+    public static void init(ModConfigSpec.Builder builder) {
         builder.push("Register");
 
         builder.comment("This can make the berry farm task enabled or not.");
@@ -50,7 +50,6 @@ public class RegisterConfig {
         SERENESEASONS_FARM_TASK_ENABLED = builder.define("SereneSeasonsTaskEnabled", true);
         builder.comment("This can make the eclipticseasons farm task enabled or not.");
         ECLIPTICSEASONS_FARM_TASK_ENABLED = builder.define("EclipticSeasonsTaskEnabled", true);
-
 
         builder.comment("This can make the feed and drink owner task enabled or not.");
         FEED_AND_DRINK_OWNER_TASK_ENABLED = builder.define("FeedAndDrinkOwnerTaskEnabled", true);

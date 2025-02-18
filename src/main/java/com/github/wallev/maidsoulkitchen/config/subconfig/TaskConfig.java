@@ -1,6 +1,6 @@
 package com.github.wallev.maidsoulkitchen.config.subconfig;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,11 +10,11 @@ import static com.github.wallev.maidsoulkitchen.util.BlockUtil.getId;
 
 public class TaskConfig {
 
-    public static ForgeConfigSpec.ConfigValue<List<List<String>>> MELON_AND_STEM_LIST;
-//    public static ForgeConfigSpec.ConfigValue<Integer> COOK_SELECTED_RECIPES;
-    public static ForgeConfigSpec.ConfigValue<Integer> FEED_SINGLE_ANIMAL_MAX_NUMBER;
+    public static ModConfigSpec.ConfigValue<List<List<String>>> MELON_AND_STEM_LIST;
+//    public static ModConfigSpec.ConfigValue<Integer> COOK_SELECTED_RECIPES;
+    public static ModConfigSpec.ConfigValue<Integer> FEED_SINGLE_ANIMAL_MAX_NUMBER;
 
-    public static void init(ForgeConfigSpec.Builder builder) {
+    public static void init(ModConfigSpec.Builder builder) {
         builder.push("Task");
 
         builder.comment("These entries configure the melon stem and melon_block item list.", "rule: [melon_block_id, attached_melon_stem_block_id]", "Eg: [\"minecraft:melon\", \"minecraft:attached_melon_stem\"]");

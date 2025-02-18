@@ -5,14 +5,14 @@ import com.github.wallev.maidsoulkitchen.compat.jade.JadeCompat;
 import com.github.wallev.maidsoulkitchen.compat.patchouli.PatchouliCompat;
 import com.github.wallev.maidsoulkitchen.compat.top.TopCompat;
 import com.github.wallev.maidsoulkitchen.foundation.utility.Mods;
-import com.github.tartaricacid.touhoulittlemaid.client.gui.mod.ClothConfigScreen;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public final class CompatRegistry {
     @SubscribeEvent
     public static void onEnqueue(final InterModEnqueueEvent event) {
