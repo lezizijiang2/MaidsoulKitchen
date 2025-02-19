@@ -104,16 +104,16 @@
     - [x] Herbalbrews
         - [x] Tea Kettle 不兼容 1.21
         - [x] Cauldron 不兼容 1.21
-    - [x] DrinkBeer 未测试
+    - [x] DrinkBeer 
         - [x] Beer Barrel 未测试
-    - [x] Crock Pot 不兼容 1.21
-        - [x] Crock Pot 不兼容 1.21
+    - [ ] Crock Pot 不兼容 1.21
+        - [ ] Crock Pot 不兼容 1.21(存在1.21.1版本，未发布)
     - [ ] Fruit Stack 有这玩意？
     - [x] Kitchen Karrot
         - [x] Air Compressor 不兼容 1.21
         - [x] Brewing Barrel 不兼容 1.21
     - [ ] Minecraft
-        - [x] Furnace 未测试是
+        - [x] Furnace 未测试
         - [ ] Brewing Stand
 - [ ] Farm
     - [x] Berry
