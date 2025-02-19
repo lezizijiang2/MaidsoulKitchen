@@ -1,6 +1,7 @@
 package com.github.wallev.maidsoulkitchen.mixin.fd;
 
 import com.github.wallev.maidsoulkitchen.handler.base.mkcontainer.ICookBeAccessor;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,12 +24,12 @@ public abstract class MixinCookingPotBlockEntityV2 implements ICookBeAccessor<Co
     @Override
     public boolean canCook$msk() {
         RecipeWrapper inventoryWrapper = new RecipeWrapper(this.getInventory());
-        Optional<CookingPotRecipe> matchingRecipe = this.getMatchingRecipe(inventoryWrapper);
+        Optional<CookingPotRecipe> matchingRecipe = this.getMatchingRecipe(inventoryWrapper).map(RecipeHolder::value);
         return matchingRecipe.isPresent() && this.canCook(matchingRecipe.get());
     }
 
     @Shadow
-    protected abstract Optional<CookingPotRecipe> getMatchingRecipe(RecipeWrapper inventoryWrapper);
+    protected abstract Optional<RecipeHolder<CookingPotRecipe>> getMatchingRecipe(RecipeWrapper inventoryWrapper);
 
     @Shadow
     protected abstract boolean canCook(CookingPotRecipe recipe);

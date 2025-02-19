@@ -117,8 +117,8 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
 
     public static Map<BagType, List<BlockPos>> getBindPoses(ItemStack stack) {
         if (stack.is(MkItems.CULINARY_HUB.get())) {
-            CompoundTag tag = stack.get(STORAGE_DATA_TAG);
-            if (tag != null && tag.contains(BIND_POS_TAG, Tag.TAG_COMPOUND)) {
+            CompoundTag tag = stack.getOrDefault(STORAGE_DATA_TAG, new CompoundTag());
+            if (tag.contains(BIND_POS_TAG, Tag.TAG_COMPOUND)) {
                 CompoundTag tag1 = tag.getCompound(BIND_POS_TAG);
 
                 HashMap<BagType, List<BlockPos>> typeListHashMap = new HashMap<>();
