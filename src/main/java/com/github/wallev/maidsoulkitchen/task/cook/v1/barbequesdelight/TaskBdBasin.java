@@ -60,7 +60,7 @@ public class TaskBdBasin implements ICookTask<BasinBlockEntity, SkeweringRecipe<
 
     @Override
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
-        if (maid.level.isClientSide) {
+        if (maid.level().isClientSide) {
             return Collections.emptyList();
         }
 

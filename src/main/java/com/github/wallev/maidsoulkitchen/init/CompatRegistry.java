@@ -16,15 +16,9 @@ import net.neoforged.fml.loading.FMLEnvironment;
 public final class CompatRegistry {
     @SubscribeEvent
     public static void onEnqueue(final InterModEnqueueEvent event) {
-        event.enqueueWork(() -> checkModLoad(Mods.CLOTH_CONFIG, ClothCompat::init));
         event.enqueueWork(() -> checkModLoad(Mods.PATCHOULI, PatchouliCompat::init));
         event.enqueueWork(() -> checkModLoad(Mods.JADE, JadeCompat::init));
         event.enqueueWork(() -> checkModLoad(Mods.TOP, TopCompat::init));
-        event.enqueueWork(() -> {
-            if (FMLEnvironment.dist == Dist.CLIENT) {
-                ClothConfigScreen.registerNoClothConfigPage();
-            }
-        });
     }
 
     private static void checkModLoad(Mods mod, Runnable runnable) {

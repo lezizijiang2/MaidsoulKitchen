@@ -14,8 +14,8 @@ public class OpenPatchouliBookEvent {
         ResourceLocation uid = event.getTask().getUid();
 
         if (uid.getNamespace().equals(MaidsoulKitchen.MOD_ID) && event.getTask() instanceof IMaidsoulKitchenTask task) {
-            ResourceLocation location = new ResourceLocation(TouhouLittleMaid.MOD_ID, "memorizable_gensokyo");
-            PatchouliAPI.get().openBookEntry(location, new ResourceLocation(TouhouLittleMaid.MOD_ID, "maidsoulkitchen/" + task.getBookEntry()), 1);
+            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(TouhouLittleMaid.MOD_ID, "memorizable_gensokyo");
+            PatchouliAPI.get().openBookEntry(location, ResourceLocation.fromNamespaceAndPath(TouhouLittleMaid.MOD_ID, "maidsoulkitchen/" + task.getBookEntry()), 1);
         }
     }
 

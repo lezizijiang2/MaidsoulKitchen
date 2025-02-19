@@ -80,7 +80,7 @@ public class TaskBdGrill implements ICookTask<GrillBlockEntity, GrillingRecipe<?
 
     @Override
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
-        if (maid.level.isClientSide) {
+        if (maid.level().isClientSide) {
             return Collections.emptyList();
         }
 
