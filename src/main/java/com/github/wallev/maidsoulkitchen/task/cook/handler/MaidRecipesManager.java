@@ -202,10 +202,9 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     private List<R> getValidRecipesFor() {
         List<R> allRecipesFor;
         if (this.lastTaskRule.equals(CookData.Mode.WHITELIST.name)) {
-
-            allRecipesFor = task.getRecipes(level).stream().filter(r -> recipeIds.stream().anyMatch(key -> level.getRecipeManager().getRecipes().stream().anyMatch(holder -> holder.id().equals(ResourceLocation.parse(key))))).toList();
+            allRecipesFor = task.getRecipeHolders(level).stream().filter(r -> recipeIds.contains(r.id().toString())).map(RecipeHolder::value).toList();
         } else {
-            allRecipesFor = task.getRecipes(level).stream().filter(r -> recipeIds.stream().noneMatch(key -> level.getRecipeManager().getRecipes().stream().anyMatch(holder -> holder.id().equals(ResourceLocation.parse(key))))).toList();
+            allRecipesFor = task.getRecipeHolders(level).stream().filter(r -> !recipeIds.contains(r.id().toString())).map(RecipeHolder::value).toList();
         }
         return allRecipesFor;
     }

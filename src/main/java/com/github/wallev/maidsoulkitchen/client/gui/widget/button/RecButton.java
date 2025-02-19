@@ -1,6 +1,7 @@
 package com.github.wallev.maidsoulkitchen.client.gui.widget.button;
 
 import com.github.tartaricacid.touhoulittlemaid.api.client.gui.ITooltipButton;
+import com.github.tartaricacid.touhoulittlemaid.client.gui.widget.button.TouhouStateSwitchButton;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
@@ -21,7 +22,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import java.util.List;
 import java.util.Optional;
 
-public class RecButton extends StateSwitchingButton implements ITooltipButton {
+public class RecButton extends TouhouStateSwitchButton implements ITooltipButton {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
     private final EntityMaid maid;
     private final ICookTask<?, ?> cookTask;
@@ -33,7 +34,7 @@ public class RecButton extends StateSwitchingButton implements ITooltipButton {
     public RecButton(EntityMaid maid, ICookTask<?, ?> cookTask, CookData cookData, Recipe<?> recipe, int pX, int pY) {
 
         super(pX, pY, 20, 20, cookData.getRecs().contains(maid.level().getRecipeManager().getRecipes().stream().filter(r -> r.value().equals(recipe)).map(r -> r.id()).findFirst().orElse(null)));
-        this.initTextureValues(new WidgetSprites(TEXTURE, TEXTURE));
+        this.initTextureValues(179, 25, 22, 0, TEXTURE);
         this.maid = maid;
         this.cookTask = cookTask;
         this.recipe = recipe;
