@@ -20,9 +20,9 @@ public class DefaultCookRecSerializer<R extends Recipe<? extends RecipeInput>> e
     @Override
     protected void initialize(Level level) {
         this.initRecipes(level);
-        for (R rec : this.recs) {
-            List<Ingredient> ingredients = getIngredients(rec);
-            List<Item> resultItem = Lists.newArrayList(getResultItem(rec, level).getItem());
+        for (RecipeHolder<R> rec : this.holders) {
+            List<Ingredient> ingredients = getIngredients(rec.value());
+            List<Item> resultItem = Lists.newArrayList(getResultItem(rec.value(), level).getItem());
             List<List<Item>> ingreItems = ingredients.stream()
                 .map(ingredient -> {
                     List<Item> itemSet = Arrays.stream(ingredient.getItems())
@@ -32,9 +32,9 @@ public class DefaultCookRecSerializer<R extends Recipe<? extends RecipeInput>> e
                     return itemSet;
                 })
                 .collect(Collectors.toList());
-            DefaultCookRec<R> cookRec = new DefaultCookRec<>(rec, ingreItems, resultItem);
+            DefaultCookRec<R> cookRec = new DefaultCookRec<>(rec.value(), ingreItems, resultItem, rec.id().toString());
             this.cookRecs.add(cookRec);
-            this.cookRecData.put(rec, cookRec);
+            this.cookRecData.put(rec.value(), cookRec);
         }
     }
 }

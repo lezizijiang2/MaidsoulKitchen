@@ -54,7 +54,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     protected final Zone scrollDisplay = new Zone(161, 44, 9, 86);
     protected final ResultInfo ref = new ResultInfo(4, 7, 20, 20, 2, 2);
     @SuppressWarnings("rawtypes")
-    private final List<Recipe> recipeList = new ArrayList<>();
+    private final List<RecipeHolder> recipeList = new ArrayList<>();
     private final List<RecButton> recButtons = new ArrayList<>();
     private EditBox searchBox;
     private CookData cookData;
@@ -85,17 +85,17 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     @SuppressWarnings("all")
     private void initRecipeList() {
         this.recipeList.clear();
-        List<Recipe> recipes;
+        List<? extends RecipeHolder<?>> recipes;
         Level level = maid.level();
         RegistryAccess registryAccess = level.registryAccess();
         if (searchBox != null && StringUtils.isNotBlank(searchBox.getValue())) {
             String search = this.searchBox.getValue().toLowerCase(Locale.US);
-            recipes = (List<Recipe>) ((ICookTask<?, ?>) task).getRecipes(level)
+            recipes =  ((ICookTask<?, ?>) task).getRecipeHolders(level)
                     .stream().filter(recipe -> {
-                        return ((ICookTask<?, ?>) task).getResultItem((Recipe<?>)recipe, registryAccess).getDisplayName().getString().toLowerCase(Locale.US).contains(search);
+                        return ((ICookTask<?, ?>) task).getResultItem((Recipe<?>) recipe.value(), registryAccess).getDisplayName().getString().toLowerCase(Locale.US).contains(search);
                     }).toList();
         } else {
-            recipes = (List<Recipe>) ((ICookTask<?, ?>) task).getRecipes(level); // all recipes
+            recipes =  ((ICookTask<?, ?>) task).getRecipeHolders(level); // all recipes
         }
         this.recipeList.addAll(recipes);
     }
@@ -361,14 +361,14 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
                 if (index >= this.recipeList.size()) {
                     return;
                 }
-                Recipe recipe = this.recipeList.get(index++);
+                RecipeHolder recipe = this.recipeList.get(index++);
                 int x = startX + (ref.rowWidth() + ref.rowSpacing()) * col;
                 int y = startY + (ref.colHeight() + ref.colSpacing()) * row;
-                RecButton recButton = new RecButton(maid, (ICookTask<?, ?>) task, cookData, recipe, x, y) {
+                RecButton recButton = new RecButton(maid, (ICookTask<?, ?>) task, cookData, recipe.value(), x, y) {
                     @Override
                     public void onClick(double pMouseX, double pMouseY) {
-                        maid.level().getRecipeManager().getRecipes().stream().filter(r -> recipe.equals(r.value())).findFirst().ifPresent(r -> {
-                            arAndSyncRec(r.id().toString());
+                        ((ICookTask) task).getRecipeHolders(maid.level()).stream().filter(r -> recipe.id().equals(((RecipeHolder)r).id())).findFirst().ifPresent(r -> {
+                            arAndSyncRec(((RecipeHolder)r).id().toString());
                         });
                         updateRecButtonsState(this::toggleState);
                     }

@@ -8,11 +8,11 @@ import net.minecraft.world.item.crafting.RecipeInput;
 import java.util.List;
 
 public class DefaultCookRec<R extends Recipe<? extends RecipeInput>> extends AbstractCookRec<R> {
-    public DefaultCookRec(R rec, List<List<Item>> ingres, List<Item> result, boolean single) {
-        super(rec, ingres, result, single);
+    public DefaultCookRec(R rec, List<List<Item>> ingres, List<Item> result, boolean single, String id) {
+        super(rec, ingres, result, single, id);
     }
 
-    public DefaultCookRec(R rec, List<List<Item>> ingres, List<Item> result) {
-        super(rec, ingres, result);
+    public DefaultCookRec(R rec, List<List<Item>> ingres, List<Item> result, String id) {
+        super(rec, ingres, result, id);
     }
 }

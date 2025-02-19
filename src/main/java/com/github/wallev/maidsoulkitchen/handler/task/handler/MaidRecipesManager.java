@@ -199,13 +199,11 @@ public class MaidRecipesManager<MCB extends AbstractMaidCookBe<B, R>, B extends 
         if (this.lastTaskRule.equals(CookData.Mode.WHITELIST.name)) {
             allRecipesFor = CookRecRecipeInitializerManager.getInitializer(cookTask.getRecipeType())
                     .getCookRecs().stream()
-                    .filter(r -> recipeIds.stream().anyMatch(key -> serverLevel.getRecipeManager().getRecipes()
-                            .stream().anyMatch(holder -> holder.id().equals(ResourceLocation.parse(key))))).toList();
+                    .filter(r -> recipeIds.contains(r.getId())).toList();
         } else {
             allRecipesFor = CookRecRecipeInitializerManager.getInitializer(cookTask.getRecipeType())
                     .getCookRecs().stream()
-                    .filter(r -> recipeIds.stream().anyMatch(key -> serverLevel.getRecipeManager().getRecipes()
-                            .stream().noneMatch(holder -> holder.id().equals(ResourceLocation.parse(key))))).toList();
+                    .filter(r -> !recipeIds.contains(r.getId())).toList();
         }
         return allRecipesFor;
     }

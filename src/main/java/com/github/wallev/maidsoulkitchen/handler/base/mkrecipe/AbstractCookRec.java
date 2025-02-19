@@ -11,21 +11,23 @@ import java.util.Set;
 
 public abstract class AbstractCookRec<R extends Recipe<? extends RecipeInput>> {
     protected final R rec;
+    protected final String id;
     protected final List<List<Item>> ingres;
     protected final List<Item> result;
     protected final boolean single;
     protected final Set<Item> validItems;
 
-    public AbstractCookRec(R rec, List<List<Item>> ingres, List<Item> result, boolean single) {
+    public AbstractCookRec(R rec, List<List<Item>> ingres, List<Item> result, boolean single, String id) {
         this.rec = rec;
+        this.id = id;
         this.ingres = ingres;
         this.result = result;
         this.single = single;
         this.validItems = createValidItems();
     }
 
-    public AbstractCookRec(R rec, List<List<Item>> ingres, List<Item> result) {
-        this(rec, ingres, result, false);
+    public AbstractCookRec(R rec, List<List<Item>> ingres, List<Item> result, String id) {
+        this(rec, ingres, result, false, id);
     }
 
     protected Set<Item> createValidItems() {
@@ -54,5 +56,9 @@ public abstract class AbstractCookRec<R extends Recipe<? extends RecipeInput>> {
 
     public Set<Item> getValidItems() {
         return validItems;
+    }
+
+    public String getId() {
+        return id;
     }
 }

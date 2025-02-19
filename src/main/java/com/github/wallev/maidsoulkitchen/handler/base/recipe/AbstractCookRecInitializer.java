@@ -17,6 +17,7 @@ import java.util.Set;
 public abstract class AbstractCookRecInitializer<R extends Recipe<? extends RecipeInput>> {
     protected final RecipeType<R> recipeType;
     protected final List<R> recs = Lists.newArrayList();
+    protected final List<RecipeHolder<R>> holders = Lists.newArrayList();
     protected final Set<Item> validIngres = Sets.newHashSet();
     protected final Map<R, AbstractCookRec<R>> cookRecData = Maps.newHashMap();
     protected final List<AbstractCookRec<R>> cookRecs = Lists.newArrayList();
@@ -44,7 +45,9 @@ public abstract class AbstractCookRecInitializer<R extends Recipe<? extends Reci
 
     protected void initRecipes(Level level) {
         List<R> recipes = this.getRecipes(level);
+        List<RecipeHolder<R>> recipeHolders = this.getRecipeHolders(level);
         this.recs.addAll(recipes);
+        this.holders.addAll(recipeHolders);
     }
 
     /**
@@ -75,6 +78,17 @@ public abstract class AbstractCookRecInitializer<R extends Recipe<? extends Reci
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected List<R> getRecipes(Level level) {
         return level.getRecipeManager().getAllRecipesFor((RecipeType) getRecipeType()).stream().map( r -> ((RecipeHolder) r).value()).toList();
+    }
+
+    /**
+     * 获取对应配方类型的所有配方
+     * 这应该和initialize一起使用
+     * @param level Level
+     * @return 对应的配方类型的所有配方
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected List<RecipeHolder<R>> getRecipeHolders(Level level) {
+        return level.getRecipeManager().getAllRecipesFor((RecipeType) getRecipeType());
     }
 
     public List<R> getRecipes() {

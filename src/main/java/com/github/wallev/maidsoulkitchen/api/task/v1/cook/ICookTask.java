@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends ILittleMaidTask, IDataTask<CookData> {
 
@@ -60,6 +61,10 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Rec
         return level.getRecipeManager().getAllRecipesFor((RecipeType) getRecipeType()).stream().map(r -> ((RecipeHolder)r).value()).toList();
     }
 
+    default List<RecipeHolder<R>> getRecipeHolders(Level level) {
+        return level.getRecipeManager().getAllRecipesFor((RecipeType) getRecipeType());
+    }
+
     @Nullable
     @Override
     default SoundEvent getAmbientSound(EntityMaid maid) {
@@ -70,6 +75,7 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Rec
         return 3.2;
     }
 
+    @Override
     default List<Pair<String, Predicate<EntityMaid>>> getEnableConditionDesc(EntityMaid maid) {
         return Lists.newArrayList(Pair.of("has_enough_favor", this::hasEnoughFavor));
     }

@@ -8,6 +8,7 @@ import lekavar.lma.drinkbeer.registries.RecipeRegistry;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 
 import java.util.Arrays;
@@ -22,10 +23,10 @@ public class DbBrewingRecipeSerializer extends DefaultCookRecSerializer<BrewingR
     @Override
     protected void initialize(Level level) {
         this.initRecipes(level);
-        for (BrewingRecipe rec : this.recs) {
-            List<Ingredient> ingredients = getIngredients(rec);
-            ingredients.add(Ingredient.of(rec.getBeerCup()));
-            List<Item> resultItem = Lists.newArrayList(getResultItem(rec, level).getItem());
+        for (RecipeHolder<BrewingRecipe> rec : this.holders) {
+            List<Ingredient> ingredients = getIngredients(rec.value());
+            ingredients.add(Ingredient.of(rec.value().getBeerCup()));
+            List<Item> resultItem = Lists.newArrayList(getResultItem(rec.value(), level).getItem());
             List<List<Item>> ingreItems = ingredients.stream()
                     .map(ingredient -> {
                         List<Item> itemSet = Arrays.stream(ingredient.getItems())
@@ -35,9 +36,9 @@ public class DbBrewingRecipeSerializer extends DefaultCookRecSerializer<BrewingR
                         return itemSet;
                     })
                     .collect(Collectors.toList());
-            DefaultCookRec<BrewingRecipe> cookRec = new DefaultCookRec<>(rec, ingreItems, resultItem);
+            DefaultCookRec<BrewingRecipe> cookRec = new DefaultCookRec<>(rec.value(), ingreItems, resultItem, rec.id().toString());
             this.cookRecs.add(cookRec);
-            this.cookRecData.put(rec, cookRec);
+            this.cookRecData.put(rec.value(), cookRec);
         }
     }
 }

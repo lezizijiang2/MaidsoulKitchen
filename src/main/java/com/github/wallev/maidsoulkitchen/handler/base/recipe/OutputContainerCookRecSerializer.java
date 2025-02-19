@@ -6,10 +6,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeInput;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
 import java.util.Arrays;
@@ -26,9 +23,9 @@ public abstract class OutputContainerCookRecSerializer<R extends Recipe<? extend
     @Override
     protected void initialize(Level level) {
         this.initRecipes(level);
-        for (R rec : this.recs) {
-            List<Ingredient> ingredients = getIngredients(rec);
-            List<Item> resultItem = Lists.newArrayList(getResultItem(rec, level).getItem());
+        for (RecipeHolder<R> rec : this.holders) {
+            List<Ingredient> ingredients = getIngredients(rec.value());
+            List<Item> resultItem = Lists.newArrayList(getResultItem(rec.value(), level).getItem());
             List<List<Item>> ingreItems = ingredients.stream()
                 .map(ingredient -> {
                     List<Item> itemSet = Arrays.stream(ingredient.getItems())
@@ -38,11 +35,11 @@ public abstract class OutputContainerCookRecSerializer<R extends Recipe<? extend
                     return itemSet;
                 })
                 .collect(Collectors.toList());
-            Item container = getContainer(rec).getItem();
+            Item container = getContainer(rec.value()).getItem();
             this.validContainers.add(container);
-            ContainerCookRec<R> cookRec = new ContainerCookRec<>(rec, ingreItems, resultItem, container);
+            ContainerCookRec<R> cookRec = new ContainerCookRec<>(rec.value(), ingreItems, resultItem, container, rec.id().toString());
             this.cookRecs.add(cookRec);
-            this.cookRecData.put(rec, cookRec);
+            this.cookRecData.put(rec.value(), cookRec);
         }
     }
 
