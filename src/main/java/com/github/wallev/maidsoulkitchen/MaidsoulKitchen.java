@@ -5,6 +5,7 @@ import com.github.wallev.maidsoulkitchen.init.MkContainer;
 import com.github.wallev.maidsoulkitchen.init.MkEffects;
 import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.init.MkMemories;
+import com.github.wallev.maidsoulkitchen.item.ItemCulinaryHub;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
 import com.google.common.collect.Lists;
 import net.neoforged.bus.api.IEventBus;
@@ -33,6 +34,7 @@ public final class MaidsoulKitchen {
         MkEffects.EFFECTS.register(modEventBus);
         MkContainer.CONTAINER_TYPE.register(modEventBus);
         MkMemories.MEMORY_MODULE_TYPES.register(modEventBus);
+        ItemCulinaryHub.DATA_COMPONENTS.register(modEventBus);
         modEventBus.addListener(NetworkHandler::registerPacket);
     }
 

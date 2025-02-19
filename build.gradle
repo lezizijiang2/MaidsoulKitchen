@@ -157,7 +157,7 @@ dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
     /** ---------------------------------------农夫乐事--------------------------------------------------------- */
     implementation "curse.maven:farmers-delight-398521:${farmers_delight_file_id}"
-    implementation "curse.maven:miners-delight-plus-689630:${miners_delight_plus_file_id}"
+//    implementation "curse.maven:miners-delight-plus-689630:${miners_delight_plus_file_id}"
     implementation "curse.maven:my-nethers-delight-1003673:${my_nethers_delight_file_id}"
     compileOnly jarJar("com.tterrag.registrate:Registrate:${registrate_version}"){
         transitive = false
@@ -167,13 +167,13 @@ dependencies {
     implementation files("lib/l2core-3.0.8+3.jar")
     compileOnly files("lib/l2itemselector-3.0.9.jar")
     compileOnly files("lib/l2modularblocks-3.0.0+4.jar")
-    compileOnly "curse.maven:l2library-620203:6083582"
+    implementation "curse.maven:l2library-620203:6083582"
     compileOnly files("lib/l2damagetracker-3.0.3+8.jar")
     implementation "curse.maven:youkais-homecoming-957437:${ykhc_file_id}"
 //    implementation "curse.maven:bnc-1-20-port-898078:${bnc_file_id}"
 //    implementation "curse.maven:farmers-respite-551453:5543547"
     implementation "curse.maven:cuisine-delight-893541:5768148"
-    implementation "curse.maven:barbeques-delight-1007788:5848042"
+    implementation "curse.maven:barbeques-delight-1007788:5850994"
 //    implementation "curse.maven:coffee-delight-835597:4871782"
 
     /** ---------------------------------------Let's do--------------------------------------------------------- */
@@ -198,13 +198,13 @@ dependencies {
 //    implementation "curse.maven:kitchen-karrot-880555:${kitchen_karrot_file_id}"
     implementation "curse.maven:drink-beer-refill-729120:${drink_beer_refill_file_id}"
 //    implementation "curse.maven:crock-pot-404523:${crock_pot_file_id}"
-    implementation "curse.maven:smartpot-1098636:5727794"
+//    implementation "curse.maven:smartpot-1098636:5718955"
 }
 
 // 联动(存储)
 dependencies {
     implementation "curse.maven:storage-drawers-223852:${storage_drawers_file_id}"
-    implementation "curse.maven:toms-storage-378609:5548573"
+    implementation "curse.maven:toms-storage-378609:6123292"
     implementation "curse.maven:sophisticated-core-618298:6160815"
     implementation "curse.maven:sophisticated-storage-619320:6168774"
 }
@@ -216,8 +216,8 @@ dependencies {
 
     implementation "curse.maven:ecliptic-seasons-1118306:${ecliptic_seasons_file_id}"
 
-    implementation "maven.modrinth:pandalib:Hs1ReP4A"
-    implementation "maven.modrinth:pandas-falling-trees:BTha8GrF"
+    implementation "maven.modrinth:pandalib:DGnanYoJ"
+    implementation "maven.modrinth:pandas-falling-trees:4Hy3Cjgh"
 
 //    implementation files("lib/fruit-stack-900231-4807247_mapped_parchment_2023.09.03-1.20.1.jar")
 //    implementation "curse.maven:simple-farming-327554:${simple_farming_file_id}"
@@ -225,7 +225,7 @@ dependencies {
 
     implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
     implementation "curse.maven:l2library-620203:5447286"
-    implementation "curse.maven:modulargolems-690937:5476223"
+    implementation "curse.maven:modulargolems-690937:6015251"
 
     runtimeOnly "curse.maven:kotlin-for-forge-351264:${kotlin_id}"
     runtimeOnly "curse.maven:libipn-679177:${libipn_id}"
@@ -249,12 +249,8 @@ dependencies {
 
 // 基础配置
 dependencies {
-
-    // Apply Mixin AP
-//    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.0"))
-    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.4.0")) {
-        jarJar.ranged(it, "[0.4.0,)")
+    implementation(jarJar("io.github.llamalad7:mixinextras-neoforge:0.4.1")) {
+        jarJar.ranged(it, "[0.4.1,)")
     }
 }
 
@@ -290,7 +286,7 @@ dependencies {
 dependencies {
     runtimeOnly files('lib/quickmodstart-neoforge-1.20.1-1.0.0.jar')
 
-    runtimeOnly "curse.maven:appleskin-248787:4770828"
+    runtimeOnly "curse.maven:appleskin-248787:5586600"
     runtimeOnly "curse.maven:nbtedit-reborn-678133:${nbtedit_reborn_id}"
 }
 
