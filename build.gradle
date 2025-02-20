@@ -204,9 +204,9 @@ dependencies {
 // 联动(存储)
 dependencies {
     implementation "curse.maven:storage-drawers-223852:${storage_drawers_file_id}"
-    implementation "curse.maven:toms-storage-378609:6123292"
-    implementation "curse.maven:sophisticated-core-618298:6160815"
-    implementation "curse.maven:sophisticated-storage-619320:6168774"
+    implementation "curse.maven:toms-storage-378609:${toms_storage_file_id}"
+    implementation "curse.maven:sophisticated-core-618298:${sophisticated_core_file_id}"
+    implementation "curse.maven:sophisticated-storage-619320:${sophisticated_storage_file_id}"
 }
 
 // 联动(其他)
@@ -216,24 +216,24 @@ dependencies {
 
     implementation "curse.maven:ecliptic-seasons-1118306:${ecliptic_seasons_file_id}"
 
-    implementation "maven.modrinth:pandalib:DGnanYoJ"
-    implementation "maven.modrinth:pandas-falling-trees:4Hy3Cjgh"
+    implementation "maven.modrinth:pandalib:${pandalib_version}"
+    implementation "maven.modrinth:pandas-falling-trees:${panda_falling_trees_version}"
 
 //    implementation files("lib/fruit-stack-900231-4807247_mapped_parchment_2023.09.03-1.20.1.jar")
 //    implementation "curse.maven:simple-farming-327554:${simple_farming_file_id}"
 //    implementation "curse.maven:hexerei-548599:${hexerei_file_id}"
 
     implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
-    implementation "curse.maven:l2library-620203:5447286"
-    implementation "curse.maven:modulargolems-690937:6015251"
+    implementation "curse.maven:l2library-620203:${l2lib_version}"
+    implementation "curse.maven:modulargolems-690937:${modular_golems_file_id}"
 
     runtimeOnly "curse.maven:kotlin-for-forge-351264:${kotlin_id}"
     runtimeOnly "curse.maven:libipn-679177:${libipn_id}"
     implementation "curse.maven:inventory-profiles-next-495267:${ipn_id}"
 
-    implementation "curse.maven:kubejs-238086:5810100"
-    implementation "curse.maven:rhino-416294:6000610"
-    implementation "curse.maven:probejs-585406:5820894"
+    implementation "curse.maven:kubejs-238086:${kubejs_version}"
+    implementation "curse.maven:rhino-416294:${rhino_version}"
+    implementation "curse.maven:probejs-585406:${probejs_version}"
 }
 
 // Core Dependencies
@@ -286,7 +286,7 @@ dependencies {
 dependencies {
     runtimeOnly files('lib/quickmodstart-neoforge-1.20.1-1.0.0.jar')
 
-    runtimeOnly "curse.maven:appleskin-248787:5586600"
+    runtimeOnly "curse.maven:appleskin-248787:${appleskin_version}"
     runtimeOnly "curse.maven:nbtedit-reborn-678133:${nbtedit_reborn_id}"
 }
 
