@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
@@ -21,7 +22,7 @@ import java.util.Optional;
 @Mixin(value = CookingPotBlockEntity.class, remap = false)
 public abstract class CookingPotBlockEntityMixin implements IFdCbeAccessor<CookingPotRecipe>, IRecipeExperinceAward {
     @Shadow
-    protected abstract Optional<CookingPotRecipe> getMatchingRecipe(RecipeWrapper inventoryWrapper);
+    protected abstract Optional<RecipeHolder<CookingPotRecipe>> getMatchingRecipe(RecipeWrapper inventoryWrapper);
 
     @Shadow
     protected abstract boolean canCook(CookingPotRecipe recipe);
@@ -32,7 +33,7 @@ public abstract class CookingPotBlockEntityMixin implements IFdCbeAccessor<Cooki
 
     @Override
     public Optional<CookingPotRecipe> tlmk$getMatchingRecipe(RecipeWrapper inventoryWrapper) {
-        return getMatchingRecipe(inventoryWrapper);
+        return getMatchingRecipe(inventoryWrapper).map(RecipeHolder::value);
     }
 
     @Override

@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -27,7 +28,7 @@ public abstract class AbstractFurnaceMixin implements IAbstractFurnaceAccessor, 
     private RecipeType<? extends AbstractCookingRecipe> recipeType;
 
     @Shadow
-    public abstract List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel pLevel, Vec3 pPopVec);
+    public abstract List<RecipeHolder<?>> getRecipesToAwardAndPopExperience(ServerLevel pLevel, Vec3 pPopVec);
 
     public RecipeType<? extends AbstractCookingRecipe> tlmk$getRecipeType() {
         return this.recipeType;
