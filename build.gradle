@@ -27,7 +27,7 @@ tasks.named('wrapper', Wrapper).configure {
 }
 //apply plugin: 'org.spongepowered.mixin'
 
-String version_type = "beta"
+String version_type = "alpha"
 
 base {
     archivesName = "maidsoulkitchen"
