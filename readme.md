@@ -77,17 +77,17 @@
 ## 1.21 迁移进度
 - [ ] Cook
     - [x] Farmer's Delight
-        - [x] Cooking Pot 配方不显示……
-        - [x] Cutting Board 配方配置界面无法选择，背景图片错误.工作正常
+        - [ ] Cooking Pot 配方不显示…… main分支显示正常
+        - [x] Cutting Board 配置正常，工作正常
     - [ ] Miner's Delight
         - [ ] Copper Pot 不兼容 1.21
     - [ ] Brewin' And Chewin'
         - [ ] Key 不兼容 1.21
     - [x] Youkai's Homecoming
-        - [x] Moka Pot 配方配置界面无法选择，背景图片错误
-        - [x] Kettle 配方配置界面无法选择，背景图片错误
-        - [x] Fermentation Tank 配方配置界面无法选择，背景图片错误
-        - [x] Drying Rack 配方配置界面无法选择，背景图片错误
+        - [x] Moka Pot 配置正常，工作未测试
+        - [x] Kettle 配置正常，工作未测试
+        - [x] Fermentation Tank 配置正常，工作未测试
+        - [x] Drying Rack 配置正常，工作未测试
     - [ ] Cuisine Delight 未测试
     - [ ] My Nether's Delight 未测试
     - [ ] Vinery
