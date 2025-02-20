@@ -55,7 +55,7 @@ public class TaskFdCookingPotV2 extends AbstractTaskCook<OutputContainerIMbe<Coo
 
     @Override
     public ResourceLocation getUid() {
-        return TaskInfo.FD_COOK_POT.uid;
+        return TaskInfo.FD_COOK_POT_V2.uid;
     }
 
     @Override

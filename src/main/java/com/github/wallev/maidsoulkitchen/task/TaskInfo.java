@@ -18,6 +18,7 @@ public enum TaskInfo {
     FURNACE("furnace"),
 
     FD_COOK_POT("fd_cooking_pot"),
+    FD_COOK_POT_V2("fd_cooking_pot_v2"),
     FD_CUTTING_BOARD("fd_cutting_board"),
     MD_COOK_POT("md_copper_pot"),
     BNC_KEY("bnc_key"),
