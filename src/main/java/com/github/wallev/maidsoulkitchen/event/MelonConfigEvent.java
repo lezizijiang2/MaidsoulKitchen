@@ -2,23 +2,15 @@ package com.github.wallev.maidsoulkitchen.event;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.config.subconfig.TaskConfig;
-import com.github.wallev.maidsoulkitchen.util.EmptyLevelAccessor;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import com.github.wallev.maidsoulkitchen.task.cook.v1.common.cbaccessor.IAttachedStemBlockFruitAccessor;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.AttachedStemBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.config.ModConfigEvent;
-import vectorwing.farmersdelight.common.registry.ModItems;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,22 +38,12 @@ public final class MelonConfigEvent {
     }
 
     private static void handleMelonStemList(Map<String, String> output) {
-        // todo: 找到更好的方式获取瓜和瓜藤的对应关系
-//        for (Block block : BuiltInRegistries.BLOCK) {
-//            if (block instanceof AttachedStemBlock attachedStemBlock) {
-//                BlockState defaultState = attachedStemBlock.defaultBlockState();
-//                Direction facing = defaultState.getValue(AttachedStemBlock.FACING);
-//                BlockPos pos = BlockPos.ZERO;
-//                BlockPos fruitPos = pos.relative(facing);
-//
-//                // Get the fruit block from the block update behavior
-//                BlockState testState = defaultState.updateShape(facing, Blocks.AIR.defaultBlockState(),
-//                        EmptyLevelAccessor.INSTANCE, pos, fruitPos);
-
-                    output.put(getId(Blocks.MELON), getId(Blocks.ATTACHED_MELON_STEM));
-                    output.put(getId(Blocks.PUMPKIN), getId(Blocks.ATTACHED_PUMPKIN_STEM));
-//            }
-//        }
+        for (Block block : BuiltInRegistries.BLOCK) {
+            if (block instanceof AttachedStemBlock attachedStemBlock) {
+                output.put((((IAttachedStemBlockFruitAccessor)attachedStemBlock).maidsoulKitchen$friut().location().toString()), getId(attachedStemBlock));
+                MaidsoulKitchen.LOGGER.debug("add fruit {}, stem {}", ((IAttachedStemBlockFruitAccessor)attachedStemBlock).maidsoulKitchen$friut().location().toString(), getId(attachedStemBlock));
+            }
+        }
     }
 
     private static void handleMelonAndStemList(List<List<String>> config, Map<String, String> output) {
