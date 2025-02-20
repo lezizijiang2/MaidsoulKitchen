@@ -16,6 +16,7 @@
     "fd.MixinCookingPotBlockEntityV2",
     "mc.AbstractFurnaceAccessor",
     "mc.MixinMinecraftServer",
+    "mc.MixinAttachedStemBlock",
     "tlm.MixinEntityMaid",
     "tlm.MixinMaidRunOne",
     "yhc.KettleBlockAccessor",
