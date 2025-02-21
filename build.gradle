@@ -203,7 +203,7 @@ dependencies {
 
 // 联动(存储)
 dependencies {
-    implementation "curse.maven:storage-drawers-223852:${storage_drawers_file_id}"
+//    implementation "curse.maven:storage-drawers-223852:${storage_drawers_file_id}"
     implementation "curse.maven:toms-storage-378609:${toms_storage_file_id}"
     implementation "curse.maven:sophisticated-core-618298:${sophisticated_core_file_id}"
     implementation "curse.maven:sophisticated-storage-619320:${sophisticated_storage_file_id}"
