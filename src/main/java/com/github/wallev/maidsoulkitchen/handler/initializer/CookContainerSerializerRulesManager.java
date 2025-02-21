@@ -16,7 +16,7 @@ import java.util.Map;
 
 public final class CookContainerSerializerRulesManager {
 
-    private static Map<RecipeType<?>, List<AbstractCookBlockEntitySerializer<?, ?, ?>>> COOK_CONTAINER_SERIALIZER_RULES_MAP;
+    private static Map<RecipeType<?>, List<AbstractCookBlockEntitySerializer<?, ?, ?>>> COOK_CONTAINER_SERIALIZER_RULES_MAP = new HashMap<>();
 
     private CookContainerSerializerRulesManager() {
         COOK_CONTAINER_SERIALIZER_RULES_MAP = new HashMap<>();
