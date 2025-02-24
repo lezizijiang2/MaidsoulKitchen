@@ -65,7 +65,7 @@
 ## 1.21 迁移进度
 - [ ] Cook
     - [x] Farmer's Delight
-        - [ ] Cooking Pot 配方不显示…… main分支显示正常
+        - [x] Cooking Pot 配置正常，工作正常
         - [x] Cutting Board 配置正常，工作正常
     - [ ] Miner's Delight
         - [ ] Copper Pot 不兼容 1.21
@@ -77,7 +77,7 @@
         - [x] Fermentation Tank 配置正常，工作未测试
         - [x] Drying Rack 配置正常，工作未测试
     - [ ] Cuisine Delight 未测试
-    - [ ] My Nether's Delight 未测试
+    - [x] My Nether's Delight 未测试
     - [ ] Vinery
         - [ ] Fermentation Barrel 不兼容 1.21
     - [x] Candelight

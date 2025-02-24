@@ -143,7 +143,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
         boolean isCookSettingMainZone = mouseX >= visualZone.startX() && mouseY >= visualZone.startY() && mouseX < visualZone.startX() + visualZone.width() && mouseY < visualZone.startY() + visualZone.height();
         if (deltaY != 0 && isCookSettingMainZone) {
             // 向上滚
-            if (deltaX > 0 && solIndex > 0) {
+            if (deltaY > 0 && solIndex > 0) {
                 solIndex--;
                 this.init();
                 return true;
