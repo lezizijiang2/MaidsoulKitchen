@@ -86,7 +86,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     private void initRecipeList() {
         this.recipeList.clear();
         List<? extends RecipeHolder<?>> recipes;
-        Level level = maid.level();
+        Level level = maid.level;
         RegistryAccess registryAccess = level.registryAccess();
         if (searchBox != null && StringUtils.isNotBlank(searchBox.getValue())) {
             String search = this.searchBox.getValue().toLowerCase(Locale.US);
@@ -367,7 +367,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
                 RecButton recButton = new RecButton(maid, (ICookTask<?, ?>) task, cookData, recipe.value(), x, y) {
                     @Override
                     public void onClick(double pMouseX, double pMouseY) {
-                        ((ICookTask) task).getRecipeHolders(maid.level()).stream().filter(r -> recipe.id().equals(((RecipeHolder)r).id())).findFirst().ifPresent(r -> {
+                        ((ICookTask) task).getRecipeHolders(maid.level).stream().filter(r -> recipe.id().equals(((RecipeHolder)r).id())).findFirst().ifPresent(r -> {
                             arAndSyncRec(((RecipeHolder)r).id().toString());
                         });
                         updateRecButtonsState(this::toggleState);

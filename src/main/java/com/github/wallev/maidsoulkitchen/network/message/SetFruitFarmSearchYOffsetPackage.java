@@ -41,7 +41,7 @@ public record SetFruitFarmSearchYOffsetPackage(int entityId, ResourceLocation da
         if (context.flow().isServerbound()) {
             context.enqueueWork(() -> {
                 ServerPlayer sender = (ServerPlayer) context.player();
-                Entity entity = sender.level().getEntity(message.entityId);
+                Entity entity = sender.level.getEntity(message.entityId);
                 if (entity instanceof EntityMaid maid && maid.isOwnedBy(sender)) {
                     TaskDataKey<FruitData> value = TaskDataRegister.getValue(message.dataKey);
                     FruitData fruitData = maid.getOrCreateData(value, new FruitData());

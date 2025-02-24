@@ -31,7 +31,7 @@ public interface IFakePlayerTask {
                 targetPos, true);
         //processRightClick
         ItemStack itemInHand = fakePlayer.getItemInHand(hand);
-        return fakePlayer.gameMode.useItemOn(fakePlayer, maid.level(), itemInHand, hand, blockraytraceresult);
+        return fakePlayer.gameMode.useItemOn(fakePlayer, maid.level, itemInHand, hand, blockraytraceresult);
     }
 
     static void maidRightClick(EntityMaid maid, BlockPos targetPos, InteractionHand hand) {
@@ -39,7 +39,7 @@ public interface IFakePlayerTask {
 //            LOGGER.info("FakePlayerUtil.interactUseOnBlock ");
             InteractionResult interactionResult = interactUseOnBlock(maid, targetPos, hand, null);
             if (interactionResult == InteractionResult.PASS) {
-                BlockState blockState = maid.level().getBlockState(targetPos);
+                BlockState blockState = maid.level.getBlockState(targetPos);
                 Block block = blockState.getBlock();
                 LOGGER.warn("FakePlayerUtil.interactUseOnBlock PASS: items:{} blockstate: {}", blockState, block);
                 blackList.add(block);

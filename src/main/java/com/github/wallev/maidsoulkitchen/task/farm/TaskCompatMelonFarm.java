@@ -53,7 +53,7 @@ public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTa
         if (MelonConfigEvent.MELON_STEM_MAP.containsKey(BlockUtil.getId(block))) {
             String stemBlockId = MelonConfigEvent.MELON_STEM_MAP.get(BlockUtil.getId(block));
             for (Direction direction : Direction.Plane.HORIZONTAL) {
-                BlockState offsetState = maid.level().getBlockState(cropPos.relative(direction));
+                BlockState offsetState = maid.level.getBlockState(cropPos.relative(direction));
                 if (BlockUtil.getId(offsetState).equals(stemBlockId)) {
                     return true;
                 }
@@ -67,7 +67,7 @@ public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTa
         Block block = cropState.getBlock();
         if (cropState.is(Blocks.MELON)) {
             ItemStack mainHandItem = maid.getMainHandItem();
-            RegistryAccess access = maid.level().registryAccess();
+            RegistryAccess access = maid.level.registryAccess();
             if (EnchantmentKeys.getEnchantmentLevel(access, Enchantments.SILK_TOUCH, mainHandItem) > 0) {
                 if (this.destroyBlockByHandItem(maid, cropPos)) {
                     mainHandItem.hurtAndBreak(1, maid, EquipmentSlot.MAINHAND);
@@ -85,7 +85,7 @@ public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTa
     }
 
     public boolean destroyBlockByHandItem(EntityMaid maid, BlockPos pos, boolean dropBlock) {
-        return maid.canDestroyBlock(pos) && this.destroyBlockByHandItem(maid, maid.level(), pos, dropBlock);
+        return maid.canDestroyBlock(pos) && this.destroyBlockByHandItem(maid, maid.level, pos, dropBlock);
     }
 
     private boolean destroyBlockByHandItem(EntityMaid maid, Level level, BlockPos blockPos, boolean dropBlock) {

@@ -40,7 +40,7 @@ public record ActionCookDataRecPackage(int entityId, ResourceLocation dataKey, S
         if (context.flow().isServerbound()) {
             context.enqueueWork(() -> {
                 ServerPlayer sender = (ServerPlayer) context.player();
-                Entity entity = sender.level().getEntity(message.entityId);
+                Entity entity = sender.level.getEntity(message.entityId);
                 if (entity instanceof EntityMaid maid && maid.isOwnedBy(sender)) {
                     TaskDataKey<CookData> value = TaskDataRegister.getValue(message.dataKey);
                     CookData cookData = maid.getOrCreateData(value, new CookData());

@@ -28,7 +28,7 @@ public class TaskEsFarm extends TaskNormalFarm implements IMaidsoulKitchenTask, 
         boolean plantB = super.canPlant(maid, basePos, baseState, seed);
         if (plantB && CommonConfig.Crop.enableCrop.get() && seed.getItem() instanceof BlockItem blockItem) {
             CropSeasonInfo seasonInfo = CropInfoManager.getSeasonInfo(blockItem.getBlock());
-            Season season = SolarUtil.getSeason(maid.level());
+            Season season = SolarUtil.getSeason(maid.level);
             return seasonInfo != null && seasonInfo.isSuitable(season);
         }
 

@@ -149,7 +149,7 @@ return true;
     }
 
     private Optional<? extends AbstractCookingRecipe> getRecipe(EntityMaid maid, ItemStack stack, RecipeType<? extends AbstractCookingRecipe> recipeType) {
-        return maid.level().getRecipeManager().getRecipeFor(recipeType, new SingleRecipeInput(stack), maid.level()).map(RecipeHolder::value);
+        return maid.level.getRecipeManager().getRecipeFor(recipeType, new SingleRecipeInput(stack), maid.level).map(RecipeHolder::value);
     }
 
     @Override

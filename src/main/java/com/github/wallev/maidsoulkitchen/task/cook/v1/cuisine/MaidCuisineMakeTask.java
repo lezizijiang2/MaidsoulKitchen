@@ -78,7 +78,7 @@ public class MaidCuisineMakeTask extends Behavior<EntityMaid> {
     private static void processV1(ServerLevel worldIn, EntityMaid maid, CuisineSkilletBlockEntity cuisineSkilletBlockEntity) {
         if (!cuisineSkilletBlockEntity.cookingData.contents.isEmpty()) {
             if (!worldIn.isClientSide()) {
-                cuisineSkilletBlockEntity.stir(worldIn.getGameTime(), getReduction(maid.level(), maid.getMainHandItem()));
+                cuisineSkilletBlockEntity.stir(worldIn.getGameTime(), getReduction(maid.level, maid.getMainHandItem()));
             } else {
                 playSound(maid, worldIn, ModSounds.BLOCK_SKILLET_SIZZLE.get());
             }
@@ -238,6 +238,6 @@ public class MaidCuisineMakeTask extends Behavior<EntityMaid> {
                 targetPos, true);
         //processRightClick
         ItemStack itemInHand = fakePlayer.getItemInHand(hand);
-        return fakePlayer.gameMode.useItemOn(fakePlayer, maid.level(), itemInHand, hand, blockraytraceresult);
+        return fakePlayer.gameMode.useItemOn(fakePlayer, maid.level, itemInHand, hand, blockraytraceresult);
     }
 }

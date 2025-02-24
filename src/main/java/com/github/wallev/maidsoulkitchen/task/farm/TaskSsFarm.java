@@ -27,7 +27,7 @@ public class TaskSsFarm extends TaskNormalFarm implements IMaidsoulKitchenTask, 
     public boolean canPlant(EntityMaid maid, BlockPos basePos, BlockState baseState, ItemStack seed) {
         boolean plantB = super.canPlant(maid, basePos, baseState, seed);
         if (plantB) {
-            String lowerCase = SeasonHelper.getSeasonState(maid.level()).getSeason().name().toLowerCase(Locale.ENGLISH);
+            String lowerCase = SeasonHelper.getSeasonState(maid.level).getSeason().name().toLowerCase(Locale.ENGLISH);
             TagKey<Item> itemTagKey = ItemTags.create(ResourceLocation.parse("sereneseasons:" + lowerCase + "_crops"));
             return seed.getTags().anyMatch(itemTagKey::equals) ||
                     seed.getTags().noneMatch(tagKey -> tagKey.location().toString().matches("sereneseasons:.*_crops"));

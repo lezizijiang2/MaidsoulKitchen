@@ -34,13 +34,13 @@ public class BurnProtectBauble implements ILittleMaidBauble {
             if (slot >= 0) {
                 event.setCanceled(true);
                 ItemStack stack = maid.getMaidBauble().getStackInSlot(slot);
-                if ( maid.level() instanceof ServerLevel serverLevel) {
+                if ( maid.level instanceof ServerLevel serverLevel) {
                     stack.hurtAndBreak(1, serverLevel, maid, m -> NetworkHandler.sendToNearby(maid, new ItemBreakPackage(maid.getId(), stack)));
                 }
                 maid.getMaidBauble().setStackInSlot(slot, stack);
                 maid.addEffect(new MobEffectInstance(MkEffects.BURN_PROTECT, 300));
-                if (!maid.level().isClientSide) {
-                    maid.level().addFreshEntity(new EntityExtinguishingAgent(maid.level(), maid.position()));
+                if (!maid.level.isClientSide) {
+                    maid.level.addFreshEntity(new EntityExtinguishingAgent(maid.level, maid.position()));
                 }
             }
         }

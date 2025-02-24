@@ -110,7 +110,7 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
 
         if (!blockEntity.items.isEmpty()) {
             FermentationDummyContainer cont = new FermentationDummyContainer(blockEntity.items, blockEntity.fluids);
-            Optional<FermentationRecipe<?>> opt = maid.level().getRecipeManager().getRecipeFor((RecipeType) YHBlocks.FERMENT_RT.get(), cont, maid.level());
+            Optional<FermentationRecipe<?>> opt = maid.level.getRecipeManager().getRecipeFor((RecipeType) YHBlocks.FERMENT_RT.get(), cont, maid.level);
             if (opt.isEmpty()) {
                 return true;
             }
@@ -176,7 +176,7 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
 
         if (!blockEntity.items.isEmpty()) {
             FermentationDummyContainer cont = new FermentationDummyContainer(blockEntity.items, blockEntity.fluids);
-            Optional<FermentationRecipe<?>> opt = maid.level().getRecipeManager().getRecipeFor((RecipeType) YHBlocks.FERMENT_RT.get(), cont, maid.level());
+            Optional<FermentationRecipe<?>> opt = maid.level.getRecipeManager().getRecipeFor((RecipeType) YHBlocks.FERMENT_RT.get(), cont, maid.level);
             if (opt.isEmpty()) {
                 blockEntity.dumpInventory();
             }
