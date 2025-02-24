@@ -42,7 +42,7 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Rec
 
     @Override
     default List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
-        if (maid.level().isClientSide) {
+        if (maid.level.isClientSide) {
             return Collections.emptyList();
         }
 

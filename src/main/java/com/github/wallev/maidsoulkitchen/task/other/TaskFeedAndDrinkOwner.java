@@ -110,8 +110,8 @@ public class TaskFeedAndDrinkOwner implements ILittleMaidTask, IFeedTask, IDrink
     @Override
     public ItemStack drink(ItemStack stack, Player owner) {
         if (stack.getUseAnimation() == UseAnim.DRINK) {
-            owner.level().playSound(null, owner, stack.getDrinkingSound(), SoundSource.NEUTRAL,
-                    0.5f, owner.level().getRandom().nextFloat() * 0.1f + 0.9f);
+            owner.level.playSound(null, owner, stack.getDrinkingSound(), SoundSource.NEUTRAL,
+                    0.5f, owner.level.getRandom().nextFloat() * 0.1f + 0.9f);
         }
 
         AtomicBoolean canDrink = new AtomicBoolean(false);
@@ -123,7 +123,7 @@ public class TaskFeedAndDrinkOwner implements ILittleMaidTask, IFeedTask, IDrink
         });
 
         if (canDrink.get()) {
-            return stack.getItem().finishUsingItem(stack, owner.level(), owner);
+            return stack.getItem().finishUsingItem(stack, owner.level, owner);
         }
         return stack;
     }
@@ -184,10 +184,10 @@ public class TaskFeedAndDrinkOwner implements ILittleMaidTask, IFeedTask, IDrink
     @Override
     public ItemStack feed(ItemStack stack, Player owner) {
         if (stack.getUseAnimation() == UseAnim.DRINK) {
-            owner.level().playSound(null, owner, stack.getDrinkingSound(), SoundSource.NEUTRAL,
-                    0.5f, owner.level().getRandom().nextFloat() * 0.1f + 0.9f);
+            owner.level.playSound(null, owner, stack.getDrinkingSound(), SoundSource.NEUTRAL,
+                    0.5f, owner.level.getRandom().nextFloat() * 0.1f + 0.9f);
         }
-        return stack.getItem().finishUsingItem(stack, owner.level(), owner);
+        return stack.getItem().finishUsingItem(stack, owner.level, owner);
     }
 
     private boolean isHarmfulEffect(MobEffectInstance effect) {

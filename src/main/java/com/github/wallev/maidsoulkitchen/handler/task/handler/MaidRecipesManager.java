@@ -57,7 +57,7 @@ public class MaidRecipesManager<MCB extends AbstractMaidCookBe<B, R>, B extends 
 
     public MaidRecipesManager(EntityMaid maid, AbstractTaskCook<MCB, B, R> cookTask) {
         this.maid = maid;
-        this.serverLevel = (ServerLevel) maid.level();
+        this.serverLevel = (ServerLevel) maid.level;
         this.cookTask = cookTask;
 
         this.createRecipesIngredients();
@@ -109,14 +109,14 @@ public class MaidRecipesManager<MCB extends AbstractMaidCookBe<B, R>, B extends 
             for (BlockPos ingredientPo : ingredientPos) {
                 if (isPosZone(ingredientPo)) continue;
 
-                BlockEntity blockEntity = maid.level().getBlockEntity(ingredientPo);
+                BlockEntity blockEntity = maid.level.getBlockEntity(ingredientPo);
                 if (blockEntity == null) continue;
                 if (stack.isEmpty()) break;
 
                 // 原版
                 for (IChestType type : ChestManager.getAllChestTypes()) {
                     if (!type.isChest(blockEntity)) continue;
-                    if (type.getOpenCount(maid.level(), ingredientPo, blockEntity) > 0) continue;
+                    if (type.getOpenCount(maid.level, ingredientPo, blockEntity) > 0) continue;
                     Optional.ofNullable(blockEntity.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, blockEntity.getBlockPos(), null)).ifPresent(beInv -> {
                         ItemStack leftStack = ItemHandlerHelper.insertItemStacked(beInv, stack.copy(), false);
                         stack.shrink(stack.getCount() - leftStack.getCount());
@@ -262,7 +262,7 @@ public class MaidRecipesManager<MCB extends AbstractMaidCookBe<B, R>, B extends 
 
             // 原版
             for (IChestType type : ChestManager.getAllChestTypes()) {
-                if (!type.isChest(blockEntity) || type.getOpenCount(maid.level(), ingredientPo, blockEntity) > 0)
+                if (!type.isChest(blockEntity) || type.getOpenCount(maid.level, ingredientPo, blockEntity) > 0)
                     continue;
                 Optional.ofNullable(blockEntity.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, blockEntity.getBlockPos(), null)).ifPresent(beInv -> {
                     for (int i = 0; i < beInv.getSlots(); i++) {

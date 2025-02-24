@@ -33,7 +33,7 @@ public class RecButton extends TouhouStateSwitchButton implements ITooltipButton
     @SuppressWarnings("all")
     public RecButton(EntityMaid maid, ICookTask<?, ?> cookTask, CookData cookData, Recipe<?> recipe, int pX, int pY) {
 
-        super(pX, pY, 20, 20, cookData.getRecs().contains(maid.level().getRecipeManager().getRecipes().stream().filter(r -> r.value().equals(recipe)).map(r -> r.id()).findFirst().orElse(null)));
+        super(pX, pY, 20, 20, cookData.getRecs().contains(maid.level.getRecipeManager().getRecipes().stream().filter(r -> r.value().equals(recipe)).map(r -> r.id()).findFirst().orElse(null)));
         this.initTextureValues(179, 25, 22, 0, TEXTURE);
         this.maid = maid;
         this.cookTask = cookTask;

@@ -44,7 +44,7 @@ public record SetCookDataPackage(int entityId, ResourceLocation dataKey, String 
                 if (sender == null) {
                     return;
                 }
-                Entity entity = sender.level().getEntity(message.entityId);
+                Entity entity = sender.level.getEntity(message.entityId);
                 if (entity instanceof EntityMaid maid && maid.isOwnedBy(sender)) {
                     TaskDataKey<CookData> value = TaskDataRegister.getValue(message.dataKey);
                     CookData cookData = maid.getOrCreateData(value, new CookData());

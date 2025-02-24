@@ -35,7 +35,7 @@ public abstract class AbstractTaskCook<MCB extends AbstractMaidCookBe<B, R>, B e
 
     @Override
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
-        return maid.level().isClientSide ? Collections.emptyList() : createTaskCookBrainTasks(maid);
+        return maid.level.isClientSide ? Collections.emptyList() : createTaskCookBrainTasks(maid);
     }
 
     /**

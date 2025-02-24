@@ -41,7 +41,7 @@ public record ActionBerryFarmRulePackage(int entityId, ResourceLocation dataKey,
         if (context.flow().isServerbound()) {
             context.enqueueWork(() -> {
                 ServerPlayer sender = (ServerPlayer) context.player();
-                Entity entity = sender.level().getEntity(message.entityId);
+                Entity entity = sender.level.getEntity(message.entityId);
                 if (entity instanceof EntityMaid maid && maid.isOwnedBy(sender)) {
                     TaskDataKey<BerryData> value = TaskDataRegister.getValue(message.dataKey);
                     BerryData fruitData = maid.getOrCreateData(value, new BerryData());

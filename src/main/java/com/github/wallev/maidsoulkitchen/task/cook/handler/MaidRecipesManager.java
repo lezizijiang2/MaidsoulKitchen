@@ -56,7 +56,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
 
     public MaidRecipesManager(EntityMaid maid, ICookTask<?, R> task, boolean single, boolean createRecIng) {
         this.maid = maid;
-        this.level = maid.level();
+        this.level = maid.level;
         this.single = single;
         this.task = task;
 
@@ -111,15 +111,15 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
             for (BlockPos ingredientPo : ingredientPos) {
                 if (isPosZone(ingredientPo)) continue;
 
-                BlockEntity blockEntity = maid.level().getBlockEntity(ingredientPo);
+                BlockEntity blockEntity = maid.level.getBlockEntity(ingredientPo);
                 if (blockEntity == null) continue;
                 if (stack.isEmpty()) break;
 
                 // 原版
                 for (IChestType type : ChestManager.getAllChestTypes()) {
                     if (!type.isChest(blockEntity)) continue;
-                    if (type.getOpenCount(maid.level(), ingredientPo, blockEntity) > 0) continue;
-                    IItemHandler iItemHandler = maid.level().getCapability(Capabilities.ItemHandler.BLOCK, blockEntity.getBlockPos(), null);
+                    if (type.getOpenCount(maid.level, ingredientPo, blockEntity) > 0) continue;
+                    IItemHandler iItemHandler = maid.level.getCapability(Capabilities.ItemHandler.BLOCK, blockEntity.getBlockPos(), null);
                     Optional.ofNullable(iItemHandler).ifPresent(beInv -> {
                         ItemStack leftStack = ItemHandlerHelper.insertItemStacked(beInv, stack.copy(), false);
                         stack.shrink(stack.getCount() - leftStack.getCount());
@@ -267,7 +267,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
 
             // 原版
             for (IChestType type : ChestManager.getAllChestTypes()) {
-                if (!type.isChest(blockEntity) || type.getOpenCount(maid.level(), ingredientPo, blockEntity) > 0)
+                if (!type.isChest(blockEntity) || type.getOpenCount(maid.level, ingredientPo, blockEntity) > 0)
                     continue;
                 IItemHandler iItemHandler = level.getCapability(Capabilities.ItemHandler.BLOCK, blockEntity.getBlockPos(), null);
                 Optional.ofNullable(iItemHandler).ifPresent(beInv -> {

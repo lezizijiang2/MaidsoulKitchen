@@ -41,7 +41,7 @@ public class MaidDestroyBlockTask extends Behavior<EntityMaid> {
     @Override
     protected void tick(ServerLevel worldIn, EntityMaid maid, long gameTime) {
 //        if (maid.getRandom().nextInt(20) == 0) {
-//            maid.level().levelEvent(1019, this.breakPos, 0);
+//            maid.level.levelEvent(1019, this.breakPos, 0);
             if (!maid.swinging) {
                 maid.swing(maid.getUsedItemHand());
             }
@@ -50,22 +50,22 @@ public class MaidDestroyBlockTask extends Behavior<EntityMaid> {
         ++this.breakTime;
         int i = (int)(this.breakTime / this.breakMaxTime * 10.0F);
         if (i != this.lastBreakProgress) {
-            maid.level().destroyBlockProgress(maid.getId(), this.breakPos, i);
+            maid.level.destroyBlockProgress(maid.getId(), this.breakPos, i);
             this.lastBreakProgress = i;
         }
 
         if (this.breakTime >= this.breakMaxTime) {
             maid.destroyBlock(this.breakPos);
-            maid.level().levelEvent(1021, this.breakPos, 0);
-            maid.level().levelEvent(2001, this.breakPos, Block.getId(maid.level().getBlockState(this.breakPos)));
+            maid.level.levelEvent(1021, this.breakPos, 0);
+            maid.level.levelEvent(2001, this.breakPos, Block.getId(maid.level.getBlockState(this.breakPos)));
         }
     }
 
     @Override
     protected void stop(ServerLevel worldIn, EntityMaid maid, long gameTime) {
-//        maid.level().destroyBlockProgress(maid.getId(), this.breakPos, -1);
-//        maid.level().gameEvent(maid, GameEvent.BLOCK_DESTROY, this.breakPos);
-        maid.level().setBlock(this.breakPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+//        maid.level.destroyBlockProgress(maid.getId(), this.breakPos, -1);
+//        maid.level.gameEvent(maid, GameEvent.BLOCK_DESTROY, this.breakPos);
+        maid.level.setBlock(this.breakPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         maid.getBrain().eraseMemory(MkMemories.DESTROY_POS.get());
         maid.getBrain().eraseMemory(InitEntities.TARGET_POS.get());
         maid.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
@@ -81,7 +81,7 @@ public class MaidDestroyBlockTask extends Behavior<EntityMaid> {
 
     protected boolean canStart(EntityMaid maid) {
         if (this.breakPos != null &&
-                net.neoforged.neoforge.common.CommonHooks.canEntityDestroy(maid.level(), this.breakPos, maid)) {
+                net.neoforged.neoforge.common.CommonHooks.canEntityDestroy(maid.level, this.breakPos, maid)) {
             return true;
         }
         return false;

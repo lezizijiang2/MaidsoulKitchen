@@ -82,7 +82,7 @@ public class TaskCuisineSkillet implements ICookTask<CuisineSkilletBlockEntity, 
 
     @Override
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
-        if (maid.level().isClientSide) {
+        if (maid.level.isClientSide) {
             return Collections.emptyList();
         }
 

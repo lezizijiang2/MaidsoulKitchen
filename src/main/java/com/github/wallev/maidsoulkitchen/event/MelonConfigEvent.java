@@ -2,7 +2,6 @@ package com.github.wallev.maidsoulkitchen.event;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.config.subconfig.TaskConfig;
-import com.github.wallev.maidsoulkitchen.task.cook.v1.common.cbaccessor.IAttachedStemBlockFruitAccessor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.AttachedStemBlock;
@@ -40,8 +39,8 @@ public final class MelonConfigEvent {
     private static void handleMelonStemList(Map<String, String> output) {
         for (Block block : BuiltInRegistries.BLOCK) {
             if (block instanceof AttachedStemBlock attachedStemBlock) {
-                output.put((((IAttachedStemBlockFruitAccessor)attachedStemBlock).maidsoulKitchen$friut().location().toString()), getId(attachedStemBlock));
-                MaidsoulKitchen.LOGGER.debug("add fruit {}, stem {}", ((IAttachedStemBlockFruitAccessor)attachedStemBlock).maidsoulKitchen$friut().location().toString(), getId(attachedStemBlock));
+                output.put(attachedStemBlock.fruit.location().toString(), getId(attachedStemBlock));
+                MaidsoulKitchen.LOGGER.debug("add fruit {}, stem {}", attachedStemBlock.fruit.location().toString(), getId(attachedStemBlock));
             }
         }
     }
