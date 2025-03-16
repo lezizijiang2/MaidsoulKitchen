@@ -3,8 +3,6 @@ package com.github.wallev.maidsoulkitchen.util;
 import com.google.gson.*;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
-import dev.latvian.mods.kubejs.bindings.IngredientWrapper;
-import mezz.jei.neoforge.platform.IngredientHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.util.GsonHelper;

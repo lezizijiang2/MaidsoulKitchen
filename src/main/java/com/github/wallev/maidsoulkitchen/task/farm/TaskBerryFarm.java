@@ -120,6 +120,11 @@ public class TaskBerryFarm implements ICompatFarm<BerryHandler, BerryData>, IFak
             public AbstractContainerMenu createMenu(int index, Inventory playerInventory, Player player) {
                 return new BerryFarmConfigContainer(index, playerInventory, entityId);
             }
+
+            @Override
+            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
+                return false;
+            }
         };
     }
 

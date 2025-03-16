@@ -120,6 +120,11 @@ public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTa
             public AbstractMaidContainer createMenu(int index, Inventory playerInventory, Player player) {
                 return new CompatMelonConfigContainer(index, playerInventory, entityId);
             }
+
+            @Override
+            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
+                return false;
+            }
         };
     }
 

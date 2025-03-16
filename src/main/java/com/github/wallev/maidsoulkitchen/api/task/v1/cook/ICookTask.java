@@ -112,6 +112,11 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Rec
             public AbstractContainerMenu createMenu(int index, Inventory playerInventory, Player player) {
                 return new CookConfigContainer(index, playerInventory, entityId);
             }
+
+            @Override
+            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
+                return false;
+            }
         };
     }
 
