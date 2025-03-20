@@ -172,7 +172,7 @@ dependencies {
     implementation "curse.maven:l2library-620203:6083582"
     compileOnly files("lib/l2damagetracker-3.0.3+8.jar")
     implementation "curse.maven:youkais-homecoming-957437:${ykhc_file_id}"
-//    implementation "curse.maven:bnc-1-20-port-898078:${bnc_file_id}"
+    implementation "curse.maven:brewin-and-chewin-637808:${bnc_file_id}"
 //    implementation "curse.maven:farmers-respite-551453:5543547"
     implementation "curse.maven:cuisine-delight-893541:5768148"
     implementation "curse.maven:barbeques-delight-1007788:5850994"

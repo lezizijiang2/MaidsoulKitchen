@@ -145,9 +145,13 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     }
 
     private List<R> getRecs() {
-        List<R> list = new ArrayList<>(this.rec);
+        List<R> list = this.getFilterRecipes(this.rec);
         shuffle(list);
         return list;
+    }
+
+    protected List<R> getFilterRecipes(List<R> rec) {
+        return new ArrayList<>(rec);
     }
 
     public List<Pair<List<Integer>, List<List<ItemStack>>>> getRecipesIngredients() {

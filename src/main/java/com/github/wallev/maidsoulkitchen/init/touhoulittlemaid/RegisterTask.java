@@ -4,6 +4,7 @@ import com.github.wallev.maidsoulkitchen.config.subconfig.RegisterConfig;
 import com.github.wallev.maidsoulkitchen.foundation.utility.Mods;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.barbequesdelight.TaskBdBasin;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.barbequesdelight.TaskBdGrill;
+import com.github.wallev.maidsoulkitchen.task.cook.v1.brewinandchewin.TaskBncKeg;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.cuisine.TaskCdCuisineSkillet;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.drinkbeer.TaskDbBeerBarrel;
 import com.github.wallev.maidsoulkitchen.task.cook.v1.farmersdelight.TaskFdCookPot;
@@ -59,9 +60,9 @@ public final class RegisterTask {
 //        if (Mods.FRD.isLoaded() && RegisterConfig.FR_KETTLE_TASK_ENABLED.get()) {
 //            manager.add(new TaskFrKettle());
 //        }
-//        if (Mods.BNCD.isLoaded() && RegisterConfig.BNC_KEY_TASK_ENABLED.get()) {
-//            manager.add(new TaskBncKeg());
-//        }
+        if (Mods.BNCD.isLoaded() && RegisterConfig.BNC_KEY_TASK_ENABLED.get()) {
+            manager.add(new TaskBncKeg());
+        }
         if (Mods.BD.isLoaded() && RegisterConfig.BD_BASIN_TASK_ENABLED.get()) {
             manager.add(new TaskBdBasin());
         }
