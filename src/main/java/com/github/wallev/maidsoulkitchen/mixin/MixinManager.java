@@ -49,6 +49,7 @@ public class MixinManager {
         putMixin("mc.AbstractFurnaceAccessor", true);
         putMixin("kitchkarrot.AirCompressorBlockEntityAccessor", true);
         putMixin("drinkbeer.BeerBarrelBlockAccessor", true);
+        putMixin("brewinandchewin.KegBlockEntityAccessor", true);
 
 //        putMixin("tlm.MixinAbstractMaidContainerGui", true);
 //        putMixin("tlm.MixinEntityMaid", true);

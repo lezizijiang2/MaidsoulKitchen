@@ -12,6 +12,7 @@
   ],
   "mixins": [
     "drinkbeer.BeerBarrelBlockAccessor",
+    "brewinandchewin.KegBlockEntityMixin",
     "farmersdelight.CookingPotBlockEntityMixin",
     "forge.FluidTankAccessor",
     "minecraft.AbstractFurnaceMixin",
