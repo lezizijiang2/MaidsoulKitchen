@@ -33,7 +33,6 @@ public class NetworkHandler {
     }
 
     public static void sendToServer(CustomPacketPayload toSend) {
-
             PacketDistributor.sendToServer(toSend);
     }
 

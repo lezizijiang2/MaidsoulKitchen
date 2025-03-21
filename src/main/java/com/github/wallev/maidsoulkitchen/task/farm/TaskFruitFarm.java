@@ -6,16 +6,16 @@ import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarm;
 import com.github.wallev.maidsoulkitchen.api.task.IFakePlayerTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
 import com.github.wallev.maidsoulkitchen.api.event.MaidMkTaskEnableEvent;
-import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.RegisterData;
+import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.FruitFarmConfigContainer;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
-import com.github.wallev.maidsoulkitchen.task.ai.MaidCompatFarmPlantTask;
-import com.github.wallev.maidsoulkitchen.task.ai.MaidCompatFruitMoveTask;
-import com.github.wallev.maidsoulkitchen.task.farm.handler.v1.IFarmHandlerManager;
+import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCompatFarmPlantTask;
+import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCompatFruitMoveTask;
+import com.github.wallev.maidsoulkitchen.task.farm.handler.IFarmHandlerManager;
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.wallev.maidsoulkitchen.task.farm.handler.v1.fruit.FruitHandler;
-import com.github.wallev.maidsoulkitchen.task.farm.handler.v1.fruit.FruitHandlerManager;
+import com.github.wallev.maidsoulkitchen.task.farm.handler.fruit.FruitHandler;
+import com.github.wallev.maidsoulkitchen.task.farm.handler.fruit.FruitHandlerManager;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -118,6 +118,6 @@ public class TaskFruitFarm implements ICompatFarm<FruitHandler, FruitData>, IFak
 
     @Override
     public TaskDataKey<FruitData> getCookDataKey() {
-        return RegisterData.FRUIT_FARM;
+        return DataRegister.FRUIT_FARM;
     }
 }

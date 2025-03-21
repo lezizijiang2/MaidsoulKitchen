@@ -10,17 +10,18 @@ import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.api.event.MaidMkTaskEnableEvent;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CookConfigContainer;
 import com.github.wallev.maidsoulkitchen.inventory.tooltip.AmountTooltip;
-import com.github.wallev.maidsoulkitchen.task.ai.MaidCookMakeTask;
-import com.github.wallev.maidsoulkitchen.task.ai.MaidCookMoveTask;
-import com.github.wallev.maidsoulkitchen.task.cook.handler.MaidRecipesManager;
+import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCookMakeTask;
+import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCookMoveTask;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
+import com.github.wallev.maidsoulkitchen.task.cook.common.cbaccessor.IRecipeExperinceAward;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.player.Inventory;
@@ -38,7 +39,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends IMaidsoulKitchenTask, IDataTask<CookData> {
 
@@ -150,12 +150,23 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Rec
         return recipe.getResultItem(pRegistryAccess);
     }
 
-    default Optional<TooltipComponent> getRecClientAmountTooltip(Recipe<?> recipe, boolean modeRandom, boolean overSize) {
+    default Optional<TooltipComponent> getRecClientAmountTooltip(Recipe<?> recipe, boolean modeRandom, boolean overSize, CookData cookData) {
         List<Ingredient> ingres = this.getIngredients(recipe);
-        return ingres.isEmpty() ? Optional.empty() : Optional.of(new AmountTooltip(ingres, modeRandom, overSize));
+        return ingres.isEmpty() ? Optional.empty() : Optional.of(new AmountTooltip(getRecipeId(recipe), ingres, modeRandom, overSize, cookData));
+    }
+
+    default String getRecipeId(Recipe<?> recipe) {
+        Optional<RecipeHolder<R>> recipeHolder = this.getRecipeHolders(Minecraft.getInstance().level).stream().filter(r -> r.value().equals(recipe)).findFirst();
+        return recipeHolder.map(rRecipeHolder -> rRecipeHolder.id().toString()).orElse("");
     }
 
     default List<Component> getWarnComponent() {
         return Collections.emptyList();
+    }
+
+    static void awardExperience(BlockEntity blockEntity, EntityMaid maid) {
+        if (blockEntity instanceof IRecipeExperinceAward iRecipeExperinceAward) {
+            iRecipeExperinceAward.tlmk$awardExperience(maid);
+        }
     }
 }

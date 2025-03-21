@@ -12,15 +12,14 @@ import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagAbstractContainer;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagConfigContainer;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagContainer;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.ListCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -53,13 +52,18 @@ import static net.minecraft.core.registries.Registries.DATA_COMPONENT_TYPE;
 
 public class ItemCulinaryHub extends Item implements MenuProvider {
     private static final int COOK_BAG_SIZE = getCookBagSize();
-    private static final String CONTAINER_TAG = "CulinaryHubContainer";
-    private static final String BIND_MODE_TAG = "CulinaryHubBindMode";
-    private static final String BIND_POS_TAG = "CulinaryHubBindPos";
+    private static final String CONTAINER_TAG = "container";
+    private static final String BIND_MODE_TAG = "binding_mode";
+    private static final String BIND_POS_TAG = "binding_pos";
     public static final String STORAGE_DATA_TAG_NAME = "storage_data";
     public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(DATA_COMPONENT_TYPE, MaidsoulKitchen.MOD_ID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> STORAGE_DATA_TAG = DATA_COMPONENTS
             .register(STORAGE_DATA_TAG_NAME, () -> DataComponentType.<CompoundTag>builder().persistent(CompoundTag.CODEC).networkSynchronized(ByteBufCodecs.COMPOUND_TAG).build());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<BlockPos>>> BINDING_POSES = DATA_COMPONENTS
+            .register(BIND_POS_TAG, () -> DataComponentType.<List<BlockPos>>builder().persistent(Codec.list(BlockPos.CODEC))
+                    .networkSynchronized(ByteBufCodecs.fromCodec(Codec.list(BlockPos.CODEC)))
+                    .build());
+
     private static final int BIND_SIZE = 3;
 
     public ItemCulinaryHub() {
@@ -83,15 +87,17 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
         if (stack.is(MkItems.CULINARY_HUB.get()) && !mode.isEmpty()) {
             CompoundTag tag = stack.getOrDefault(STORAGE_DATA_TAG, new CompoundTag());
             CompoundTag compound = tag.getCompound(BIND_POS_TAG);
-            ListTag list = compound.getList(mode, Tag.TAG_COMPOUND);
+            ListTag list = compound.getList(mode, Tag.TAG_INT_ARRAY);
             AtomicBoolean remove = new AtomicBoolean(false);
-            list.removeIf(tag1 -> {
-                if (NbtUtils.readBlockPos((CompoundTag) tag1, "ChunkPos").equals(blockPos)) {
+
+            for (Tag tag1 : list) {
+                BlockPos pos = readBlockPos((IntArrayTag) tag1);
+                if (pos.equals(blockPos)) {
                     remove.set(true);
-                    return true;
+                    list.remove(tag1);
+                    break;
                 }
-                return false;
-            });
+            }
 
             if (!remove.get()) {
                 list.add(NbtUtils.writeBlockPos(blockPos));
@@ -107,11 +113,16 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
             CompoundTag tag = stack.get(STORAGE_DATA_TAG);
             if (tag != null && tag.contains(BIND_POS_TAG, Tag.TAG_COMPOUND)) {
                 CompoundTag tag1 = tag.getCompound(BIND_POS_TAG);
-                ListTag list = tag1.getList(mode, Tag.TAG_COMPOUND);
-                return list.stream().map(tag2 -> NbtUtils.readBlockPos((CompoundTag) tag2, "ChunkPos").get()).toList();
+                ListTag list = tag1.getList(mode, Tag.TAG_INT_ARRAY);
+                return list.stream().map(tag2 -> readBlockPos((IntArrayTag) tag2)).toList();
             }
         }
         return Collections.emptyList();
+    }
+
+    public static BlockPos readBlockPos(IntArrayTag arrayTag) {
+        int[] asIntArray = arrayTag.getAsIntArray();
+        return new BlockPos(asIntArray[0], asIntArray[1], asIntArray[2]);
     }
 
     public static Map<BagType, List<BlockPos>> getBindPoses(ItemStack stack) {
@@ -122,8 +133,8 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
 
                 HashMap<BagType, List<BlockPos>> typeListHashMap = new HashMap<>();
                 for (BagType value : BagType.values()) {
-                    ListTag list = tag1.getList(value.name, Tag.TAG_COMPOUND);
-                    List<BlockPos> poses = list.stream().map(tag2 -> NbtUtils.readBlockPos((CompoundTag) tag2, "ChunkPos").get()).toList();
+                    ListTag list = tag1.getList(value.name, Tag.TAG_INT_ARRAY);
+                    List<BlockPos> poses = list.stream().map(tag2 -> readBlockPos((IntArrayTag)tag2)).toList();
                     typeListHashMap.put(value, poses);
                 }
 
@@ -239,6 +250,11 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
             public CookBagAbstractContainer createMenu(int index, Inventory playerInventory, Player player) {
                 return new CookBagContainer(index, playerInventory, player.getMainHandItem());
             }
+
+            @Override
+            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
+                return false;
+            }
         };
     }
 
@@ -252,6 +268,11 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
             @Override
             public CookBagAbstractContainer createMenu(int index, Inventory playerInventory, Player player) {
                 return new CookBagConfigContainer(index, playerInventory, player.getMainHandItem());
+            }
+
+            @Override
+            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
+                return false;
             }
         };
     }
@@ -326,6 +347,13 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
             tooltip.add(Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.usage.1").withStyle(ChatFormatting.GRAY));
             tooltip.add(Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.usage.2").withStyle(ChatFormatting.GRAY));
             tooltip.add(Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.usage.3").withStyle(ChatFormatting.GRAY));
+        }
+
+
+        {
+            tooltip.add(Component.empty());
+            tooltip.add(Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.function").withStyle(ChatFormatting.GREEN));
+            tooltip.add(Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.function.1").withStyle(ChatFormatting.GRAY));
         }
 
         Map<BagType, List<BlockPos>> bindPoses = ItemCulinaryHub.getBindPoses(stack);

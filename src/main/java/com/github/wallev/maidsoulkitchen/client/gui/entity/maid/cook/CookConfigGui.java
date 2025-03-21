@@ -341,7 +341,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
 
     private void setAndSyncMode(String mode) {
         cookData.setMode(mode);
-        NetworkHandler.sendToNearby(maid, new SetCookDataPackage(maid.getId(), cookTask.getCookDataKey().getKey(), mode));
+        NetworkHandler.sendToServer(new SetCookDataPackage(maid.getId(), cookTask.getCookDataKey().getKey(), mode));
     }
 
     private void setAndSyncMode(boolean isSelected) {
@@ -421,7 +421,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
 
     private void arAndSyncRec(String rec) {
         cookData.addOrRemoveRec(rec, this.cookData.mode());
-        NetworkHandler.sendToNearby(maid, new ActionCookDataRecPackage(maid.getId(), cookTask.getCookDataKey().getKey(), rec, this.cookData.mode()));
+        NetworkHandler.sendToServer(new ActionCookDataRecPackage(maid.getId(), cookTask.getCookDataKey().getKey(), rec, this.cookData.mode()));
     }
 
     // 161, 25 189, 74

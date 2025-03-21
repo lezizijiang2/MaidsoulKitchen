@@ -3,6 +3,7 @@ package com.github.wallev.maidsoulkitchen.entity.passive;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.util.FakePlayerUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
@@ -92,5 +93,10 @@ public interface IAddonMaid {
     WeakReference<FakePlayer> tlmk$getFakePlayer();
 
     void tlmk$initFakePlayer();
+
+    static void pickupAction(EntityMaid maid) {
+        maid.swing(InteractionHand.MAIN_HAND);
+        maid.playSound(SoundEvents.ITEM_PICKUP, 1.0F, maid.getRandom().nextFloat() * 0.1F + 1.0F);
+    }
 
 }

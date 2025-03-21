@@ -18,6 +18,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +36,7 @@ public class RecButton extends TouhouStateSwitchButton implements ITooltipButton
     @SuppressWarnings("all")
     public RecButton(EntityMaid maid, ICookTask<?, ?> cookTask, CookData cookData, Recipe<?> recipe, int pX, int pY) {
 
-        super(pX, pY, 20, 20, cookData.getRecs().contains(maid.level.getRecipeManager().getRecipes().stream().filter(r -> r.value().equals(recipe)).map(r -> r.id()).findFirst().orElse(null)));
+        super(pX, pY, 20, 20, cookData.getRecs().contains(cookTask.getRecipeId(recipe)));
         this.initTextureValues(179, 25, 22, 0, TEXTURE);
         this.maid = maid;
         this.cookTask = cookTask;
@@ -89,7 +92,7 @@ public class RecButton extends TouhouStateSwitchButton implements ITooltipButton
 //        boolean overSize = cookData.getRecs().size() >= TaskConfig.COOK_SELECTED_RECIPES.get();
 
 //        Optional<TooltipComponent> recClientAmountTooltip = cookTask.getRecClientAmountTooltip(recipe, modeRandom, overSize);
-        Optional<TooltipComponent> recClientAmountTooltip = cookTask.getRecClientAmountTooltip(recipe, modeRandom, false);
+        Optional<TooltipComponent> recClientAmountTooltip = cookTask.getRecClientAmountTooltip(recipe, modeRandom, false, cookData);
 
         pGuiGraphics.renderTooltip(mc.font, stackTooltip, recClientAmountTooltip, stack, pMouseX, pMouseY);
     }

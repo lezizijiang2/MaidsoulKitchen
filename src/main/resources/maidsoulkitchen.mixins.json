@@ -6,18 +6,20 @@
   "refmap": "maidsoulkitchen.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "minecraft.AbstractContainerScreenMixin",
     "touhoulittlemaid.AbstractMaidContainerGuiMixin"
   ],
   "server": [
   ],
   "mixins": [
+    "brewinandchewin.KegBlockEntityMixin",
     "drinkbeer.BeerBarrelBlockAccessor",
     "farmersdelight.CookingPotBlockEntityMixin",
     "forge.FluidTankAccessor",
     "minecraft.AbstractFurnaceMixin",
+    "touhoulittlemaid.AbstractMaidContainerGuiMixin",
+    "touhoulittlemaid.EntityMaidMixin",
     "touhoulittlemaid.MaidRunOneMixin",
-    "touhoulittlemaid.AbstractMaidContainerGuiMixin",
-    "touhoulittlemaid.AbstractMaidContainerGuiMixin",
     "youkaishomecoming.BasePotBlockEntityMixin",
     "youkaishomecoming.KettleBlockAccessor"
   ]

@@ -1,6 +1,7 @@
 package com.github.wallev.maidsoulkitchen.client.tooltip;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.inventory.tooltip.AmountTooltip;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
@@ -17,52 +18,55 @@ public class NormalAmountTooltip implements ClientAmountTooltip {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
     private final MutableComponent titleTip = Component.translatable("tooltips.maidsoulkitchen.amount.title");
     private final MutableComponent randomTip = Component.translatable("gui.maidsoulkitchen.btn.cook_guide.warn.not_select").withStyle(ChatFormatting.YELLOW);
-//    private final MutableComponent overSizeTip = Component.translatable("gui.maidsoulkitchen.btn.cook_guide.warn.over_size", TaskConfig.COOK_SELECTED_RECIPES.get()).withStyle(ChatFormatting.YELLOW);
+    //    private final MutableComponent overSizeTip = VComponent.translatable("gui.maidsoulkitchen.btn.cook_guide.warn.over_size", TaskConfig.COOK_SELECTED_RECIPES.get()).withStyle(ChatFormatting.YELLOW);
+    private final String recipeId;
     private final List<Ingredient> ingres;
-    private final boolean isRandom;
+    private final boolean isBlacklist;
     private final boolean isOverSize;
+    private final CookData cookData;
 
     public NormalAmountTooltip(AmountTooltip containerTooltip) {
+        this.recipeId = containerTooltip.recipeId();
         this.ingres = containerTooltip.ingredients();
-        this.isRandom = containerTooltip.isRandom();
+        this.isBlacklist = containerTooltip.isBlacklist();
         this.isOverSize = containerTooltip.isOverSize();
+        this.cookData = containerTooltip.cookData();
     }
 
     @Override
     public int getHeight() {
-        return 30 + 10;
-//        return 30;
+        return 30 + 10 + 10;
     }
 
     @Override
     public int getWidth(Font font) {
         int tipMax = font.width(titleTip);
-//        if (isRandom) {
         {
-            MutableComponent tip = Component.translatable("gui.maidsoulkitchen.btn.cook_guide.warn.now_type")
-                    .append(Component.translatable(String.format("gui.maidsoulkitchen.btn.cook_guide.type.%s", this.isRandom ? "blacklist" : "whitelist")));
-            tipMax = Math.max(tipMax, font.width(tip));
+            MutableComponent type = Component.translatable("gui.maidsoulkitchen.btn.cook_guide.warn.now_type")
+                    .append(Component.translatable(String.format("gui.maidsoulkitchen.btn.cook_guide.type.%s", this.isBlacklist ? "blacklist" : "whitelist")));
+            tipMax = Math.max(tipMax, font.width(type));
+            MutableComponent canCook = Component.translatable("gui.maidsoulkitchen.btn.cook_guide.can_cook")
+                    .append(Component.translatable(String.format("gui.maidsoulkitchen.btn.cook_guide.can_cook.%s", this.canCook() ? "true" : "false")));
+            tipMax = Math.max(tipMax, font.width(canCook));
         }
-//        if (isOverSize) {
-//            tipMax = Math.max(tipMax, font.width(overSizeTip));
-//        }
         return Math.max(tipMax, ingres.size() * 20);
     }
 
     @SuppressWarnings("all")
     @Override
     public void renderImage(Font font, int pX, int pY, GuiGraphics guiGraphics) {
-//        if (isRandom) {
         {
             MutableComponent tip = Component.translatable("gui.maidsoulkitchen.btn.cook_guide.warn.now_type")
-                    .append(Component.translatable(String.format("gui.maidsoulkitchen.btn.cook_guide.type.%s", this.isRandom ? "blacklist" : "whitelist")));
+                    .append(Component.translatable(String.format("gui.maidsoulkitchen.btn.cook_guide.type.%s", this.isBlacklist ? "blacklist" : "whitelist")));
             guiGraphics.drawString(font, tip, pX, pY, ChatFormatting.YELLOW.getColor());
             pY += 10;
+            MutableComponent canCook = Component.translatable("gui.maidsoulkitchen.btn.cook_guide.can_cook")
+                    .append(Component.translatable(String.format("gui.maidsoulkitchen.btn.cook_guide.can_cook.%s", this.canCook() ? "true" : "false")))
+                    .withStyle(this.canCook() ? ChatFormatting.GREEN : ChatFormatting.RED);
+            guiGraphics.drawString(font, canCook, pX, pY, ChatFormatting.YELLOW.getColor());
+            pY += 10;
         }
-//        if (isOverSize) {
-//            guiGraphics.drawString(font, overSizeTip, pX, pY, ChatFormatting.YELLOW.getColor());
-//            pY += 10;
-//        }
+
         guiGraphics.drawString(font, titleTip, pX, pY, ChatFormatting.GRAY.getColor());
         int i = 0;
         pY += 10;
@@ -83,6 +87,14 @@ public class NormalAmountTooltip implements ClientAmountTooltip {
             if (stackItems.length > 1) {
                 guiGraphics.blit(TEXTURE, xOffset, pY + 13, 0, 253, 3, 3);
             }
+        }
+    }
+
+    private boolean canCook() {
+        if (isBlacklist) {
+            return !cookData.blacklistRecs().contains(recipeId);
+        } else {
+            return cookData.whitelistRecs().contains(recipeId);
         }
     }
 }

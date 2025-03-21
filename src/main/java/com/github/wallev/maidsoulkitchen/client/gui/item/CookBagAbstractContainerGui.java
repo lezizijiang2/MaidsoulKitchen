@@ -50,7 +50,8 @@ public abstract class CookBagAbstractContainerGui<T extends CookBagAbstractConta
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+//        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+        this.renderBg(guiGraphics, partialTick, mouseX, mouseY);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }

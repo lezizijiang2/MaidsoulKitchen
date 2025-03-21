@@ -1,11 +1,8 @@
 package com.github.wallev.maidsoulkitchen;
 
-import com.github.tartaricacid.touhoulittlemaid.TouhouLittleMaid;
-import com.github.tartaricacid.touhoulittlemaid.client.entity.GeckoMaidEntity;
-import com.github.tartaricacid.touhoulittlemaid.compat.cloth.MenuIntegration;
-import com.github.tartaricacid.touhoulittlemaid.init.InitDataAttachment;
 import com.github.tartaricacid.touhoulittlemaid.init.registry.CompatRegistry;
 import com.github.wallev.maidsoulkitchen.compat.cloth.ClothCompat;
+import com.github.wallev.maidsoulkitchen.compat.cloth.MenuIntegration;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
