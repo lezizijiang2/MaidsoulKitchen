@@ -17,7 +17,6 @@
     "farmersdelight.CookingPotBlockEntityMixin",
     "forge.FluidTankAccessor",
     "minecraft.AbstractFurnaceMixin",
-    "touhoulittlemaid.AbstractMaidContainerGuiMixin",
     "touhoulittlemaid.EntityMaidMixin",
     "touhoulittlemaid.MaidRunOneMixin",
     "youkaishomecoming.BasePotBlockEntityMixin",
