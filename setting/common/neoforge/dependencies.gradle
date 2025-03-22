@@ -113,7 +113,7 @@ dependencies {
     if (!jade_version.isEmpty())
         implementation "maven.modrinth:jade:${jade_version}-${mod_loader},${minecraft_version}"
     if (!the_one_probe_version.isEmpty())
-        implementation "maven.modrinth:the-one-probe:${the_one_probe_version}-${mod_loader},${minecraft_version}"
+        compileOnly "maven.modrinth:the-one-probe:${the_one_probe_version}-${mod_loader},${minecraft_version}"
     if (!cloth_config_version.isEmpty())
         implementation "maven.modrinth:cloth-config:${cloth_config_version}-${mod_loader},${minecraft_version}"
 //        implementation "me.shedaniel.cloth:cloth-config-${mod_loader}:${cloth_config_forge}"
