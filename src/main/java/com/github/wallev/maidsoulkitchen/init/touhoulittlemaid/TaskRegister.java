@@ -60,6 +60,7 @@ public final class TaskRegister {
 //            manager.add(new TaskFrKettle());
 //        }
         if (Mods.BNCD.isLoaded() && RegisterConfig.BNC_KEY_TASK_ENABLED.get()) {
+//            manager.add(new TaskBncKeg());
         }
         if (Mods.BD.isLoaded() && RegisterConfig.BD_BASIN_TASK_ENABLED.get()) {
             manager.add(new TaskBdBasin());

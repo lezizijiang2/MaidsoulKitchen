@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
+import umpaz.brewinandchewin.common.container.AbstractedItemHandler;
 import umpaz.brewinandchewin.common.crafting.KegFermentingRecipe;
 import umpaz.brewinandchewin.common.utility.KegRecipeWrapper;
 
@@ -25,6 +26,10 @@ public abstract class KegBlockEntityMixin implements ICbeAccessor, IRecipeExperi
     @Shadow
     @Final
     private KegRecipeWrapper recipeWrapper;
+
+
+    @Shadow
+    public abstract AbstractedItemHandler getInventory();
 
     @Shadow
     protected abstract boolean canFerment(KegFermentingRecipe recipe, KegBlockEntity keg);
