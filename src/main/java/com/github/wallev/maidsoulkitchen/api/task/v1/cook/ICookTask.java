@@ -5,15 +5,15 @@ import com.github.tartaricacid.touhoulittlemaid.init.InitSounds;
 import com.github.tartaricacid.touhoulittlemaid.util.SoundUtil;
 import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
 import com.github.wallev.maidsoulkitchen.api.TaskBookEntryType;
+import com.github.wallev.maidsoulkitchen.api.event.MaidMkTaskEnableEvent;
 import com.github.wallev.maidsoulkitchen.api.task.IDataTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
-import com.github.wallev.maidsoulkitchen.api.event.MaidMkTaskEnableEvent;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CookConfigContainer;
 import com.github.wallev.maidsoulkitchen.inventory.tooltip.AmountTooltip;
 import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCookMakeTask;
 import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCookMoveTask;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cbaccessor.IRecipeExperinceAward;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
@@ -32,6 +32,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.Nullable;
 
@@ -150,11 +152,13 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Rec
         return recipe.getResultItem(pRegistryAccess);
     }
 
+    @OnlyIn(Dist.CLIENT)
     default Optional<TooltipComponent> getRecClientAmountTooltip(Recipe<?> recipe, boolean modeRandom, boolean overSize, CookData cookData) {
         List<Ingredient> ingres = this.getIngredients(recipe);
         return ingres.isEmpty() ? Optional.empty() : Optional.of(new AmountTooltip(getRecipeId(recipe), ingres, modeRandom, overSize, cookData));
     }
 
+    @OnlyIn(Dist.CLIENT)
     default String getRecipeId(Recipe<?> recipe) {
         Optional<RecipeHolder<R>> recipeHolder = this.getRecipeHolders(Minecraft.getInstance().level).stream().filter(r -> r.value().equals(recipe)).findFirst();
         return recipeHolder.map(rRecipeHolder -> rRecipeHolder.id().toString()).orElse("");
