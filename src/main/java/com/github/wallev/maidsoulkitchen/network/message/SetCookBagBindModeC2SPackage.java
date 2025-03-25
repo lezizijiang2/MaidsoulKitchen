@@ -1,8 +1,8 @@
 package com.github.wallev.maidsoulkitchen.network.message;
 
 import com.github.wallev.maidsoulkitchen.item.ItemCulinaryHub;
+import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -10,16 +10,15 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
-
 import static com.github.tartaricacid.touhoulittlemaid.util.ResourceLocationUtil.getResourceLocation;
 
-public record ToggleCookBagGuiSideTabPackage(int tabId) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ToggleCookBagGuiSideTabPackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("toggle_cook_bag_gui_side_tab"));
-    public static final StreamCodec<ByteBuf, ToggleCookBagGuiSideTabPackage> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT,
-            ToggleCookBagGuiSideTabPackage::tabId,
-            ToggleCookBagGuiSideTabPackage::new
+public record SetCookBagBindModeC2SPackage(String mode) implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<SetCookBagBindModeC2SPackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("set_cook_bag_bind_poses_c2s"));
+    public static final StreamCodec<ByteBuf, SetCookBagBindModeC2SPackage> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.STRING_UTF8,
+            SetCookBagBindModeC2SPackage::mode,
+            SetCookBagBindModeC2SPackage::new
     );
 
     @Override
@@ -27,11 +26,12 @@ public record ToggleCookBagGuiSideTabPackage(int tabId) implements CustomPacketP
         return TYPE;
     }
 
-    public static void handle(ToggleCookBagGuiSideTabPackage message, IPayloadContext context) {
+    public static void handle(SetCookBagBindModeC2SPackage message, IPayloadContext context) {
         if (context.flow().isServerbound()) {
             context.enqueueWork(() -> {
                 ServerPlayer sender = (ServerPlayer) context.player();
-                ItemCulinaryHub.openCookBagGuiFromSideTab(sender, message.tabId);
+                ItemCulinaryHub.setBindModeTag(sender.getMainHandItem(), message.mode);
+                NetworkHandler.sendToClient(sender, new SetCookBagBindModeS2CPackage(message.mode));
             });
         }
     }

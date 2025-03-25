@@ -5,7 +5,6 @@ import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.data.TaskDataRegister;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -15,21 +14,19 @@ import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
-
 import static com.github.tartaricacid.touhoulittlemaid.util.ResourceLocationUtil.getResourceLocation;
 
-public record SetFruitFarmSearchYOffsetPackage(int entityId, ResourceLocation dataKey, int searchYOffset) implements CustomPacketPayload {
+public record SetFruitFarmSearchYOffsetC2SPackage(int entityId, ResourceLocation dataKey, int searchYOffset) implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<SetFruitFarmSearchYOffsetPackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("set_fruit_farm_search_y_offset"));
-    public static final StreamCodec<ByteBuf, SetFruitFarmSearchYOffsetPackage> STREAM_CODEC = StreamCodec.composite(
+    public static final CustomPacketPayload.Type<SetFruitFarmSearchYOffsetC2SPackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("set_fruit_farm_search_y_offset_c2s"));
+    public static final StreamCodec<ByteBuf, SetFruitFarmSearchYOffsetC2SPackage> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT,
-            SetFruitFarmSearchYOffsetPackage::entityId,
+            SetFruitFarmSearchYOffsetC2SPackage::entityId,
             ResourceLocation.STREAM_CODEC,
-            SetFruitFarmSearchYOffsetPackage::dataKey,
+            SetFruitFarmSearchYOffsetC2SPackage::dataKey,
             ByteBufCodecs.VAR_INT,
-            SetFruitFarmSearchYOffsetPackage::searchYOffset,
-            SetFruitFarmSearchYOffsetPackage::new
+            SetFruitFarmSearchYOffsetC2SPackage::searchYOffset,
+            SetFruitFarmSearchYOffsetC2SPackage::new
     );
 
     @Override
@@ -37,7 +34,7 @@ public record SetFruitFarmSearchYOffsetPackage(int entityId, ResourceLocation da
         return TYPE;
     }
 
-    public static void handle(SetFruitFarmSearchYOffsetPackage message, IPayloadContext context) {
+    public static void handle(SetFruitFarmSearchYOffsetC2SPackage message, IPayloadContext context) {
         if (context.flow().isServerbound()) {
             context.enqueueWork(() -> {
                 ServerPlayer sender = (ServerPlayer) context.player();

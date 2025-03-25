@@ -12,7 +12,7 @@ import com.github.wallev.maidsoulkitchen.client.gui.widget.button.Zone;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.BerryData;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.BerryFarmConfigContainer;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
-import com.github.wallev.maidsoulkitchen.network.message.ActionBerryFarmRulePackage;
+import com.github.wallev.maidsoulkitchen.network.message.ActionBerryFarmRuleC2SPackage;
 import com.github.wallev.maidsoulkitchen.task.farm.TaskBerryFarm;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.IFarmHandlerManager;
 import net.minecraft.ChatFormatting;
@@ -110,7 +110,7 @@ public class BerryFarmConfigGui extends MaidTaskConfigGui<BerryFarmConfigContain
                 public void onClick(double pMouseX, double pMouseY) {
                     this.isSelected = !this.isSelected;
                     farmTaskInfo.addOrRemoveRule(this.handlerInfo.getUid().toString());
-                    NetworkHandler.sendToServer(new ActionBerryFarmRulePackage(maid.getId(), ((TaskBerryFarm) task).getCookDataKey().getKey(), this.handlerInfo.getUid().toString()));
+                    NetworkHandler.sendToServer(new ActionBerryFarmRuleC2SPackage(maid.getId(), ((TaskBerryFarm) task).getCookDataKey().getKey(), this.handlerInfo.getUid().toString()));
                 }
             };
             this.addRenderableWidget(cfRuleButton);

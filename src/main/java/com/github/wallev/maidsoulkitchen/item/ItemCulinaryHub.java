@@ -64,7 +64,7 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
                     .networkSynchronized(ByteBufCodecs.fromCodec(Codec.list(BlockPos.CODEC)))
                     .build());
 
-    private static final int BIND_SIZE = 3;
+    public static final int BIND_SIZE = 3;
 
     public ItemCulinaryHub() {
         super(new Item.Properties().stacksTo(1));
@@ -298,7 +298,7 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
                 ItemStack stack = player.getMainHandItem();
                 String bindMode = getBindMode(stack);
                 List<BlockPos> bindModePoses = getBindModePoses(stack, bindMode);
-                if (bindModePoses.size() >= 3 && !bindModePoses.contains(pos)) {
+                if (bindModePoses.size() >= BIND_SIZE && !bindModePoses.contains(pos)) {
                     if (context.getLevel().isClientSide) {
                         player.sendSystemMessage(Component.translatable("message.maidsoulkitchen.culinary_hub.bine_type_max"));
                     }
@@ -354,6 +354,7 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
             tooltip.add(Component.empty());
             tooltip.add(Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.function").withStyle(ChatFormatting.GREEN));
             tooltip.add(Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.function.1").withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.function.2").withStyle(ChatFormatting.GRAY));
         }
 
         Map<BagType, List<BlockPos>> bindPoses = ItemCulinaryHub.getBindPoses(stack);

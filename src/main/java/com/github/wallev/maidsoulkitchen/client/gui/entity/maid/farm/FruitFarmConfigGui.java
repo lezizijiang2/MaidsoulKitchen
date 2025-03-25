@@ -12,8 +12,8 @@ import com.github.wallev.maidsoulkitchen.client.gui.widget.button.Zone;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.FruitFarmConfigContainer;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
-import com.github.wallev.maidsoulkitchen.network.message.ActionFruitFarmRulePackage;
-import com.github.wallev.maidsoulkitchen.network.message.SetFruitFarmSearchYOffsetPackage;
+import com.github.wallev.maidsoulkitchen.network.message.ActionFruitFarmRuleC2SPackage;
+import com.github.wallev.maidsoulkitchen.network.message.SetFruitFarmSearchYOffsetC2SPackage;
 import com.github.wallev.maidsoulkitchen.task.farm.TaskFruitFarm;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.IFarmHandlerManager;
 import net.minecraft.ChatFormatting;
@@ -88,14 +88,14 @@ public class FruitFarmConfigGui extends MaidTaskConfigGui<FruitFarmConfigContain
                 return;
             }
             this.farmTaskInfo.increaseYOffset();
-            NetworkHandler.sendToServer(new SetFruitFarmSearchYOffsetPackage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.farmTaskInfo.searchYOffset()));
+            NetworkHandler.sendToServer(new SetFruitFarmSearchYOffsetC2SPackage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.farmTaskInfo.searchYOffset()));
         });
         Button downButton = new TouhouImageButton(startX + 17, startY, 17, 18, 80 + 17, 238, 0, TEXTURE, b -> {
             if (this.farmTaskInfo.searchYOffset() <= -5) {
                 return;
             }
             this.farmTaskInfo.decreaseYOffset();
-            NetworkHandler.sendToServer(new SetFruitFarmSearchYOffsetPackage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.farmTaskInfo.searchYOffset()));
+            NetworkHandler.sendToServer(new SetFruitFarmSearchYOffsetC2SPackage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.farmTaskInfo.searchYOffset()));
         });
         this.addRenderableWidget(addButton);
         this.addRenderableWidget(downButton);
@@ -168,7 +168,7 @@ public class FruitFarmConfigGui extends MaidTaskConfigGui<FruitFarmConfigContain
                 public void onClick(double pMouseX, double pMouseY) {
                     this.isSelected = !this.isSelected;
                     farmTaskInfo.addOrRemoveRule(this.handlerInfo.getUid().toString());
-                    NetworkHandler.sendToServer(new ActionFruitFarmRulePackage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.handlerInfo.getUid().toString()));
+                    NetworkHandler.sendToServer(new ActionFruitFarmRuleC2SPackage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.handlerInfo.getUid().toString()));
                 }
             };
             this.addRenderableWidget(cfRuleButton);

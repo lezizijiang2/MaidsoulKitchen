@@ -1,22 +1,18 @@
 package com.github.wallev.maidsoulkitchen.client.gui.item;
 
 import com.github.tartaricacid.touhoulittlemaid.client.gui.widget.button.TouhouImageButton;
-import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.tartaricacid.touhoulittlemaid.inventory.container.AbstractMaidContainer;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.button.CookBagModeButton;
-import com.github.wallev.maidsoulkitchen.client.gui.widget.button.TImageButton;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagConfigContainer;
 import com.github.wallev.maidsoulkitchen.item.ItemCulinaryHub;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
-import com.github.wallev.maidsoulkitchen.network.message.ClearCookBagBindPosesPackage;
-import com.github.wallev.maidsoulkitchen.network.message.SetCookBagBindModePackage;
+import com.github.wallev.maidsoulkitchen.network.message.ClearCookBagBindPosesC2SPackage;
+import com.github.wallev.maidsoulkitchen.network.message.SetCookBagBindModeC2SPackage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.CommonComponents;
@@ -28,10 +24,10 @@ import net.minecraft.world.item.Items;
 import org.anti_ad.mc.ipn.api.IPNIgnore;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+
+import static com.github.wallev.maidsoulkitchen.item.ItemCulinaryHub.BIND_SIZE;
 
 @IPNIgnore
 public class CookBagConfigContainerGui extends CookBagAbstractContainerGui<CookBagConfigContainer> {
@@ -62,13 +58,18 @@ public class CookBagConfigContainerGui extends CookBagAbstractContainerGui<CookB
                 title.append(Component.translatable("gui.maidsoulkitchen.development")).withStyle(ChatFormatting.YELLOW);
             }
 
+            Map<BagType, java.util.List<BlockPos>> bindPoses = ItemCulinaryHub.getBindPoses(this.menu.cookBag);
+            int bindSize = bindPoses.getOrDefault(value, Collections.emptyList()).size();
+
             CookBagModeButton cookBagModeButton = new CookBagModeButton(x, y += 22, 100, 20, title, b -> {
-            }, Tooltip.create(Component.translatable("gui.maidsoulkitchen.culinary_hub.config.bind_mode." + value.translateKey + ".tooltip"))) {
+            }, Tooltip.create(Component.empty().append(title.append(Component.literal(String.format("[%s/%s]", bindSize, BIND_SIZE)).withStyle(bindSize < BIND_SIZE ? ChatFormatting.GREEN : ChatFormatting.GRAY)))
+                    .append(CommonComponents.NEW_LINE)
+                    .append(Component.translatable("gui.maidsoulkitchen.culinary_hub.config.bind_mode." + value.translateKey + ".tooltip")))) {
                 @Override
                 public void onClick(double pMouseX, double pMouseY) {
                     super.onClick(pMouseX, pMouseY);
                     bindMode = value.name;
-                    NetworkHandler.sendToServer(new SetCookBagBindModePackage(bindMode));
+                    NetworkHandler.sendToServer(new SetCookBagBindModeC2SPackage(bindMode));
                 }
 
                 @Override
@@ -88,7 +89,7 @@ public class CookBagConfigContainerGui extends CookBagAbstractContainerGui<CookB
         }
 
         Button clearButton = Button.builder(Component.translatable("gui.maidsoulkitchen.culinary_hub.config.clear_bind_poses").withStyle(ChatFormatting.YELLOW), b -> {
-                    NetworkHandler.sendToServer(new ClearCookBagBindPosesPackage(0));
+                    NetworkHandler.sendToServer(new ClearCookBagBindPosesC2SPackage(0));
                     onClose();
                 })
                 .bounds(x, y += 22, 100, 20)

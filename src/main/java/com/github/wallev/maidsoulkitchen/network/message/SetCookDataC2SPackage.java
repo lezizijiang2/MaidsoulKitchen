@@ -14,21 +14,19 @@ import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-
 import static com.github.tartaricacid.touhoulittlemaid.util.ResourceLocationUtil.getResourceLocation;
 
-public record ActionCookDataRecPackage(int entityId, ResourceLocation dataKey, String rec, String mode) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ActionCookDataRecPackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("cook_data_rec"));
-    public static final StreamCodec<ByteBuf, ActionCookDataRecPackage> STREAM_CODEC = StreamCodec.composite(
+public record SetCookDataC2SPackage(int entityId, ResourceLocation dataKey, String mode) implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<SetCookDataC2SPackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("set_cook_data_c2s"));
+    public static final StreamCodec<ByteBuf, SetCookDataC2SPackage> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT,
-            ActionCookDataRecPackage::entityId,
+            SetCookDataC2SPackage::entityId,
             ResourceLocation.STREAM_CODEC,
-            ActionCookDataRecPackage::dataKey,
+            SetCookDataC2SPackage::dataKey,
             ByteBufCodecs.STRING_UTF8,
-            ActionCookDataRecPackage::rec,
-            ByteBufCodecs.STRING_UTF8,
-            ActionCookDataRecPackage::mode,
-            ActionCookDataRecPackage::new
+            SetCookDataC2SPackage::mode,
+            SetCookDataC2SPackage::new
     );
 
     @Override
@@ -36,15 +34,18 @@ public record ActionCookDataRecPackage(int entityId, ResourceLocation dataKey, S
         return TYPE;
     }
 
-    public static void handle(ActionCookDataRecPackage message, IPayloadContext context) {
+    public static void handle(SetCookDataC2SPackage message, IPayloadContext context) {
         if (context.flow().isServerbound()) {
             context.enqueueWork(() -> {
                 ServerPlayer sender = (ServerPlayer) context.player();
+                if (sender == null) {
+                    return;
+                }
                 Entity entity = sender.level.getEntity(message.entityId);
                 if (entity instanceof EntityMaid maid && maid.isOwnedBy(sender)) {
                     TaskDataKey<CookData> value = TaskDataRegister.getValue(message.dataKey);
                     CookData cookData = maid.getOrCreateData(value, new CookData());
-                    cookData.addOrRemoveRec(message.rec, message.mode);
+                    cookData.setMode(message.mode);
                     maid.setAndSyncData(value, cookData);
                 }
             });

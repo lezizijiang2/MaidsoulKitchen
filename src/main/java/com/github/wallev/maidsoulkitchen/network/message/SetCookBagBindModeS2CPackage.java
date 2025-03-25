@@ -6,20 +6,19 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
-
 import static com.github.tartaricacid.touhoulittlemaid.util.ResourceLocationUtil.getResourceLocation;
 
-public record SetCookBagBindModePackage(String mode) implements CustomPacketPayload {
+public record SetCookBagBindModeS2CPackage(String mode) implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<SetCookBagBindModePackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("set_cook_bag_bind_poses"));
-    public static final StreamCodec<ByteBuf, SetCookBagBindModePackage> STREAM_CODEC = StreamCodec.composite(
+    public static final Type<SetCookBagBindModeS2CPackage> TYPE = new Type<>(getResourceLocation("set_cook_bag_bind_poses_s2c"));
+    public static final StreamCodec<ByteBuf, SetCookBagBindModeS2CPackage> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8,
-            SetCookBagBindModePackage::mode,
-            SetCookBagBindModePackage::new
+            SetCookBagBindModeS2CPackage::mode,
+            SetCookBagBindModeS2CPackage::new
     );
 
     @Override
@@ -27,13 +26,10 @@ public record SetCookBagBindModePackage(String mode) implements CustomPacketPayl
         return TYPE;
     }
 
-    public static void handle(SetCookBagBindModePackage message, IPayloadContext context) {
-        if (context.flow().isServerbound()) {
+    public static void handle(SetCookBagBindModeS2CPackage message, IPayloadContext context) {
+        if (context.flow().isClientbound()) {
             context.enqueueWork(() -> {
-                ServerPlayer sender = (ServerPlayer) context.player();
-                if (sender == null) {
-                    return;
-                }
+                Player sender = context.player();
                 ItemCulinaryHub.setBindModeTag(sender.getMainHandItem(), message.mode);
             });
         }

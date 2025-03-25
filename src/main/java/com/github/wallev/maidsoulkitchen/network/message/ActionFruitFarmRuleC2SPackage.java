@@ -1,8 +1,6 @@
 package com.github.wallev.maidsoulkitchen.network.message;
 
-
-import com.github.tartaricacid.touhoulittlemaid.network.message.MaidModelPackage;
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.BerryData;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.data.TaskDataRegister;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
@@ -18,40 +16,36 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.github.tartaricacid.touhoulittlemaid.util.ResourceLocationUtil.getResourceLocation;
 
-public record ActionBerryFarmRulePackage(int entityId, ResourceLocation dataKey, String rec) implements CustomPacketPayload {
+public record ActionFruitFarmRuleC2SPackage(int entityId, ResourceLocation dataKey, String rec) implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<ActionBerryFarmRulePackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("berry_farm_rule"));
-    public static final StreamCodec<ByteBuf, ActionBerryFarmRulePackage> STREAM_CODEC = StreamCodec.composite(
+    public static final CustomPacketPayload.Type<ActionFruitFarmRuleC2SPackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("action_fruit_farm_rule_c2s"));
+    public static final StreamCodec<ByteBuf, ActionFruitFarmRuleC2SPackage> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT,
-            ActionBerryFarmRulePackage::entityId,
+            ActionFruitFarmRuleC2SPackage::entityId,
             ResourceLocation.STREAM_CODEC,
-            ActionBerryFarmRulePackage::dataKey,
+            ActionFruitFarmRuleC2SPackage::dataKey,
             ByteBufCodecs.STRING_UTF8,
-            ActionBerryFarmRulePackage::rec,
-            ActionBerryFarmRulePackage::new
+            ActionFruitFarmRuleC2SPackage::rec,
+            ActionFruitFarmRuleC2SPackage::new
     );
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
-
-    public static void handle(ActionBerryFarmRulePackage message, IPayloadContext context) {
+    public static void handle(ActionFruitFarmRuleC2SPackage message, IPayloadContext context) {
         if (context.flow().isServerbound()) {
             context.enqueueWork(() -> {
                 ServerPlayer sender = (ServerPlayer) context.player();
                 Entity entity = sender.level.getEntity(message.entityId);
                 if (entity instanceof EntityMaid maid && maid.isOwnedBy(sender)) {
-                    TaskDataKey<BerryData> value = TaskDataRegister.getValue(message.dataKey);
-                    BerryData fruitData = maid.getOrCreateData(value, new BerryData());
+                    TaskDataKey<FruitData> value = TaskDataRegister.getValue(message.dataKey);
+                    FruitData fruitData = maid.getOrCreateData(value, new FruitData());
                     fruitData.addOrRemoveRule(message.rec);
                     maid.setAndSyncData(value, fruitData);
                 }
             });
         }
     }
-
-
-
 }

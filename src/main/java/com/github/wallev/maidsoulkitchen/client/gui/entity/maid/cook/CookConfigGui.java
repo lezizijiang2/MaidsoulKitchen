@@ -7,8 +7,8 @@ import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.MaidTaskConfigGu
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CookConfigContainer;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
-import com.github.wallev.maidsoulkitchen.network.message.ActionCookDataRecPackage;
-import com.github.wallev.maidsoulkitchen.network.message.SetCookDataPackage;
+import com.github.wallev.maidsoulkitchen.network.message.ActionCookDataRecC2SPackage;
+import com.github.wallev.maidsoulkitchen.network.message.SetCookDataC2SPackage;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.button.*;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
@@ -16,7 +16,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.StateSwitchingButton;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -341,7 +340,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
 
     private void setAndSyncMode(String mode) {
         cookData.setMode(mode);
-        NetworkHandler.sendToServer(new SetCookDataPackage(maid.getId(), cookTask.getCookDataKey().getKey(), mode));
+        NetworkHandler.sendToServer(new SetCookDataC2SPackage(maid.getId(), cookTask.getCookDataKey().getKey(), mode));
     }
 
     private void setAndSyncMode(boolean isSelected) {
@@ -421,7 +420,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
 
     private void arAndSyncRec(String rec) {
         cookData.addOrRemoveRec(rec, this.cookData.mode());
-        NetworkHandler.sendToServer(new ActionCookDataRecPackage(maid.getId(), cookTask.getCookDataKey().getKey(), rec, this.cookData.mode()));
+        NetworkHandler.sendToServer(new ActionCookDataRecC2SPackage(maid.getId(), cookTask.getCookDataKey().getKey(), rec, this.cookData.mode()));
     }
 
     // 161, 25 189, 74
