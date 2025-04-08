@@ -18,6 +18,7 @@ public class RegisterConfig {
 
     public static ModConfigSpec.BooleanValue FD_COOK_POT_TASK_ENABLED;
     public static ModConfigSpec.BooleanValue FD_CUTTING_BOARD_TASK_ENABLED;
+    public static ModConfigSpec.BooleanValue FD_SKILLET_TASK_ENABLED;
     public static ModConfigSpec.BooleanValue CD_CUISINE_SKILLET_TASK_ENABLED;
     public static ModConfigSpec.BooleanValue MD_COOK_POT_TASK_ENABLED;
     public static ModConfigSpec.BooleanValue BNC_KEY_TASK_ENABLED;
@@ -61,6 +62,8 @@ public class RegisterConfig {
         FD_COOK_POT_TASK_ENABLED = builder.define("FdCookPotTaskEnabled", true);
         builder.comment("This can make the fd cutting board task enabled or not.");
         FD_CUTTING_BOARD_TASK_ENABLED = builder.define("FdCuttingBoardTaskEnabled", true);
+        builder.comment("This can make the fd skillet task enabled or not.");
+        FD_SKILLET_TASK_ENABLED = builder.define("FdSkilletTaskEnabled", true);
         builder.comment("This can make the cd cuisine skillet task enabled or not.");
         CD_CUISINE_SKILLET_TASK_ENABLED = builder.define("CdCuisineSkilletTaskEnabled", true);
         builder.comment("This can make the md cook pot task enabled or not.");

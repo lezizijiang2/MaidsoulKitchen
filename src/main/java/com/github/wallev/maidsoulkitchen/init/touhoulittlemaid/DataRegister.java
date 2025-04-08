@@ -14,6 +14,7 @@ public final class DataRegister {
     // farmer's delight && addon
     public static TaskDataKey<CookData> FD_COOK_POT;
     public static TaskDataKey<CookData> FD_CUTTING_BOARD;
+    public static TaskDataKey<CookData> FD_SKILLET;
     public static TaskDataKey<CookData> FR_KETTLE;
     public static TaskDataKey<CookData> MD_COPPER_POT;
     public static TaskDataKey<CookData> BNC_KEY;
@@ -39,6 +40,7 @@ public final class DataRegister {
 
         FD_COOK_POT = data.register(TaskInfo.FD_COOK_POT.uid, CookData.CODEC);
         FD_CUTTING_BOARD = data.register(TaskInfo.FD_CUTTING_BOARD.uid, CookData.CODEC);
+        FD_SKILLET = data.register(TaskInfo.FD_SKILLET.uid, CookData.CODEC);
         CUISINE_SKILLET = data.register(TaskInfo.CD_CUISINE_SKILLET.uid, CookData.CODEC);
         MD_COPPER_POT = data.register(TaskInfo.MD_COOK_POT.uid, CookData.CODEC);
         BNC_KEY = data.register(TaskInfo.BNC_KEY.uid, CookData.CODEC);
