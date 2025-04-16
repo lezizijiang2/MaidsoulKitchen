@@ -59,4 +59,8 @@ repositories {
     maven {
         url "https://maven.ithundxr.dev/snapshots"
     }
+    // Handcrafted
+    maven {
+        url "https://maven.teamresourceful.com/repository/maven-public/"
+    }
 }

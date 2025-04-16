@@ -52,6 +52,9 @@ public enum Mods {
     SS("sereneseasons"),
     ES("eclipticseasons"),
 
+    TSS("toms_storage"),
+    HANDCRAFTED("handcrafted"),
+
     MC("minecraft") {
         @Override
         public boolean isLoaded() {
