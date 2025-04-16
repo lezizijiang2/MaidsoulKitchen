@@ -157,5 +157,10 @@ dependencies {
         runtimeOnly "maven.modrinth:nbtedit-reborn:${nbtedit_reborn_version}-${mod_loader},${minecraft_version}"
 }
 
+// 箱子兼容
+dependencies {
+    compileOnly group: "earth.terrarium.handcrafted", name: "handcrafted-${modLoader}-${minecraftVersion}", version: "${handcraftedVersion}"
+}
+
 
 

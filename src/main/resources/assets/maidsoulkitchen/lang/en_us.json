@@ -340,6 +340,9 @@
   "gui.maidsoulkitchen.culinary_hub.config.bind_mode.output_addition.tooltip": "Here is the button to bind the box that stores the containers needed to take out the food that has already been cooked\n\nFor example, the bowl needed to take out the mushroom pot in the Farmer's Delight's cooking pot, and the glass bottle for apple cider",
   "gui.maidsoulkitchen.culinary_hub.config.bind_mode.output.tooltip": "Here is the button to bind the box for storing cooked food\n\nsuch as the cooked mushroom pot, rice, and cider",
   "gui.maidsoulkitchen.culinary_hub.config.clear_bind_poses.tooltip": "Clear the coordinates of bound boxes with one click",
-
-  "gui.maidsoulkitchen.development": "(Development)"
+  "gui.maidsoulkitchen.development": "(Development)",
+  "gui.maidsoulkitchen.sort_mode.default": "Sort Mode: Random",
+  "gui.maidsoulkitchen.sort_mode.nutrition": "Sort Mode: Nutrition (High to Low)",
+  "gui.maidsoulkitchen.sort_mode.saturation": "Sort Mode: Saturation (High to Low)",
+  "gui.maidsoulkitchen.sort_mode.ingredients": "Sort Mode: Ingredients Count (High to Low)"
 }

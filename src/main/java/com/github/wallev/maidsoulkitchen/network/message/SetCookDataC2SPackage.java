@@ -1,9 +1,9 @@
 package com.github.wallev.maidsoulkitchen.network.message;
 
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.data.TaskDataRegister;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -16,7 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.github.tartaricacid.touhoulittlemaid.util.ResourceLocationUtil.getResourceLocation;
 
-public record SetCookDataC2SPackage(int entityId, ResourceLocation dataKey, String mode) implements CustomPacketPayload {
+public record SetCookDataC2SPackage(int entityId, ResourceLocation dataKey, String mode,
+                                    String sortMode) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<SetCookDataC2SPackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("set_cook_data_c2s"));
     public static final StreamCodec<ByteBuf, SetCookDataC2SPackage> STREAM_CODEC = StreamCodec.composite(
@@ -26,6 +27,8 @@ public record SetCookDataC2SPackage(int entityId, ResourceLocation dataKey, Stri
             SetCookDataC2SPackage::dataKey,
             ByteBufCodecs.STRING_UTF8,
             SetCookDataC2SPackage::mode,
+            ByteBufCodecs.STRING_UTF8,
+            SetCookDataC2SPackage::sortMode,
             SetCookDataC2SPackage::new
     );
 
@@ -46,6 +49,7 @@ public record SetCookDataC2SPackage(int entityId, ResourceLocation dataKey, Stri
                     TaskDataKey<CookData> value = TaskDataRegister.getValue(message.dataKey);
                     CookData cookData = maid.getOrCreateData(value, new CookData());
                     cookData.setMode(message.mode);
+                    cookData.setSortMode(message.sortMode);
                     maid.setAndSyncData(value, cookData);
                 }
             });

@@ -1,19 +1,13 @@
 package com.github.wallev.maidsoulkitchen.item;
 
-import com.github.tartaricacid.touhoulittlemaid.TouhouLittleMaid;
 import com.github.tartaricacid.touhoulittlemaid.api.bauble.IChestType;
-import com.github.tartaricacid.touhoulittlemaid.entity.passive.TabIndex;
-import com.github.tartaricacid.touhoulittlemaid.init.InitDataComponent;
 import com.github.tartaricacid.touhoulittlemaid.inventory.chest.ChestManager;
-import com.github.tartaricacid.touhoulittlemaid.inventory.container.config.MaidConfigContainer;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagAbstractContainer;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagConfigContainer;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagContainer;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.ListCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -47,7 +41,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.github.tartaricacid.touhoulittlemaid.init.InitDataComponent.STORAGE_DATA_TAG;
 import static net.minecraft.core.registries.Registries.DATA_COMPONENT_TYPE;
 
 public class ItemCulinaryHub extends Item implements MenuProvider {
@@ -59,10 +52,6 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
     public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(DATA_COMPONENT_TYPE, MaidsoulKitchen.MOD_ID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> STORAGE_DATA_TAG = DATA_COMPONENTS
             .register(STORAGE_DATA_TAG_NAME, () -> DataComponentType.<CompoundTag>builder().persistent(CompoundTag.CODEC).networkSynchronized(ByteBufCodecs.COMPOUND_TAG).build());
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<BlockPos>>> BINDING_POSES = DATA_COMPONENTS
-            .register(BIND_POS_TAG, () -> DataComponentType.<List<BlockPos>>builder().persistent(Codec.list(BlockPos.CODEC))
-                    .networkSynchronized(ByteBufCodecs.fromCodec(Codec.list(BlockPos.CODEC)))
-                    .build());
 
     public static final int BIND_SIZE = 3;
 

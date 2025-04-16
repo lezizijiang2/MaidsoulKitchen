@@ -339,6 +339,9 @@
   "gui.maidsoulkitchen.culinary_hub.config.bind_mode.output_addition.tooltip": "这里是用来绑定存放取出厨具已经烹饪好的食物所需要的容器的箱子的按钮\n\n比如农夫乐事的厨锅取出蘑菇煲所需要的碗，苹果酒所需要的玻璃瓶",
   "gui.maidsoulkitchen.culinary_hub.config.bind_mode.output.tooltip": "这里是用来绑定存放烹饪好的食物的箱子的按钮\n\n比如烹饪好的蘑菇煲、米饭、苹果酒",
   "gui.maidsoulkitchen.culinary_hub.config.clear_bind_poses.tooltip": "一键清除已绑定过的箱子的坐标",
-
-  "gui.maidsoulkitchen.development": "(开发中)"
+  "gui.maidsoulkitchen.development": "(开发中)",
+  "gui.maidsoulkitchen.sort_mode.default": "排序: 随机",
+  "gui.maidsoulkitchen.sort_mode.nutrition": "排序: 优先饥饿度",
+  "gui.maidsoulkitchen.sort_mode.saturation": "排序: 优先饱和度",
+  "gui.maidsoulkitchen.sort_mode.ingredients": "排序: 优先食材数量"
 }

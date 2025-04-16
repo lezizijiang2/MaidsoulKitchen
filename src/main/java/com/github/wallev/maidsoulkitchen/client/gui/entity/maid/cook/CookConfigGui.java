@@ -4,12 +4,12 @@ import com.github.tartaricacid.touhoulittlemaid.client.gui.widget.button.TouhouI
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.MaidTaskConfigGui;
+import com.github.wallev.maidsoulkitchen.client.gui.widget.button.*;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CookConfigContainer;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
 import com.github.wallev.maidsoulkitchen.network.message.ActionCookDataRecC2SPackage;
 import com.github.wallev.maidsoulkitchen.network.message.SetCookDataC2SPackage;
-import com.github.wallev.maidsoulkitchen.client.gui.widget.button.*;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -47,8 +47,9 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     protected final Zone taskDisplay = new Zone(6, 20, 70, 20);
     // 需要特殊处理
     protected final Zone typeDisplay = new Zone(-4, 22, 18, 18);
-    protected final Zone searchBoxDisplay = new Zone(-25, 22, 18, 18);
-    protected final Zone searchTextDisplay = new Zone(-25, 22, 41, 18);
+    protected final Zone sortDisplay = new Zone(-25, 22, 18, 18);
+    protected final Zone searchBoxDisplay = new Zone(-46, 22, 18, 18);
+    protected final Zone searchTextDisplay = new Zone(-46, 22, 35, 18);
     protected final Zone resultDisplay = new Zone(6, 44, 152, 86);
     protected final Zone scrollDisplay = new Zone(161, 44, 9, 86);
     protected final ResultInfo ref = new ResultInfo(4, 7, 20, 20, 2, 2);
@@ -106,6 +107,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
         this.addSearchTextBox();
         this.addSearchBox();
         this.addTypeButton();
+        this.addSortButton();
         this.addResultInfo();
         this.addScrollButton();
 
@@ -338,9 +340,30 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
         this.addRenderableWidget(typeButton);
     }
 
+    private void addSortButton() {
+        int startX = width - leftPos - (-sortDisplay.startX()) - sortDisplay.width() - 1;
+        int startY = visualZone.startY() + sortDisplay.startY();
+        RecipeSortModeButton sortModeButton = new RecipeSortModeButton(startX, startY, sortDisplay.width(), sortDisplay.height(), CookData.RecipeSortMode.byName(cookData.sortMode())) {
+            @Override
+            public void onPress() {
+                super.onPress();
+                initCookData = false;
+                setAndSyncSortMode(getCurrentMode().name);
+                init();
+                initCookData = true;
+            }
+        };
+        this.addRenderableWidget(sortModeButton);
+    }
+
     private void setAndSyncMode(String mode) {
         cookData.setMode(mode);
-        NetworkHandler.sendToServer(new SetCookDataC2SPackage(maid.getId(), cookTask.getCookDataKey().getKey(), mode));
+        NetworkHandler.sendToServer(new SetCookDataC2SPackage(maid.getId(), cookTask.getCookDataKey().getKey(), mode, cookData.sortMode()));
+    }
+
+    private void setAndSyncSortMode(String sortMode) {
+        cookData.setSortMode(sortMode);
+        NetworkHandler.sendToServer(new SetCookDataC2SPackage(maid.getId(), cookTask.getCookDataKey().getKey(), cookData.mode(), cookData.sortMode()));
     }
 
     private void setAndSyncMode(boolean isSelected) {
