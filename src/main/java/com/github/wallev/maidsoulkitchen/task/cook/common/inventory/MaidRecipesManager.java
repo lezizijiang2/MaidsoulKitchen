@@ -39,21 +39,36 @@ import java.util.function.Predicate;
  * @param <R> 配方类型
  */
 public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
-    protected final List<R> rec = new ArrayList<>();              // 所有可用配方列表
-    protected final List<R> currentRecs = new ArrayList<>();      // 当前正在处理的配方列表
-    protected final EntityMaid maid;                              // 关联的女仆实体
-    protected final Level level;                                  // 所在世界
-    protected final ICookTask<?, R> task;                         // 烹饪任务接口
-    protected final boolean single;                               // 是否单个处理
-    protected ICookInventory cookInv;                             // 烹饪物品栏
-    protected boolean hasCulinaryHub;                             // 是否拥有烹饪中枢
-    protected Map<BagType, List<BlockPos>> bindingPoses;          // 绑定的方块位置（按背包类型分类）
-    protected String lastTaskRule;                                // 上一次任务规则
-    protected List<String> recipeIds;                             // 配方ID列表
-    protected int repeatTimes = 0;                                // 重复次数
-    protected List<Pair<List<Integer>, List<List<ItemStack>>>> recipesIngredients = new ArrayList<>(); // 配方材料缓存
-    protected int tryTime = 0;                                    // 尝试次数
-    protected CookData.RecipeSortMode sortMode = CookData.RecipeSortMode.DEFAULT;   // 配方排序模式
+    // 所有可用配方列表
+    protected final List<R> rec = new ArrayList<>();
+    // 当前正在处理的配方列表
+    protected final List<R> currentRecs = new ArrayList<>();
+    // 关联的女仆实体
+    protected final EntityMaid maid;
+    // 所在世界
+    protected final Level level;
+    // 烹饪任务接口
+    protected final ICookTask<?, R> task;
+    // 是否单个处理
+    protected final boolean single;
+    // 烹饪物品栏
+    protected ICookInventory cookInv;
+    // 是否拥有烹饪中枢
+    protected boolean hasCulinaryHub;
+    // 绑定的方块位置（按背包类型分类）
+    protected Map<BagType, List<BlockPos>> bindingPoses;
+    // 上一次任务规则
+    protected String lastTaskRule;
+    // 配方ID列表
+    protected List<String> recipeIds;
+    // 重复次数
+    protected int repeatTimes = 0;
+    // 配方材料缓存
+    protected List<Pair<List<Integer>, List<List<ItemStack>>>> recipesIngredients = new ArrayList<>();
+    // 尝试次数
+    protected int tryTime = 0;
+    // 配方排序模式
+    protected CookData.RecipeSortMode sortMode = CookData.RecipeSortMode.DEFAULT;
 
     /**
      * 构造函数
@@ -393,6 +408,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
             ICookTask<?, R> cookTask = (ICookTask<?, R>) maid.getTask();
             CookData cookData = cookTask.getTaskData(maid);
             this.lastTaskRule = cookData.mode();
+            this.setSortMode(CookData.RecipeSortMode.valueOf(cookData.sortMode()));
             this.recipeIds = cookData.getRecs();
             this.rec.clear();
 
@@ -565,7 +581,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
      * @return 是否超出范围
      */
     private boolean isPosZone(BlockPos ingredientPo) {
-        float maxDistance = maid.getRestrictRadius();
+        float maxDistance = maid.getRestrictRadius() * 3;
         if (maid.distanceToSqr(ingredientPo.getX(), ingredientPo.getY(), ingredientPo.getZ()) > (maxDistance * maxDistance)) {
             return true;
         }

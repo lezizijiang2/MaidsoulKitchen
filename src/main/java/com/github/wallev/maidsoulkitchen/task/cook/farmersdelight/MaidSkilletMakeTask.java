@@ -27,8 +27,8 @@ import vectorwing.farmersdelight.common.block.entity.SkilletBlockEntity;
 import vectorwing.farmersdelight.common.registry.ModSounds;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * </ul>
@@ -68,17 +68,17 @@ public class MaidSkilletMakeTask extends Behavior<EntityMaid> {
 
     @Override
     protected boolean canStillUse(ServerLevel worldIn, EntityMaid maid, long pGameTime) {
-        return maid.getBrain().hasMemoryValue(InitEntities.TARGET_POS.get());
+        return maid.getBrain().hasMemoryValue(InitEntities.TARGET_POS.get()) && cookCount == 0;
     }
 
     @Override
     protected void start(ServerLevel worldIn, EntityMaid maid, long pGameTime) {
         super.start(worldIn, maid, pGameTime);
         // 确保配方管理器已更新并准备好
-        if (!this.maidRecipesManager.checkAndCreateRecipesIngredients()) {
-            this.stop(worldIn, maid, pGameTime);
-            return;
-        }
+//        if (!this.maidRecipesManager.checkAndCreateRecipesIngredients()) {
+//            this.stop(worldIn, maid, pGameTime);
+//            return;
+//        }
         
         this.maidRecipesManager.getCookInv().syncInv();
         
@@ -206,10 +206,6 @@ public class MaidSkilletMakeTask extends Behavior<EntityMaid> {
                     }
                 } else if (!((SkilletBlockEntity) blockEntity).hasStoredStack()) {
                     cookCount = 0;
-                    // 如果没有在烹饪，尝试开始新的烹饪
-                    if (skilletBlockEntity.isHeated()) {
-                        attemptCooking(maid, skilletBlockEntity);
-                    }
                 }
             }
         });

@@ -159,7 +159,7 @@ dependencies {
 
 // 箱子兼容
 dependencies {
-    compileOnly group: "earth.terrarium.handcrafted", name: "handcrafted-${modLoader}-${minecraftVersion}", version: "${handcraftedVersion}"
+    implementation group: "earth.terrarium.handcrafted", name: "handcrafted-${modLoader}-${minecraftVersion}", version: "${handcraftedVersion}"
 }
 
 
