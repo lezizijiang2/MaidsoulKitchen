@@ -408,7 +408,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
             ICookTask<?, R> cookTask = (ICookTask<?, R>) maid.getTask();
             CookData cookData = cookTask.getTaskData(maid);
             this.lastTaskRule = cookData.mode();
-            this.setSortMode(CookData.RecipeSortMode.valueOf(cookData.sortMode()));
+            this.setSortMode(CookData.RecipeSortMode.byName(cookData.sortMode()));
             this.recipeIds = cookData.getRecs();
             this.rec.clear();
 
