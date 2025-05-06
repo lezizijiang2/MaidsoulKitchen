@@ -19,6 +19,7 @@ public enum TaskInfo {
 
     FD_COOK_POT("fd_cooking_pot"),
     FD_CUTTING_BOARD("fd_cutting_board"),
+    FD_SKILLET("fd_skillet"), // 添加农夫乐事煎锅
     CD_CUISINE_SKILLET("cd_cuisine_skillet"),
     MD_COOK_POT("md_copper_pot"),
     BNC_KEY("bnc_key"),

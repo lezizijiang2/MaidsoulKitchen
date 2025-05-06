@@ -169,14 +169,14 @@ dependencies {
 
 // util
 def loadGradle(String minecraft_version) {
-    apply from: "/setting/common/neoforge/repositories.gradle"
-    apply from: "/setting/common/neoforge/dependencies.gradle"
-    apply from: "/setting/version/${minecraft_version}/dependencies.gradle"
+    apply from: "setting/common/neoforge/repositories.gradle"
+    apply from: "setting/common/neoforge/dependencies.gradle"
+    apply from: "setting/version/${minecraft_version}/dependencies.gradle"
 }
 
 def loadProperties(String minecraft_version) {
-    loadCustomProperties("/gradle.properties")
-    loadCustomProperties("/setting/version/${minecraft_version}/gradle.properties")
+    loadCustomProperties("gradle.properties")
+    loadCustomProperties("setting/version/${minecraft_version}/gradle.properties")
 }
 
 def loadCustomProperties(String path) {

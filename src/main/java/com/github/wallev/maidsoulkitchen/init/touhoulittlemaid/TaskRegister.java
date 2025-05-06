@@ -8,6 +8,7 @@ import com.github.wallev.maidsoulkitchen.task.cook.cuisine.TaskCdCuisineSkillet;
 import com.github.wallev.maidsoulkitchen.task.cook.drinkbeer.TaskDbBeerBarrel;
 import com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.TaskFdCookPot;
 import com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.TaskFdCuttingBoard;
+import com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.TaskFdSkillet;
 import com.github.wallev.maidsoulkitchen.task.cook.minecraft.TaskFurnace;
 import com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming.TaskYhcDryingRack;
 import com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming.TaskYhcFermentationTank;
@@ -42,7 +43,6 @@ public final class TaskRegister {
             manager.add(new TaskEsFarm());
         }
 
-
         if (Mods.MC.isLoaded() && RegisterConfig.FURNACE_TASK_ENABLED.get()) {
             manager.add(new TaskFurnace());
         }
@@ -52,6 +52,9 @@ public final class TaskRegister {
         }
         if (Mods.FD.isLoaded() && RegisterConfig.FD_CUTTING_BOARD_TASK_ENABLED.get()) {
             manager.add(new TaskFdCuttingBoard());
+        }
+        if (Mods.FD.isLoaded() && RegisterConfig.FD_SKILLET_TASK_ENABLED.get()) {
+            manager.add(new TaskFdSkillet());
         }
         if (Mods.CD.isLoaded() && RegisterConfig.CD_CUISINE_SKILLET_TASK_ENABLED.get()) {
             manager.add(new TaskCdCuisineSkillet());

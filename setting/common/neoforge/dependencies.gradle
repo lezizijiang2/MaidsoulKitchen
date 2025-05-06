@@ -16,7 +16,7 @@ dependencies {
         implementation "maven.modrinth:my-nethers-delight:${my_nethers_delight_version}-${mod_loader},${minecraft_version}"
     // 仅供妖归使用
     if (!registrate_version.isEmpty()) {
-        implementation jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: "[${registrate_version},)")
+        compileOnly jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: "[${registrate_version},)")
     }
     if (!youkaishomecoming_version.isEmpty())
         implementation "maven.modrinth:youkaishomecoming:${youkaishomecoming_version}-${mod_loader},${minecraft_version}"
