@@ -314,6 +314,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
                 break;
             default:
                 // 默认模式不进行排序
+                shuffle(recipes);
                 break;
         }
     }
@@ -370,9 +371,8 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     public Pair<List<Integer>, List<List<ItemStack>>> getRecipeIngredient() {
         if (recipesIngredients.isEmpty()) return Pair.of(Collections.emptyList(), Collections.emptyList());
         int size = recipesIngredients.size();
-        Pair<List<Integer>, List<List<ItemStack>>> integerListPair = recipesIngredients.get(0);
-        List<Pair<List<Integer>, List<List<ItemStack>>>> pairs = recipesIngredients.subList(1, size);
-        recipesIngredients = pairs;
+        Pair<List<Integer>, List<List<ItemStack>>> integerListPair = recipesIngredients.getFirst();
+        recipesIngredients.removeFirst();
         return integerListPair;
     }
 
