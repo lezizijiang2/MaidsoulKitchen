@@ -8,6 +8,7 @@ import com.github.wallev.maidsoulkitchen.api.TaskBookEntryType;
 import com.github.wallev.maidsoulkitchen.api.event.MaidMkTaskEnableEvent;
 import com.github.wallev.maidsoulkitchen.api.task.IDataTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
+import com.github.wallev.maidsoulkitchen.init.MkEntities;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CookConfigContainer;
 import com.github.wallev.maidsoulkitchen.inventory.tooltip.AmountTooltip;
 import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCookMakeTask;
@@ -166,6 +167,18 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Rec
 
     default List<Component> getWarnComponent() {
         return Collections.emptyList();
+    }
+
+    @Override
+    default boolean enableLookAndRandomWalk(EntityMaid maid) {
+        // 工作中禁止游走
+        return !maid.getBrain().hasMemoryValue(MkEntities.WORK_POS.get());
+    }
+
+    @Override
+    default boolean enableEating(EntityMaid maid) {
+        // 工作中禁止吃饭
+        return !maid.getBrain().hasMemoryValue(MkEntities.WORK_POS.get());
     }
 
     static void awardExperience(BlockEntity blockEntity, EntityMaid maid) {

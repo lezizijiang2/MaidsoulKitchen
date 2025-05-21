@@ -18,7 +18,6 @@
     "forge.FluidTankAccessor",
     "minecraft.AbstractFurnaceMixin",
     "touhoulittlemaid.EntityMaidMixin",
-    "touhoulittlemaid.MaidRunOneMixin",
     "youkaishomecoming.BasePotBlockEntityMixin",
     "youkaishomecoming.KettleBlockAccessor"
   ]

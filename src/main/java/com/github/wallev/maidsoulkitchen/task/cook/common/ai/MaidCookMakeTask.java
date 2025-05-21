@@ -1,10 +1,11 @@
 package com.github.wallev.maidsoulkitchen.task.cook.common.ai;
 
-import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
-import com.github.wallev.maidsoulkitchen.init.MkMemories;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitEntities;
+import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.init.MkEntities;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
+import com.github.wallev.maidsoulkitchen.util.MemoryUtil;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -25,7 +26,7 @@ public class MaidCookMakeTask<B extends BlockEntity, R extends Recipe<? extends 
     private final MaidRecipesManager<R> maidRecipesManager;
 
     public MaidCookMakeTask(ICookTask<B, R> task,MaidRecipesManager<R> maidRecipesManager) {
-        super(ImmutableMap.of(InitEntities.TARGET_POS.get(), MemoryStatus.VALUE_PRESENT));
+        super(ImmutableMap.of(MkEntities.WORK_POS.get(), MemoryStatus.VALUE_PRESENT));
         this.task = task;
         this.maidRecipesManager = maidRecipesManager;
     }
@@ -33,13 +34,12 @@ public class MaidCookMakeTask<B extends BlockEntity, R extends Recipe<? extends 
     @Override
     protected boolean checkExtraStartConditions(ServerLevel worldIn, EntityMaid maid) {
         Brain<EntityMaid> brain = maid.getBrain();
-        return brain.getMemory(InitEntities.TARGET_POS.get()).map(targetPos -> {
+        return brain.getMemory(MkEntities.WORK_POS.get()).map(targetPos -> {
             Vec3 targetV3d = targetPos.currentPosition();
             if (maid.distanceToSqr(targetV3d) > Math.pow(task.getCloseEnoughDist(), 2)) {
                 Optional<WalkTarget> walkTarget = brain.getMemory(MemoryModuleType.WALK_TARGET);
                 if (walkTarget.isEmpty() || !walkTarget.get().getTarget().currentPosition().equals(targetV3d)) {
                     brain.eraseMemory(InitEntities.TARGET_POS.get());
-                    brain.eraseMemory(MkMemories.DESTROY_POS.get());
                 }
                 return false;
             }
@@ -53,18 +53,16 @@ public class MaidCookMakeTask<B extends BlockEntity, R extends Recipe<? extends 
         if (maid != this.maidRecipesManager.getMaid()) {
             return;
         }
-        maid.getBrain().getMemory(InitEntities.TARGET_POS.get()).ifPresent(posWrapper -> {
+        MemoryUtil.getWorkPos(maid).ifPresent(posWrapper -> {
             BlockPos basePos = posWrapper.currentBlockPosition();
             BlockEntity blockEntity = worldIn.getBlockEntity(basePos);
             if (blockEntity != null && task.isCookBE(blockEntity)) {
                 this.task.processCookMake(worldIn, maid, (B) blockEntity, this.maidRecipesManager);
-                this.maidRecipesManager.getCookInv().syncInv();
+                this.maidRecipesManager.syncInv();
                 this.maidRecipesManager.tranOutput2Chest();
-                this.maidRecipesManager.getCookInv().syncInv();
+                this.maidRecipesManager.syncInv();
             }
-            maid.getBrain().eraseMemory(MkMemories.DESTROY_POS.get());
-            maid.getBrain().eraseMemory(InitEntities.TARGET_POS.get());
-            maid.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
+            MemoryUtil.eraseWorkPos(maid);
         });
     }
 }
