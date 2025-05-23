@@ -1,10 +1,10 @@
 package com.github.wallev.maidsoulkitchen.api.task.v1.cook;
 
-import com.github.wallev.maidsoulkitchen.task.cook.common.cbaccessor.IFdCbeAccessor;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.task.cook.common.bestate.IBaseCookItemHandlerBe;
 import com.github.wallev.maidsoulkitchen.task.cook.common.bestate.IHeatBe;
+import com.github.wallev.maidsoulkitchen.task.cook.common.cbaccessor.IFdCbeAccessor;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
-import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -77,7 +77,7 @@ public interface IFdPotCook<B extends BlockEntity, R extends Recipe<? extends Re
         tryExtractItem(serverLevel, entityMaid, blockEntity, maidRecipesManager);
         tryInsertItem(serverLevel, entityMaid, blockEntity, maidRecipesManager);
 
-        maidRecipesManager.getCookInv().syncInv();
+        maidRecipesManager.syncInv();
     }
 
     default void tryInsertItem(ServerLevel serverLevel, EntityMaid entityMaid, B blockEntity, MaidRecipesManager<R> maidRecipesManager) {

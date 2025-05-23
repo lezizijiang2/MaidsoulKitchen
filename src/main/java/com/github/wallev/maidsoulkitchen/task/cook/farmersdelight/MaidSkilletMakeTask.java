@@ -3,7 +3,6 @@ package com.github.wallev.maidsoulkitchen.task.cook.farmersdelight;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitEntities;
 import com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid;
-import com.github.wallev.maidsoulkitchen.init.MkMemories;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cbaccessor.IRecipeExperinceAward;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.google.common.collect.ImmutableMap;
@@ -75,13 +74,13 @@ public class MaidSkilletMakeTask extends Behavior<EntityMaid> {
     protected void start(ServerLevel worldIn, EntityMaid maid, long pGameTime) {
         super.start(worldIn, maid, pGameTime);
         // 确保配方管理器已更新并准备好
-//        if (!this.maidRecipesManager.checkAndCreateRecipesIngredients()) {
-//            this.stop(worldIn, maid, pGameTime);
-//            return;
-//        }
-        
-        this.maidRecipesManager.getCookInv().syncInv();
-        
+        if (!this.maidRecipesManager.checkAndCreateRecipesIngredients()) {
+            this.stop(worldIn, maid, pGameTime);
+            return;
+        }
+
+        this.maidRecipesManager.syncInv();
+
         maid.getBrain().getMemory(InitEntities.TARGET_POS.get()).ifPresent(posWrapper -> {
             BlockEntity blockEntity = worldIn.getBlockEntity(posWrapper.currentBlockPosition());
             if (blockEntity instanceof SkilletBlockEntity skilletBlockEntity) {
@@ -124,7 +123,7 @@ public class MaidSkilletMakeTask extends Behavior<EntityMaid> {
                             maid.swing(InteractionHand.MAIN_HAND);
                             playSound(maid, maid.level, ModSounds.BLOCK_SKILLET_ADD_FOOD.get());
                             // 同步物品库存
-                            this.maidRecipesManager.getCookInv().syncInv();
+                            this.maidRecipesManager.syncInv();
                             return;
                         }
                     }
@@ -152,7 +151,7 @@ public class MaidSkilletMakeTask extends Behavior<EntityMaid> {
                     playSound(maid, maid.level, ModSounds.BLOCK_SKILLET_ADD_FOOD.get());
 
                     // 同步物品库存
-                    this.maidRecipesManager.getCookInv().syncInv();
+                    this.maidRecipesManager.syncInv();
                     return;
                 }
             }
@@ -193,9 +192,9 @@ public class MaidSkilletMakeTask extends Behavior<EntityMaid> {
                         }
 
                         // 同步物品库存并转移到箱子
-                        this.maidRecipesManager.getCookInv().syncInv();
+                        this.maidRecipesManager.syncInv();
                         this.maidRecipesManager.tranOutput2Chest();
-                        this.maidRecipesManager.getCookInv().syncInv();
+                        this.maidRecipesManager.syncInv();
                         cookCount = skilletBlockEntity.getStoredStack().getCount();
                     } else {
                         // 烹饪中，可以添加动画或者声音效果
@@ -214,13 +213,12 @@ public class MaidSkilletMakeTask extends Behavior<EntityMaid> {
     @Override
     protected void stop(ServerLevel worldIn, EntityMaid maid, long pGameTime) {
         super.stop(worldIn, maid, pGameTime);
-        maid.getBrain().eraseMemory(MkMemories.DESTROY_POS.get());
         maid.getBrain().eraseMemory(InitEntities.TARGET_POS.get());
         maid.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
         cookCount = 0;
         this.tickCounter = 0;
         
         // 确保在停止任务时同步物品库存
-        this.maidRecipesManager.getCookInv().syncInv();
+        this.maidRecipesManager.syncInv();
     }
 }

@@ -1,9 +1,9 @@
 package com.github.wallev.maidsoulkitchen.task.cook.barbequesdelight;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.tartaricacid.touhoulittlemaid.init.InitEntities;
-import com.github.wallev.maidsoulkitchen.init.MkMemories;
+import com.github.wallev.maidsoulkitchen.init.MkEntities;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
+import com.github.wallev.maidsoulkitchen.util.MemoryUtil;
 import com.google.common.collect.ImmutableMap;
 import com.mao.barbequesdelight.content.block.BasinBlockEntity;
 import com.mao.barbequesdelight.content.recipe.SkeweringInput;
@@ -14,7 +14,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.Behavior;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -35,7 +34,7 @@ public class MaidBasinMakeTask extends Behavior<EntityMaid> {
     private ItemStack side = ItemStack.EMPTY;
 
     public MaidBasinMakeTask(TaskBdBasin task, MaidRecipesManager<SkeweringRecipe<?>> maidRecipesManager) {
-        super(ImmutableMap.of(InitEntities.TARGET_POS.get(), MemoryStatus.VALUE_PRESENT), 1200);
+        super(ImmutableMap.of(MkEntities.WORK_POS.get(), MemoryStatus.VALUE_PRESENT), 1200);
         this.task = task;
         this.maidRecipesManager = maidRecipesManager;
     }
@@ -43,7 +42,7 @@ public class MaidBasinMakeTask extends Behavior<EntityMaid> {
     @Override
     protected boolean checkExtraStartConditions(ServerLevel worldIn, EntityMaid maid) {
         Brain<EntityMaid> brain = maid.getBrain();
-        return brain.getMemory(InitEntities.TARGET_POS.get()).map(targetPos -> {
+        return brain.getMemory(MkEntities.WORK_POS.get()).map(targetPos -> {
             Vec3 targetV3d = targetPos.currentPosition();
             return !(maid.distanceToSqr(targetV3d) > Math.pow(task.getCloseEnoughDist(), 2));
         }).orElse(false);
@@ -51,13 +50,13 @@ public class MaidBasinMakeTask extends Behavior<EntityMaid> {
 
     @Override
     protected boolean canStillUse(ServerLevel worldIn, EntityMaid maid, long pGameTime) {
-        return maid.getBrain().hasMemoryValue(InitEntities.TARGET_POS.get());
+        return maid.getBrain().hasMemoryValue(MkEntities.WORK_POS.get());
     }
 
     @Override
     protected void start(ServerLevel worldIn, EntityMaid maid, long pGameTime) {
         super.start(worldIn, maid, pGameTime);
-        maid.getBrain().getMemory(InitEntities.TARGET_POS.get()).ifPresent(posWrapper -> {
+        MemoryUtil.getWorkPos(maid).ifPresent(posWrapper -> {
             BlockEntity blockEntity = worldIn.getBlockEntity(posWrapper.currentBlockPosition());
             if (blockEntity instanceof BasinBlockEntity basinBlockEntity) {
                 IItemHandlerModifiable inputInv = maidRecipesManager.getInputInv();
@@ -91,7 +90,7 @@ public class MaidBasinMakeTask extends Behavior<EntityMaid> {
 
                 }
 
-                this.maidRecipesManager.getCookInv().syncInv();
+                this.maidRecipesManager.syncInv();
             }
         });
     }
@@ -99,7 +98,7 @@ public class MaidBasinMakeTask extends Behavior<EntityMaid> {
     @Override
     protected void tick(ServerLevel worldIn, EntityMaid maid, long pGameTime) {
         if (tick++ % 5 != 0) return;
-        maid.getBrain().getMemory(InitEntities.TARGET_POS.get()).ifPresent(posWrapper -> {
+        MemoryUtil.getWorkPos(maid).ifPresent(posWrapper -> {
             BlockEntity blockEntity = worldIn.getBlockEntity(posWrapper.currentBlockPosition());
             if (blockEntity instanceof BasinBlockEntity basinBlockEntity) {
                 IItemHandlerModifiable outputInv = maidRecipesManager.getOutputInv();
@@ -115,7 +114,7 @@ public class MaidBasinMakeTask extends Behavior<EntityMaid> {
                     this.side = ItemStack.EMPTY;
                     return;
                 }
-                SkeweringRecipe<?> recipe = (SkeweringRecipe<?>) optional.get().value();
+                SkeweringRecipe<?> recipe = optional.get().value();
                 ItemStack ret = recipe.assemble(cont, worldIn.registryAccess());
                 ItemHandlerHelper.insertItemStacked(outputInv, ret, false);
                 maid.swing(InteractionHand.MAIN_HAND);
@@ -130,8 +129,6 @@ public class MaidBasinMakeTask extends Behavior<EntityMaid> {
     @Override
     protected void stop(ServerLevel worldIn, EntityMaid maid, long pGameTime) {
         super.stop(worldIn, maid, pGameTime);
-        maid.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
-        maid.getBrain().eraseMemory(InitEntities.TARGET_POS.get());
-        maid.getBrain().eraseMemory(MkMemories.DESTROY_POS.get());
+        MemoryUtil.eraseWorkPos(maid);
     }
 }

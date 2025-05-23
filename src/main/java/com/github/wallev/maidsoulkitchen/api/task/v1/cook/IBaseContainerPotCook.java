@@ -1,9 +1,9 @@
 package com.github.wallev.maidsoulkitchen.api.task.v1.cook;
 
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.task.cook.common.bestate.IBaseCookContainerBe;
 import com.github.wallev.maidsoulkitchen.task.cook.common.bestate.IHeatBe;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
-import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
@@ -66,7 +66,7 @@ public interface IBaseContainerPotCook<B extends BlockEntity, R extends Recipe<?
 
         tryInsertItem(serverLevel, entityMaid, blockEntity, maidRecipesManager);
 
-        maidRecipesManager.getCookInv().syncInv();
+        maidRecipesManager.syncInv();
     }
 
     default void tryExtractItem(ServerLevel serverLevel, EntityMaid entityMaid, B blockEntity, MaidRecipesManager<R> maidRecipesManager) {

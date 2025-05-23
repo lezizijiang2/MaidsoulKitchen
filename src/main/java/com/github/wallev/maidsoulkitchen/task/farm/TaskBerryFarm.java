@@ -1,19 +1,20 @@
 package com.github.wallev.maidsoulkitchen.task.farm;
 
+import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.MaidPathFindingBFS;
 import com.github.wallev.maidsoulkitchen.api.TaskBookEntryType;
-import com.github.wallev.maidsoulkitchen.api.task.IAddonFarmTask;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarm;
-import com.github.wallev.maidsoulkitchen.api.task.IFakePlayerTask;
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.BerryData;
 import com.github.wallev.maidsoulkitchen.api.event.MaidMkTaskEnableEvent;
+import com.github.wallev.maidsoulkitchen.api.task.IAddonFarmTask;
+import com.github.wallev.maidsoulkitchen.api.task.IFakePlayerTask;
+import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarm;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.BerryData;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.BerryFarmConfigContainer;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCompatFarmMoveTask;
 import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCompatFarmPlantTask;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.IFarmHandlerManager;
-import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
-import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.berry.BerryHandler;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.berry.BerryHandlerManager;
 import com.google.common.collect.Lists;
@@ -59,10 +60,10 @@ public class TaskBerryFarm implements ICompatFarm<BerryHandler, BerryData>, IFak
         if (maid.level.isClientSide) return Lists.newArrayList();
         MaidCompatFarmMoveTask<BerryHandler> maidFarmMoveTask = new MaidCompatFarmMoveTask<>(maid, this, 0.6F) {
             @Override
-            public boolean checkPathReach(EntityMaid maid, BlockPos pos) {
+            public boolean checkPathReach(EntityMaid maid, MaidPathFindingBFS pathFinding, BlockPos pos) {
                 for (int x = -1; x <= 1; ++x) {
                     for (int z = -1; z <= 1; ++z) {
-                        if (maid.canPathReach(pos.offset(x, 0, z))) {
+                        if (pathFinding.canPathReach(pos.offset(x, 0, z))) {
                             return true;
                         }
                     }

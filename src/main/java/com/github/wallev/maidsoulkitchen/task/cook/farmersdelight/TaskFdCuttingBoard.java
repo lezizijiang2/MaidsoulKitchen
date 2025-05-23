@@ -2,6 +2,7 @@ package com.github.wallev.maidsoulkitchen.task.cook.farmersdelight;
 
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
 import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
@@ -17,20 +18,27 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import vectorwing.farmersdelight.common.block.entity.CuttingBoardBlockEntity;
 import vectorwing.farmersdelight.common.crafting.CuttingBoardRecipe;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
 import vectorwing.farmersdelight.common.registry.ModRecipeTypes;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class TaskFdCuttingBoard implements ICookTask<CuttingBoardBlockEntity, CuttingBoardRecipe> {
@@ -56,12 +64,8 @@ public class TaskFdCuttingBoard implements ICookTask<CuttingBoardBlockEntity, Cu
         return Lists.newArrayList(Pair.of(5, maidCookMoveTask), Pair.of(6, maidCookMakeTask));
     }
 
-    @Override
-    public boolean shouldMoveTo(ServerLevel serverLevel, EntityMaid maid, CuttingBoardBlockEntity blockEntity, MaidRecipesManager<CuttingBoardRecipe> recManager) {
-        if (blockEntity.getStoredItem().isEmpty() && !recManager.getRecipesIngredients().isEmpty()) {
-            return true;
-        }
-        return false;
+    public static void swapItem() {
+
     }
 
     @Override
@@ -69,7 +73,63 @@ public class TaskFdCuttingBoard implements ICookTask<CuttingBoardBlockEntity, Cu
 
     }
 
+    @Override
+    public boolean shouldMoveTo(ServerLevel serverLevel, EntityMaid maid, CuttingBoardBlockEntity blockEntity, MaidRecipesManager<CuttingBoardRecipe> recManager) {
+        if (!blockEntity.isEmpty() && hasBoardStackTool(maid, blockEntity)) {
+            return true;
+        }
+
+        if (blockEntity.getStoredItem().isEmpty() && !recManager.getRecipesIngredients().isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hasBoardStackTool(EntityMaid maid, CuttingBoardBlockEntity blockEntity) {
+        return !this.getBoardStackTool(maid, blockEntity).isEmpty();
+    }
+
+    private ItemStack getBoardStackTool(EntityMaid maid, CuttingBoardBlockEntity blockEntity) {
+        Level level = maid.level;
+        CombinedInvWrapper maidInv = maid.getAvailableInv(true);
+
+        List<RecipeHolder<CuttingBoardRecipe>> recipes = level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.CUTTING.get());
+
+        for (RecipeHolder<CuttingBoardRecipe> recipe : recipes) {
+            if (recipe.value().getIngredients().getFirst().test(blockEntity.getStoredItem())) {
+                ItemStack tool = ItemsUtil.getStack(maidInv, (itemStack) -> recipe.value().getTool().test(itemStack));
+                if (!tool.isEmpty()) {
+                    return tool;
+                }
+            }
+        }
+
+        return ItemStack.EMPTY;
+    }
+
+    public ItemStack swapItem(InteractionHand hand, ItemStack itemStack, EntityMaid maid, IItemHandler inv) {
+        ItemStack swapItemCopy = itemStack.copyAndClear();
+
+        ItemStack handItem = maid.getItemInHand(hand);
+        ItemStack leftStack = ItemHandlerHelper.insertItemStacked(inv, handItem, false);
+        maid.setItemInHand(hand, swapItemCopy);
+        if (!leftStack.isEmpty()) {
+            maid.level.addFreshEntity(new ItemEntity(maid.level, maid.getX(), maid.getY(), maid.getZ(), leftStack));
+        }
+        return swapItemCopy;
+    }
+
     public void processCookMake(ServerLevel serverLevel, EntityMaid maid, CuttingBoardBlockEntity blockEntity, MaidRecipesManager<CuttingBoardRecipe> recManager, Consumer<Item> item) {
+        if (!blockEntity.isEmpty()) {
+            ItemStack boardStackTool = getBoardStackTool(maid, blockEntity);
+            if (!boardStackTool.isEmpty()) {
+                CombinedInvWrapper maidInv = maid.getAvailableInv(true);
+                ItemStack tool = this.swapItem(InteractionHand.MAIN_HAND, boardStackTool, maid, maidInv);
+                blockEntity.processStoredItemUsingTool(tool, null);
+                maid.swing(InteractionHand.MAIN_HAND);
+            }
+        }
+
         if (blockEntity.getStoredItem().isEmpty() && !recManager.getRecipesIngredients().isEmpty()) {
             Pair<List<Integer>, List<List<ItemStack>>> recipeIngredient = recManager.getRecipeIngredient();
             if (recipeIngredient.getFirst().isEmpty()) return;
@@ -79,14 +139,8 @@ public class TaskFdCuttingBoard implements ICookTask<CuttingBoardBlockEntity, Cu
             List<ItemStack> itemStacks = recipeIngredient.getSecond().get(0);
             for (ItemStack itemStack : itemStacks) {
                 if (!itemStack.isEmpty()) {
-                    ItemStack offhandItem = maid.getOffhandItem();
-                    if (offhandItem != itemStack) {
-                        if (!ItemHandlerHelper.insertItemStacked(availableInv, offhandItem, false).isEmpty()) return;
-                    }
-
-                    item.accept(itemStack.getItem());
-                    maid.setItemInHand(InteractionHand.OFF_HAND, itemStack.copy());
-                    itemStack.setCount(0);
+                    ItemStack swapItem = swapItem(InteractionHand.OFF_HAND, itemStack, maid, availableInv);
+                    item.accept(swapItem.getItem());
                     break;
                 }
             }
@@ -94,13 +148,7 @@ public class TaskFdCuttingBoard implements ICookTask<CuttingBoardBlockEntity, Cu
             List<ItemStack> toolStacks = recipeIngredient.getSecond().get(1);
             for (ItemStack itemStack : toolStacks) {
                 if (!itemStack.isEmpty()) {
-                    ItemStack maidMainHandItem = maid.getMainHandItem();
-                    if (maidMainHandItem != itemStack) {
-                        if (!ItemHandlerHelper.insertItemStacked(availableInv, maidMainHandItem, false).isEmpty()) return;
-                    }
-
-                    maid.setItemInHand(InteractionHand.MAIN_HAND, itemStack.copy());
-                    itemStack.setCount(0);
+                    swapItem(InteractionHand.MAIN_HAND, itemStack, maid, availableInv);
                     break;
                 }
             }
@@ -113,15 +161,15 @@ public class TaskFdCuttingBoard implements ICookTask<CuttingBoardBlockEntity, Cu
         return new MaidRecipesManager<>(maid, this, false) {
             @Override
             protected List<Pair<List<Integer>, List<Item>>> createIngres(Map<Item, Integer> available, boolean setRecipeIngres) {
-                ItemStackHandler availableInv = maid.getMaidInv();
-                boolean hasAvi = false;
-                for (int i = 0; i < availableInv.getSlots(); i++) {
-                    if (availableInv.getStackInSlot(i).isEmpty()) {
-                        hasAvi = true;
-                        break;
-                    }
-                }
-                if (!hasAvi) return Collections.emptyList();
+//                ItemStackHandler availableInv = maid.getMaidInv();
+//                boolean hasAvi = false;
+//                for (int i = 0; i < availableInv.getSlots(); i++) {
+//                    if (availableInv.getStackInSlot(i).isEmpty()) {
+//                        hasAvi = true;
+//                        break;
+//                    }
+//                }
+//                if (!hasAvi) return Collections.emptyList();
                 return super.createIngres(available, setRecipeIngres);
             }
 
@@ -130,6 +178,10 @@ public class TaskFdCuttingBoard implements ICookTask<CuttingBoardBlockEntity, Cu
                 return false;
             }
         };
+    }
+
+    public static class InvItem {
+
     }
 
     @Override

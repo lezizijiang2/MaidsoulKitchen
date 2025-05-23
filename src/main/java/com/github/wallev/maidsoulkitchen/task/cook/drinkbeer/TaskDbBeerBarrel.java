@@ -1,14 +1,14 @@
 package com.github.wallev.maidsoulkitchen.task.cook.drinkbeer;
 
+import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.inventory.tooltip.AmountTooltip;
 import com.github.wallev.maidsoulkitchen.mixin.drinkbeer.BeerBarrelBlockAccessor;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.TaskBaseContainerCook;
-import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
-import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.mojang.datafixers.util.Pair;
 import lekavar.lma.drinkbeer.blockentities.BeerBarrelBlockEntity;
 import lekavar.lma.drinkbeer.recipes.BrewingRecipe;
@@ -216,7 +216,7 @@ public class TaskDbBeerBarrel extends TaskBaseContainerCook<BeerBarrelBlockEntit
         extractInputStack(getContainer(blockEntity), maidRecipesManager.getInputInv(), blockEntity);
         tryInsertItem(serverLevel, entityMaid, blockEntity, maidRecipesManager);
 
-        maidRecipesManager.getCookInv().syncInv();
+        maidRecipesManager.syncInv();
     }
 
     @Override
@@ -227,7 +227,7 @@ public class TaskDbBeerBarrel extends TaskBaseContainerCook<BeerBarrelBlockEntit
             ItemStack copy = stackInSlot.copy();
             ItemStack leftStack = ItemHandlerHelper.insertItemStacked(availableInv, copy, false);
             inventory.removeItem(this.getOutputSlot(), stackInSlot.getCount() - leftStack.getCount());
-            ((BeerBarrelBlockEntity)blockEntity).markDirty();
+            ((BeerBarrelBlockEntity) blockEntity).updateBE();
         }
     }
 
