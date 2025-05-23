@@ -1,19 +1,19 @@
 package com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming;
 
+import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
-import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
-import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.util.FakePlayerUtil;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
-import dev.xkmc.youkaishomecoming.content.item.fluid.IYHSake;
+import dev.xkmc.youkaishomecoming.content.item.fluid.IYHFluidHolder;
 import dev.xkmc.youkaishomecoming.content.item.fluid.SakeBottleItem;
-import dev.xkmc.youkaishomecoming.content.item.fluid.SakeFluid;
+import dev.xkmc.youkaishomecoming.content.item.fluid.YHFluid;
 import dev.xkmc.youkaishomecoming.content.pot.ferment.*;
 import dev.xkmc.youkaishomecoming.init.registrate.YHBlocks;
 import net.minecraft.core.NonNullList;
@@ -32,6 +32,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.EmptyFluid;
 import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.fluids.capability.wrappers.FluidBucketWrapper;
@@ -39,7 +40,6 @@ import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
-import net.neoforged.neoforge.capabilities.Capabilities;
 
 import java.util.*;
 
@@ -186,7 +186,7 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
         if (!fluidInTank.isEmpty() && beRecipe.isEmpty()) {
             boolean hasFluidContainer;
 
-            if (fluid instanceof SakeFluid sakeFluid) {
+            if (fluid instanceof YHFluid sakeFluid) {
                 ItemStack outputFluidContainers = sakeFluid.type.getContainer().getDefaultInstance();
                 hasFluidContainer = recManager.hasOutputAdditionItem(itemStack -> itemStack.is(outputFluidContainers.getItem()));
             } else {
@@ -235,7 +235,7 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
             ItemStack fluidContainer;
 
             // 获取流体容器
-            if (fluid instanceof SakeFluid sakeFluid) {
+            if (fluid instanceof YHFluid sakeFluid) {
                 ItemStack outputFluidContainers = sakeFluid.type.getContainer().getDefaultInstance();
                 fluidContainer = recManager.findOutputAdditionItem(itemStack -> itemStack.is(outputFluidContainers.getItem()));
             } else {
@@ -256,7 +256,7 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
                             maid.spawnAtLocation(leftItem);
                         }
                     }
-                } else if (fluid instanceof SakeFluid sakeFluid) {
+                } else if (fluid instanceof YHFluid sakeFluid) {
                     ItemStack leftItem = ItemHandlerHelper.insertItemStacked(outputInv, sakeFluid.type.asStack(1), false);
                     fluidContainer.shrink(1);
                     if (!leftItem.isEmpty()) {
@@ -386,8 +386,8 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
             }
             for (Item item : BuiltInRegistries.ITEM) {
                 if (item instanceof SakeBottleItem sakeBottleItem) {
-                    SakeFluid sakeFluid = sakeBottleItem.getFluid();
-                    IYHSake iyhSake = sakeFluid.type;
+                    YHFluid sakeFluid = sakeBottleItem.getFluid();
+                    IYHFluidHolder iyhSake = sakeFluid.type;
                     Fluid rawFluid = sakeFluid.getSource();
 
                     if (fluidItems1.containsKey(rawFluid)) {
@@ -510,7 +510,7 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
     public ItemStack getResultItem(Recipe<?> recipe, RegistryAccess pRegistryAccess) {
         SimpleFermentationRecipe fermentationRecipe = (SimpleFermentationRecipe) recipe;
         Fluid fluid = fermentationRecipe.outputFluid.getFluid();
-        if (fluid instanceof SakeFluid sakeFluid) {
+        if (fluid instanceof YHFluid sakeFluid) {
             return sakeFluid.type.asStack(1);
         }
         return Items.AIR.getDefaultInstance();
