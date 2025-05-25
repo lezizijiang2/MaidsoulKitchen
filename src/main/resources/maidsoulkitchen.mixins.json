@@ -16,7 +16,7 @@
     "drinkbeer.BeerBarrelBlockAccessor",
     "farmersdelight.CookingPotBlockEntityMixin",
     "forge.FluidTankAccessor",
-    "minecraft.AbstractFurnaceMixin",
+    "minecraft.AbstractFurnaceBlockEntityMixin",
     "touhoulittlemaid.EntityMaidMixin",
     "youkaishomecoming.BasePotBlockEntityMixin",
     "youkaishomecoming.KettleBlockAccessor"
