@@ -250,14 +250,14 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
      * 获取可用的配方列表并根据排序模式排序
      * @return 配方列表
      */
-    private List<R> getRecs() {
+    protected List<R> getRecs() {
         List<R> list = this.getFilterRecipes(this.rec);
 
         if (sortMode == CookData.RecipeSortMode.DEFAULT) {
             /**
              * 仅在默认模式下随机打乱配方顺序
              */
-            shuffle(list);
+            this.shuffle(list);
         }
 
         return list;
