@@ -1,8 +1,10 @@
 package com.github.wallev.maidsoulkitchen.task.cook.minecraft;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cbaccessor.IAbstractFurnaceAccessor;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cbaccessor.ICbeAccessor;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipe;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
@@ -25,9 +27,8 @@ public class AbstractCookingRecipesManager extends MaidRecipesManager<AbstractCo
     // 额外尝试标志位，因为酿酒有温度要求，是可实时变化的。
     private int extraTryTime = 0;
 
-    public AbstractCookingRecipesManager(EntityMaid maid, TaskFurnace task) {
+    public AbstractCookingRecipesManager(EntityMaid maid, ICookTask<?, AbstractCookingRecipe> task) {
         super(maid, task, false);
-
         recipeTypeListIngredients = new HashMap<>();
     }
 
@@ -72,37 +73,39 @@ public class AbstractCookingRecipesManager extends MaidRecipesManager<AbstractCo
         List<Integer> orDefault = recipeTypeListIngredients.getOrDefault(tempType, Collections.emptyList());
         if (orDefault.isEmpty()) return Pair.of(Collections.emptyList(), Collections.emptyList());
 
-        int remove = orDefault.remove(0);
+        int remove = orDefault.removeFirst();
         if (orDefault.isEmpty()) recipeTypeListIngredients.remove(tempType);
 
 
         if (recipeTypeListIngredients.isEmpty()) {
-            Pair<List<Integer>, List<List<ItemStack>>> ingredients = recipesIngredients.get(remove);
             recipesIngredients.clear();
-            return ingredients;
-        } else {
-            return recipesIngredients.get(remove);
         }
+        MaidRecipe<AbstractCookingRecipe> ingredients = recipesIngredients.get(remove);
 
+        Pair<List<Integer>, List<Item>> legacy = ingredients.toLegacyFormat();
+        List<List<ItemStack>> itemStacks = legacy.getSecond().stream()
+                .map(item -> List.of(item.getDefaultInstance()))
+                .toList();
+        return Pair.of(legacy.getFirst(), itemStacks);
     }
 
     @NotNull
-    protected List<Pair<List<Integer>, List<Item>>> getRecIngreMake(Map<Item, Integer> available) {
+    protected List<MaidRecipe<AbstractCookingRecipe>> getRecIngreMake(Map<Item, Integer> available) {
         if (recipeTypeListIngredients == null) {
             recipeTypeListIngredients = new HashMap<>();
         }
         Set<RecipeType<? extends AbstractCookingRecipe>> canRecipeTypes = searchAndCreateTemperate((ServerLevel) maid.level, maid);
 
-        List<Pair<List<Integer>, List<Item>>> _make = new ArrayList<>();
+        List<MaidRecipe<AbstractCookingRecipe>> _make = new ArrayList<>();
         int index = 0;
         for (AbstractCookingRecipe r : this.currentRecs) {
             if (!canRecipeTypes.contains(r.getType())) {
                 continue;
             }
 
-            Pair<List<Integer>, List<Item>> maxCount = this.getAmountIngredient(r, available);
-            if (!maxCount.getFirst().isEmpty()) {
-                _make.add(Pair.of(maxCount.getFirst(), maxCount.getSecond()));
+            MaidRecipe<AbstractCookingRecipe> maidRecipe = this.getAmountIngredient(r, available);
+            if (!maidRecipe.isEmpty()) {
+                _make.add(maidRecipe);
 
                 RecipeType<?> type = r.getType();
                 if (recipeTypeListIngredients.containsKey(type)) {

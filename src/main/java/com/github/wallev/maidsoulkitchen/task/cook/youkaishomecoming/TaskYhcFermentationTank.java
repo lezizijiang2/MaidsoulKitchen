@@ -7,6 +7,7 @@ import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipe;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.github.wallev.maidsoulkitchen.util.FakePlayerUtil;
 import com.google.common.collect.Lists;
@@ -77,14 +78,13 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
     public MaidRecipesManager<FermentationRecipe<?>> getRecipesManager(EntityMaid maid) {
         return new MaidRecipesManager<>(maid, this, true) {
             @Override
-            protected Pair<List<Integer>, List<Item>> getAmountIngredient(FermentationRecipe<?> recipe, Map<Item, Integer> available) {
+            protected MaidRecipe<FermentationRecipe<?>> getAmountIngredient(FermentationRecipe<?> recipe, Map<Item, Integer> available) {
                 MaidFermentationRecipe maidKettleRecipe = FERMENTATION_RECIPE_INGREDIENTS.get((SimpleFermentationRecipe) recipe);
                 List<Item> invIngredient = new ArrayList<>();
                 Map<Item, Integer> itemTimes = new HashMap<>();
 
                 if (maidKettleRecipe == null) {
-                    int a = 1;
-                    return Pair.of(new ArrayList<>(), new ArrayList<>());
+                    return MaidRecipe.empty();
                 }
 
                 // 流体
@@ -117,7 +117,7 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
                     }
                 }
                 if (!maidKettleRecipe.inFluids().isEmpty() && !hasFluidItem) {
-                    return Pair.of(Collections.emptyList(), Collections.emptyList());
+                    return MaidRecipe.empty();
                 }
 
                 // 原材料
@@ -140,33 +140,32 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
                     }
 
                     if (!hasIngredient) {
-                        return Pair.of(Collections.emptyList(), Collections.emptyList());
+                        return MaidRecipe.empty();
                     }
                 }
 
-                // 检查是否缺少材料
                 if (itemTimes.entrySet().stream().anyMatch(entry -> available.get(entry.getKey()) < entry.getValue())) {
-                    return Pair.of(Collections.emptyList(), Collections.emptyList());
+                    return MaidRecipe.empty();
                 }
 
-                // 计算最大合成次数
                 int maxCount = 1;
 
-                // 计算每个物品的数量
-                List<Integer> countList = new ArrayList<>();
+                List<Pair<Item, Integer>> ingredientMap = new ArrayList<>();
                 if (!maidKettleRecipe.inFluids().isEmpty()) {
-                    countList.add(0, fluidItemAmount);
+                    ingredientMap.add(Pair.of(fluidItem, fluidItemAmount));
                     available.put(fluidItem, available.get(fluidItem) - fluidItemAmount);
-                } else {
-                    countList.add(0, 0);
-                    invIngredient.add(0, ItemStack.EMPTY.getItem());
                 }
                 for (Item item : invIngredient.stream().skip(1).toList()) {
-                    countList.add(maxCount);
+                    ingredientMap.add(Pair.of(item, maxCount));
                     available.put(item, available.get(item) - maxCount);
                 }
 
-                return Pair.of(countList, invIngredient);
+                RecipeHolder<FermentationRecipe<?>> recipeHolder = this.task.getRecipeHolders(level).stream()
+                        .filter(holder -> holder.value().equals(recipe))
+                        .findFirst()
+                        .orElse(null);
+
+                return new MaidRecipe<>(recipeHolder, ingredientMap);
             }
         };
     }

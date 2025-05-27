@@ -45,7 +45,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     protected String lastTaskRule;
     protected List<String> recipeIds;
     protected int repeatTimes = 0;
-    protected List<Pair<List<Integer>, List<List<ItemStack>>>> recipesIngredients = new ArrayList<>();
+    protected List<MaidRecipe<R>> recipesIngredients = new ArrayList<>();
     protected int tryTime = 0;
 
     public MaidRecipesManager(EntityMaid maid, ICookTask<?, R> task, boolean single) {
@@ -153,16 +153,33 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     }
 
     public List<Pair<List<Integer>, List<List<ItemStack>>>> getRecipesIngredients() {
-        return recipesIngredients;
+        // 保持向后兼容性 - 转换 MaidRecipe 为旧格式
+        return recipesIngredients.stream()
+                .map(maidRecipe -> {
+                    Pair<List<Integer>, List<Item>> legacy = maidRecipe.toLegacyFormat();
+                    List<List<ItemStack>> itemStacks = legacy.getSecond().stream()
+                            .map(item -> getCookInv().getInventoryStack().getOrDefault(item, List.of()))
+                            .toList();
+                    return Pair.of(legacy.getFirst(), itemStacks);
+                })
+                .toList();
     }
 
     public Pair<List<Integer>, List<List<ItemStack>>> getRecipeIngredient() {
+        // 保持向后兼容性
         if (recipesIngredients.isEmpty()) return Pair.of(Collections.emptyList(), Collections.emptyList());
-        int size = recipesIngredients.size();
-        Pair<List<Integer>, List<List<ItemStack>>> integerListPair = recipesIngredients.get(0);
-        List<Pair<List<Integer>, List<List<ItemStack>>>> pairs = recipesIngredients.subList(1, size);
-        recipesIngredients = pairs;
-        return integerListPair;
+
+        MaidRecipe<R> maidRecipe = recipesIngredients.removeFirst();
+        Pair<List<Integer>, List<Item>> legacy = maidRecipe.toLegacyFormat();
+        List<List<ItemStack>> itemStacks = legacy.getSecond().stream()
+                .map(item -> getCookInv().getInventoryStack().getOrDefault(item, List.of()))
+                .toList();
+
+        return Pair.of(legacy.getFirst(), itemStacks);
+    }
+
+    public RecipeHolder<R> getNextRecipe() {
+        return this.recipesIngredients.getFirst().recipe();
     }
 
     public boolean checkAndCreateRecipesIngredients() {
@@ -253,7 +270,6 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
 
         Map<Item, Integer> available = new HashMap<>();
         Map<Item, List<ItemStack>> ingredientAmount = new HashMap<>();
-
         Map<ItemStack, Pair<IItemHandler, Integer>> stackContentHandler = new HashMap<>();
 
         // 汇集所有箱子的原料
@@ -291,46 +307,55 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
             }
         }
 
-        List<Pair<List<Integer>, List<Item>>> _make = this.createIngres(available, false);
+        List<MaidRecipe<R>> _make = this.createIngres(available, false);
         if (_make.isEmpty()) return;
 
         // 转移箱子原料至CookBag
-        for (Pair<List<Integer>, List<Item>> listListPair : _make) {
-            List<Integer> first = listListPair.getFirst();
-            List<Item> second = listListPair.getSecond();
+        for (MaidRecipe<R> maidRecipe : _make) {
+            Pair<List<Integer>, List<Item>> legacy = maidRecipe.toLegacyFormat();
+            List<Integer> counts = legacy.getFirst();
+            List<Item> items = legacy.getSecond();
 
-            for (int i = 0; i < first.size(); i++) {
-                Integer i1 = first.get(i);
-                Item item = second.get(i);
-                if (i1 <= 0 || item == null) continue;
+            for (int i = 0; i < counts.size(); i++) {
+                Integer neededCount = counts.get(i);
+                Item item = items.get(i);
+                if (neededCount <= 0 || item == null) continue;
 
                 List<ItemStack> itemStacks = ingredientAmount.get(item);
+                if (itemStacks == null) continue;
+                
                 for (ItemStack itemStack : itemStacks) {
                     if (itemStack.isEmpty()) continue;
                     int count = itemStack.getCount();
                     // 减去当前物品的数量还是大于0，证明还没满足，就整体移动
 
-                    Pair<IItemHandler, Integer> iTrackedContentsItemHandlerIntegerPair = stackContentHandler.get(itemStack);
+                    Pair<IItemHandler, Integer> handlerInfo = stackContentHandler.get(itemStack);
+                    if (handlerInfo == null) continue;
 
-                    IItemHandler first1 = iTrackedContentsItemHandlerIntegerPair.getFirst();
-                    Integer second1 = iTrackedContentsItemHandlerIntegerPair.getSecond();
+                    IItemHandler handler = handlerInfo.getFirst();
+                    Integer slot = handlerInfo.getSecond();
 
-                    if (i1 - count > 0) {
+                    if (neededCount >= count) {
+                        // 需要的数量大于等于当前物品数量，全部移动
                         ItemStack copy = itemStack.copy();
-
-                        ItemStack itemStack1 = ItemHandlerHelper.insertItemStacked(inventory, copy, false);
-                        first1.extractItem(second1, itemStack.getCount() - itemStack1.getCount(), false);
+                        ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, copy, false);
+                        int transferred = copy.getCount() - remainder.getCount();
+                        handler.extractItem(slot, transferred, false);
+                        neededCount -= transferred;
                     } else {
-                        ItemStack copy = itemStack.copyWithCount(i1);
-
-                        ItemStack itemStack1 = ItemHandlerHelper.insertItemStacked(inventory, copy, false);
-                        first1.extractItem(second1, i1 - itemStack1.getCount(), false);
-                        break;
+                        // 只需要部分数量
+                        ItemStack copy = itemStack.copyWithCount(neededCount);
+                        ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, copy, false);
+                        int transferred = copy.getCount() - remainder.getCount();
+                        handler.extractItem(slot, transferred, false);
+                        neededCount = 0;
                     }
-                    i1 -= count;
+
+                    if (neededCount <= 0) break;
                 }
             }
         }
+        
         // 更新所有箱子的状态
         for (BlockPos ingredientPo : ingredientPos) {
             if (isPosZone(ingredientPo)) continue;
@@ -391,8 +416,8 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
         this.createIngres(maidAvailableInv, setRecipeIngres);
     }
 
-    protected List<Pair<List<Integer>, List<Item>>> createIngres(Map<Item, Integer> available, boolean setRecipeIngres) {
-        List<Pair<List<Integer>, List<Item>>> _make = getRecIngreMake(available);
+    protected List<MaidRecipe<R>> createIngres(Map<Item, Integer> available, boolean setRecipeIngres) {
+        List<MaidRecipe<R>> _make = getRecIngreMake(available);
 
         if (setRecipeIngres) {
             setRecIngres(_make, available);
@@ -402,21 +427,21 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     }
 
     @NotNull
-    protected List<Pair<List<Integer>, List<Item>>> getRecIngreMake(Map<Item, Integer> available) {
-        List<Pair<List<Integer>, List<Item>>> _make = new ArrayList<>();
+    protected List<MaidRecipe<R>> getRecIngreMake(Map<Item, Integer> available) {
+        List<MaidRecipe<R>> _make = new ArrayList<>();
         for (R r : this.currentRecs) {
-            Pair<List<Integer>, List<Item>> maxCount = this.getAmountIngredient(r, available);
-            if (!maxCount.getFirst().isEmpty()) {
-                _make.add(Pair.of(maxCount.getFirst(), maxCount.getSecond()));
+            MaidRecipe<R> maidRecipe = this.getAmountIngredient(r, available);
+            if (!maidRecipe.isEmpty()) {
+                _make.add(maidRecipe);
             }
         }
         repeat(_make, available, this.repeatTimes);
         return _make;
     }
 
-    protected void setRecIngres(List<Pair<List<Integer>, List<Item>>> _make, Map<Item, Integer> available) {
+    protected void setRecIngres(List<MaidRecipe<R>> _make, Map<Item, Integer> available) {
         if (_make.isEmpty()) return;
-        this.recipesIngredients = new ArrayList<>(transform(_make, available));
+        this.recipesIngredients = new ArrayList<>(_make);
     }
 
     @NotNull
@@ -428,48 +453,36 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
         return this.cookInv;
     }
 
-    protected void repeat(List<Pair<List<Integer>, List<Item>>> oriList, Map<Item, Integer> available, int times) {
-        ArrayList<Pair<List<Integer>, List<Item>>> oriPairs = new ArrayList<>(oriList);
+    protected void repeat(List<MaidRecipe<R>> oriList, Map<Item, Integer> available, int times) {
+        ArrayList<MaidRecipe<R>> oriRecipes = new ArrayList<>(oriList);
         for (int l = 0; l < times; l++) {
-            for (Pair<List<Integer>, List<Item>> listListPair : oriPairs) {
-                List<Integer> first = listListPair.getFirst();
-                List<Item> second = listListPair.getSecond();
+            for (MaidRecipe<R> maidRecipe : oriRecipes) {
+                Pair<List<Integer>, List<Item>> legacy = maidRecipe.toLegacyFormat();
+                List<Integer> counts = legacy.getFirst();
+                List<Item> items = legacy.getSecond();
 
                 boolean canRepeat = true;
-                for (int i = 0; i < second.size(); i++) {
-                    Integer availableCount = available.get(second.get(i));
-                    if (availableCount < first.get(i)) {
+                for (int i = 0; i < items.size(); i++) {
+                    Integer availableCount = available.get(items.get(i));
+                    if (availableCount < counts.get(i)) {
                         canRepeat = false;
                         break;
                     }
                 }
 
                 if (canRepeat) {
-                    for (int i = 0; i < second.size(); i++) {
-                        Item item = second.get(i);
-                        available.put(item, available.get(item) - first.get(i));
+                    for (int i = 0; i < items.size(); i++) {
+                        Item item = items.get(i);
+                        available.put(item, available.get(item) - counts.get(i));
                     }
-                    oriList.add(listListPair);
+                    oriList.add(maidRecipe);
                 }
             }
         }
     }
 
-    protected List<Pair<List<Integer>, List<List<ItemStack>>>> transform(List<Pair<List<Integer>, List<Item>>> oriList, Map<Item, Integer> available) {
-        Map<Item, List<ItemStack>> inventoryStack = this.getCookInv().getInventoryStack();
-//        return oriList.stream().map(p -> Pair.of(p.getFirst(), p.getSecond().stream().map(inventoryStack::get).toList())).toList();
 
-        List<Pair<List<Integer>, List<List<ItemStack>>>> list1 = oriList.stream().map(p -> {
-            List<List<ItemStack>> list = p.getSecond().stream().map(item -> {
-//                return inventoryStack.get(item);
-                return inventoryStack.getOrDefault(item, new ArrayList<>());
-            }).toList();
-            return Pair.of(p.getFirst(), list);
-        }).toList();
-        return list1;
-    }
-
-    protected Pair<List<Integer>, List<Item>> getAmountIngredient(R recipe, Map<Item, Integer> available) {
+    protected MaidRecipe<R> getAmountIngredient(R recipe, Map<Item, Integer> available) {
         List<Ingredient> ingredients = task.getIngredients(recipe);
         List<Item> invIngredient = new ArrayList<>();
         Map<Item, Integer> itemTimes = new HashMap<>();
@@ -507,9 +520,8 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
 
         extraEndRecipe(recipe, available, canMake, single, itemTimes, invIngredient);
 
-//        if (!canMake[0] || invIngredient.stream().anyMatch(item -> available.get(item) <= 0)) {
         if (!canMake[0] || itemTimes.entrySet().stream().anyMatch(entry -> available.get(entry.getKey()) < entry.getValue())) {
-            return Pair.of(Collections.emptyList(), Collections.emptyList());
+            return MaidRecipe.empty();
         }
 
         int maxCount = 64;
@@ -522,16 +534,22 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
             }
         }
 
-        List<Integer> countList = new ArrayList<>();
+        List<Pair<Item, Integer>> ingredientMap = new ArrayList<>();
         for (Item item : invIngredient) {
-            countList.add(maxCount);
+            ingredientMap.add(Pair.of(item, maxCount));
             available.put(item, available.get(item) - maxCount);
         }
 
-        return Pair.of(countList, invIngredient);
+        // 创建 RecipeHolder
+        RecipeHolder<R> recipeHolder = task.getRecipeHolders(level).stream()
+                .filter(holder -> holder.value().equals(recipe))
+                .findFirst()
+                .orElse(null);
+
+        return new MaidRecipe<>(recipeHolder, ingredientMap);
     }
 
-    protected boolean extraStartRecipe(R recipe, Map<Item, Integer> available, boolean[] single, boolean[] canMake, Map<Item, Integer> itemTimes, List<Item> invIngredient) {
+    protected boolean extraStartRecipe(R recipe, Map<Item, Integer> available, boolean[] canMake, boolean[] single, Map<Item, Integer> itemTimes, List<Item> invIngredient) {
         return true;
     }
 
@@ -875,4 +893,5 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     protected boolean enableHub() {
         return true;
     }
+
 }
