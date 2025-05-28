@@ -4,6 +4,7 @@ import com.github.tartaricacid.touhoulittlemaid.api.bauble.IChestType;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.inventory.chest.ChestManager;
 import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
+import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.init.MkItems;
@@ -430,7 +431,16 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     protected List<MaidRecipe<R>> getRecIngreMake(Map<Item, Integer> available) {
         List<MaidRecipe<R>> _make = new ArrayList<>();
         for (R r : this.currentRecs) {
-            MaidRecipe<R> maidRecipe = this.getAmountIngredient(r, available);
+            // 创建 RecipeHolder
+            RecipeHolder<R> recipeHolder = task.getRecipeHolders(level).stream()
+                    .filter(holder -> holder.value().equals(r))
+                    .findFirst()
+                    .orElse(null);
+            if (recipeHolder == null) {
+                MaidsoulKitchen.LOGGER.warn("Could not find maid recipe for {}", r);
+                continue;
+            }
+            MaidRecipe<R> maidRecipe = this.getAmountIngredient(recipeHolder, available);
             if (!maidRecipe.isEmpty()) {
                 _make.add(maidRecipe);
             }
@@ -482,14 +492,14 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     }
 
 
-    protected MaidRecipe<R> getAmountIngredient(R recipe, Map<Item, Integer> available) {
-        List<Ingredient> ingredients = task.getIngredients(recipe);
+    protected MaidRecipe<R> getAmountIngredient(RecipeHolder<R> recipe, Map<Item, Integer> available) {
+        List<Ingredient> ingredients = task.getIngredients(recipe.value());
         List<Item> invIngredient = new ArrayList<>();
         Map<Item, Integer> itemTimes = new HashMap<>();
         boolean[] canMake = {true};
         boolean[] single = {false};
 
-        extraStartRecipe(recipe, available, canMake, single, itemTimes, invIngredient);
+        extraStartRecipe(recipe.value(), available, canMake, single, itemTimes, invIngredient);
 
         for (Ingredient ingredient : ingredients) {
             boolean hasIngredient = false;
@@ -518,7 +528,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
             }
         }
 
-        extraEndRecipe(recipe, available, canMake, single, itemTimes, invIngredient);
+        extraEndRecipe(recipe.value(), available, canMake, single, itemTimes, invIngredient);
 
         if (!canMake[0] || itemTimes.entrySet().stream().anyMatch(entry -> available.get(entry.getKey()) < entry.getValue())) {
             return MaidRecipe.empty();
@@ -540,13 +550,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
             available.put(item, available.get(item) - maxCount);
         }
 
-        // 创建 RecipeHolder
-        RecipeHolder<R> recipeHolder = task.getRecipeHolders(level).stream()
-                .filter(holder -> holder.value().equals(recipe))
-                .findFirst()
-                .orElse(null);
-
-        return new MaidRecipe<>(recipeHolder, ingredientMap);
+        return new MaidRecipe<>(recipe, ingredientMap);
     }
 
     protected boolean extraStartRecipe(R recipe, Map<Item, Integer> available, boolean[] canMake, boolean[] single, Map<Item, Integer> itemTimes, List<Item> invIngredient) {

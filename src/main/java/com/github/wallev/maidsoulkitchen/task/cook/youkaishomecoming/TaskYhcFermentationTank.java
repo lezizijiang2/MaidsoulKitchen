@@ -78,8 +78,8 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
     public MaidRecipesManager<FermentationRecipe<?>> getRecipesManager(EntityMaid maid) {
         return new MaidRecipesManager<>(maid, this, true) {
             @Override
-            protected MaidRecipe<FermentationRecipe<?>> getAmountIngredient(FermentationRecipe<?> recipe, Map<Item, Integer> available) {
-                MaidFermentationRecipe maidKettleRecipe = FERMENTATION_RECIPE_INGREDIENTS.get((SimpleFermentationRecipe) recipe);
+            protected MaidRecipe<FermentationRecipe<?>> getAmountIngredient(RecipeHolder<FermentationRecipe<?>> recipe, Map<Item, Integer> available) {
+                MaidFermentationRecipe maidKettleRecipe = FERMENTATION_RECIPE_INGREDIENTS.get((SimpleFermentationRecipe) recipe.value());
                 List<Item> invIngredient = new ArrayList<>();
                 Map<Item, Integer> itemTimes = new HashMap<>();
 

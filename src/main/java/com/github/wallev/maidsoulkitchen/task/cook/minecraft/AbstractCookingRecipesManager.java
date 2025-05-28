@@ -1,6 +1,7 @@
 package com.github.wallev.maidsoulkitchen.task.cook.minecraft;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cbaccessor.IAbstractFurnaceAccessor;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cbaccessor.ICbeAccessor;
@@ -13,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -99,11 +101,17 @@ public class AbstractCookingRecipesManager extends MaidRecipesManager<AbstractCo
         List<MaidRecipe<AbstractCookingRecipe>> _make = new ArrayList<>();
         int index = 0;
         for (AbstractCookingRecipe r : this.currentRecs) {
-            if (!canRecipeTypes.contains(r.getType())) {
+            // 创建 RecipeHolder
+            RecipeHolder<AbstractCookingRecipe> recipeHolder = task.getRecipeHolders(level).stream()
+                    .filter(holder -> holder.value().equals(r))
+                    .findFirst()
+                    .orElse(null);
+            if (!canRecipeTypes.contains(r.getType()) || recipeHolder == null) {
+                MaidsoulKitchen.LOGGER.warn("Could not find maid recipe for {}", r);
                 continue;
             }
 
-            MaidRecipe<AbstractCookingRecipe> maidRecipe = this.getAmountIngredient(r, available);
+            MaidRecipe<AbstractCookingRecipe> maidRecipe = this.getAmountIngredient(recipeHolder, available);
             if (!maidRecipe.isEmpty()) {
                 _make.add(maidRecipe);
 
