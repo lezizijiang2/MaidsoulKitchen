@@ -1,0 +1,198 @@
+package com.github.wallev.maidsoulkitchen.task.cook.kitchencarrot;
+
+import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
+import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.api.task.v1.cook.IHandlerCookBe;
+import com.github.wallev.maidsoulkitchen.api.task.v1.cook.IItemHandlerCook;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
+import com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid;
+import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
+import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
+import com.github.wallev.maidsoulkitchen.util.FakePlayerUtil;
+import com.mojang.datafixers.util.Pair;
+import io.github.tt432.kitchenkarrot.blockentity.BrewingBarrelBlockEntity;
+import io.github.tt432.kitchenkarrot.capability.KKItemStackHandler;
+import io.github.tt432.kitchenkarrot.recipes.recipe.BrewingBarrelRecipe;
+import io.github.tt432.kitchenkarrot.registries.ModBlocks;
+import io.github.tt432.kitchenkarrot.registries.ModItems;
+import io.github.tt432.kitchenkarrot.registries.RecipeTypes;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
+
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.Map;
+
+public class TaskKkBrewingBarrel implements ICookTask<BrewingBarrelBlockEntity, BrewingBarrelRecipe>, IHandlerCookBe<BrewingBarrelBlockEntity>, IItemHandlerCook<BrewingBarrelBlockEntity, BrewingBarrelRecipe> {
+    public static final Map<Item, Integer> FLUID_WATER = Map.of(Items.WATER_BUCKET, 1, ModItems.WATER.get(), 4);
+
+    @SuppressWarnings("all")
+    private static boolean hasRecipe(BrewingBarrelBlockEntity brewBe) {
+        return !brewBe.findRecipe().isEmpty();
+    }
+
+    private static void replenishWater(EntityMaid maid, BrewingBarrelBlockEntity brewBe, CombinedInvWrapper maidInv) {
+        int fluidItemSlot = ItemsUtil.findStackSlot(maidInv, stack -> FLUID_WATER.containsKey(stack.getItem()) && stack.getCount() >= FLUID_WATER.get(stack.getItem()));
+        if (fluidItemSlot > -1) {
+
+            ItemStack waterStack = maid.getAvailableInv(true).getStackInSlot(fluidItemSlot);
+            WeakReference<FakePlayer> fakePlayer$tlma = ((IAddonMaid) maid).tlmk$getFakePlayer();
+            FakePlayer fakePlayer = fakePlayer$tlma.get();
+            if (fakePlayer != null) {
+
+                int time = FLUID_WATER.getOrDefault(waterStack.getItem(), 0);
+                for (int i = 0; i < time; i++) {
+                    fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, waterStack.split(1));
+                    try {
+                        InteractionResult interactionResult = FakePlayerUtil.interactUseOnBlock(fakePlayer$tlma, maid.level, brewBe.getBlockPos(), InteractionHand.MAIN_HAND, null);
+
+                        if (interactionResult != InteractionResult.PASS) {
+                            ItemStack itemInHand = fakePlayer.getItemInHand(InteractionHand.MAIN_HAND);
+                            ItemHandlerHelper.insertItemStacked(maid.getAvailableInv(true), itemInHand.copy(), false);
+                            fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+                        } else {
+                            fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+                        }
+
+                        if (interactionResult == InteractionResult.PASS) {
+
+                        }
+                    } catch (Exception e) {
+
+                    }
+                }
+
+
+            }
+
+        }
+    }
+
+    @Override
+    public boolean isCookBE(BlockEntity blockEntity) {
+        return blockEntity instanceof BrewingBarrelBlockEntity;
+    }
+
+    @Override
+    public RecipeType<BrewingBarrelRecipe> getRecipeType() {
+        return RecipeTypes.BREWING_BARREL.get();
+    }
+
+    @Override
+    public boolean shouldMoveTo(ServerLevel serverLevel, EntityMaid maid, BrewingBarrelBlockEntity brewBe, MaidRecipesManager<BrewingBarrelRecipe> recManager) {
+        CombinedInvWrapper maidInv = maid.getAvailableInv(true);
+
+        if (!this.getResultHandler(brewBe).getStackInSlot(getOutputSlot()).isEmpty()) {
+            return true;
+        }
+
+        boolean findFluidItem = ItemsUtil.findStackSlot(maidInv, stack -> FLUID_WATER.containsKey(stack.getItem()) && stack.getCount() >= FLUID_WATER.get(stack.getItem())) > -1;
+        if (!brewBe.isStarted() && !recManager.getRecipesIngredients().isEmpty()) {
+            return brewBe.hasEnoughWater(recManager.getNextRecipe().value()) || findFluidItem;
+        }
+
+        if (hasRecipe(brewBe) && !brewBe.hasEnoughWater(brewBe.findRecipe().get().value()) && findFluidItem) {
+            return true;
+        }
+
+        if (!brewBe.isStarted() && hasInput(getInputHandler(brewBe))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void processCookMake(ServerLevel serverLevel, EntityMaid maid, BrewingBarrelBlockEntity brewBe, MaidRecipesManager<BrewingBarrelRecipe> recManager) {
+        CombinedInvWrapper maidInv = maid.getAvailableInv(true);
+
+
+        if (!this.getResultHandler(brewBe).getStackInSlot(getOutputSlot()).isEmpty()) {
+            extractOutputStack(getResultHandler(brewBe), recManager.getOutputInv(), brewBe);
+            IAddonMaid.pickupAction(maid);
+        }
+
+
+        if (!brewBe.isStarted() && hasInput(getInputHandler(brewBe))) {
+            extractInputsStack(getInputHandler(brewBe), recManager.getInputInv(), brewBe);
+            IAddonMaid.pickupAction(maid);
+        }
+
+        if (!brewBe.isStarted() && !recManager.getRecipesIngredients().isEmpty()) {
+            Pair<List<Integer>, List<List<ItemStack>>> recipeIngredient = recManager.getRecipeIngredient();
+            if (recipeIngredient.getFirst().isEmpty()) return;
+            insertInputsStack(getInputHandler(brewBe), maidInv, brewBe, recipeIngredient);
+            IAddonMaid.pickupAction(maid);
+        }
+        // Check if the brewing barrel has an existing recipe and enough water
+        if (hasRecipe(brewBe) && !brewBe.hasEnoughWater(brewBe.findRecipe().get().value())) {
+            replenishWater(maid, brewBe, maidInv);
+            IAddonMaid.pickupAction(maid);
+        }
+    }
+
+    public KKItemStackHandler getInputHandler(BrewingBarrelBlockEntity brewBe) {
+        return brewBe.getInput();
+    }
+
+    public KKItemStackHandler getResultHandler(BrewingBarrelBlockEntity brewBe) {
+        return (KKItemStackHandler) brewBe.result();
+    }
+
+    @Override
+    public ResourceLocation getUid() {
+        return TaskInfo.KK_BREW_BARREL.uid;
+    }
+
+    @Override
+    public ItemStack getIcon() {
+        return ModBlocks.BREWING_BARREL.get().asItem().getDefaultInstance();
+    }
+
+    @Override
+    public TaskDataKey<CookData> getCookDataKey() {
+        return DataRegister.KC_BREW_BARREL;
+    }
+
+    @Override
+    public ItemStackHandler getItemStackHandler(BrewingBarrelBlockEntity brewingBarrelBlockEntity) {
+        return brewingBarrelBlockEntity.getInput();
+    }
+
+    @Override
+    public int getOutputSlot() {
+        return 0;
+    }
+
+    @Override
+    public int getInputSize() {
+        return 6;
+    }
+
+    @Override
+    public ItemStackHandler getBeInv(BrewingBarrelBlockEntity brewingBarrelBlockEntity) {
+        return brewingBarrelBlockEntity.getInput();
+    }
+
+    @Override
+    public NonNullList<Ingredient> getIngredients(Recipe<?> recipe) {
+        return NonNullList.copyOf(((BrewingBarrelRecipe) recipe).getIngredient());
+    }
+}

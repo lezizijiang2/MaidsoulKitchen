@@ -8,6 +8,7 @@ import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCookMoveTask;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipe;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
@@ -160,16 +161,7 @@ public class TaskFdCuttingBoard implements ICookTask<CuttingBoardBlockEntity, Cu
     public MaidRecipesManager<CuttingBoardRecipe> getRecipesManager(EntityMaid maid) {
         return new MaidRecipesManager<>(maid, this, false) {
             @Override
-            protected List<Pair<List<Integer>, List<Item>>> createIngres(Map<Item, Integer> available, boolean setRecipeIngres) {
-//                ItemStackHandler availableInv = maid.getMaidInv();
-//                boolean hasAvi = false;
-//                for (int i = 0; i < availableInv.getSlots(); i++) {
-//                    if (availableInv.getStackInSlot(i).isEmpty()) {
-//                        hasAvi = true;
-//                        break;
-//                    }
-//                }
-//                if (!hasAvi) return Collections.emptyList();
+            protected List<MaidRecipe<CuttingBoardRecipe>> createIngres(Map<Item, Integer> available, boolean setRecipeIngres) {
                 return super.createIngres(available, setRecipeIngres);
             }
 

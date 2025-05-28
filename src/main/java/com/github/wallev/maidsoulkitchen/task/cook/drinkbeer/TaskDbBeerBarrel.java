@@ -8,6 +8,7 @@ import com.github.wallev.maidsoulkitchen.inventory.tooltip.AmountTooltip;
 import com.github.wallev.maidsoulkitchen.mixin.drinkbeer.BeerBarrelBlockAccessor;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.TaskBaseContainerCook;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipe;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.mojang.datafixers.util.Pair;
 import lekavar.lma.drinkbeer.blockentities.BeerBarrelBlockEntity;
@@ -23,6 +24,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
@@ -61,9 +63,6 @@ public class TaskDbBeerBarrel extends TaskBaseContainerCook<BeerBarrelBlockEntit
     @Override
     public boolean beInnerCanCook(Container inventory, BeerBarrelBlockEntity be) {
         BeerBarrelBlockAccessor be1 = (BeerBarrelBlockAccessor) be;
-//        BrewingRecipe recipe = be.getLevel().getRecipeManager().getRecipeFor(RecipeRegistry.RECIPE_TYPE_BREWING.get(), be.getBrewingInventory(), be.getLevel()).orElse(null);
-//        return be1.canBrew$tlma(recipe) && be1.hasEnoughEmptyCap$tlma(recipe);
-//        return be1.statusCode$tlma() == 0 && be1.canBrew$tlma(recipe) && be1.hasEnoughEmptyCap$tlma(recipe);
 
         return be1.tlmk$statusCode() == 1;
     }
@@ -87,7 +86,7 @@ public class TaskDbBeerBarrel extends TaskBaseContainerCook<BeerBarrelBlockEntit
     public MaidRecipesManager<BrewingRecipe> getRecipesManager(EntityMaid maid) {
         return new MaidRecipesManager<>(maid, this, false){
             @Override
-            protected Pair<List<Integer>, List<Item>> getAmountIngredient(BrewingRecipe recipe, Map<Item, Integer> available) {
+            protected MaidRecipe<BrewingRecipe> getAmountIngredient(BrewingRecipe recipe, Map<Item, Integer> available) {
                 List<Ingredient> ingredients = recipe.getIngredients();
                 List<Item> invIngredient = new ArrayList<>();
                 Map<Item, Integer> itemTimes = new HashMap<>();
@@ -148,9 +147,8 @@ public class TaskDbBeerBarrel extends TaskBaseContainerCook<BeerBarrelBlockEntit
                     }
                 }
 
-
                 if (!canMake[0] || invIngredient.stream().anyMatch(item -> available.get(item) <= 0)) {
-                    return Pair.of(Collections.emptyList(), Collections.emptyList());
+                    return MaidRecipe.empty();
                 }
 
                 int maxCount = 64;
@@ -163,25 +161,25 @@ public class TaskDbBeerBarrel extends TaskBaseContainerCook<BeerBarrelBlockEntit
                     }
                 }
 
-                List<Integer> countList = new ArrayList<>();
+                List<Pair<Item, Integer>> ingredientMap = new ArrayList<>();
                 for (int i = 0; i < invIngredient.size() - 1; i++) {
-                    countList.add(maxCount);
                     Item item = invIngredient.get(i);
+                    ingredientMap.add(Pair.of(item, maxCount));
                     available.put(item, available.get(item) - maxCount);
                 }
-                {
-                    countList.add(beerCup.getCount());
+                if (!invIngredient.isEmpty()) {
                     Item item = invIngredient.get(invIngredient.size() - 1);
-                    available.put(item, available.get(item) - maxCount);
+                    int count = beerCup.getCount();
+                    ingredientMap.add(Pair.of(item, count));
+                    available.put(item, available.get(item) - count);
                 }
 
-                return Pair.of(countList, invIngredient);
-            }
+                RecipeHolder<BrewingRecipe> recipeHolder = this.task.getRecipeHolders(level).stream()
+                        .filter(holder -> holder.value().equals(recipe))
+                        .findFirst()
+                        .orElse(null);
 
-            @Override
-            protected List<Pair<List<Integer>, List<List<ItemStack>>>> transform(List<Pair<List<Integer>, List<Item>>> oriList, Map<Item, Integer> available ) {
-//                repeat(oriList, available);
-                return super.transform(oriList, available);
+                return new MaidRecipe<>(recipeHolder, ingredientMap);
             }
         };
     }

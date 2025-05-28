@@ -1,5 +1,6 @@
 package com.github.wallev.maidsoulkitchen.init.touhoulittlemaid;
 
+import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskManager;
 import com.github.wallev.maidsoulkitchen.config.subconfig.RegisterConfig;
 import com.github.wallev.maidsoulkitchen.foundation.utility.Mods;
 import com.github.wallev.maidsoulkitchen.task.cook.barbequesdelight.TaskBdBasin;
@@ -9,6 +10,8 @@ import com.github.wallev.maidsoulkitchen.task.cook.drinkbeer.TaskDbBeerBarrel;
 import com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.TaskFdCookPot;
 import com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.TaskFdCuttingBoard;
 import com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.TaskFdSkillet;
+import com.github.wallev.maidsoulkitchen.task.cook.kitchencarrot.TaskKkAirCompressor;
+import com.github.wallev.maidsoulkitchen.task.cook.kitchencarrot.TaskKkBrewingBarrel;
 import com.github.wallev.maidsoulkitchen.task.cook.minecraft.TaskFurnace;
 import com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming.TaskYhcDryingRack;
 import com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming.TaskYhcFermentationTank;
@@ -16,7 +19,6 @@ import com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming.TaskYhcMoka
 import com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming.TaskYhcTeaKettle;
 import com.github.wallev.maidsoulkitchen.task.farm.*;
 import com.github.wallev.maidsoulkitchen.task.other.TaskFeedAnimalT;
-import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskManager;
 
 public final class TaskRegister {
     private TaskRegister() {
@@ -58,6 +60,12 @@ public final class TaskRegister {
         }
         if (Mods.CD.isLoaded() && RegisterConfig.CD_CUISINE_SKILLET_TASK_ENABLED.get()) {
             manager.add(new TaskCdCuisineSkillet());
+        }
+        if (Mods.KK.isLoaded() && RegisterConfig.KK_AIR_COMPRESSOR.get()) {
+            manager.add(new TaskKkAirCompressor());
+        }
+        if (Mods.KK.isLoaded() && RegisterConfig.KK_BREW_BARREL.get()) {
+            manager.add(new TaskKkBrewingBarrel());
         }
 //        if (Mods.FRD.isLoaded() && RegisterConfig.FR_KETTLE_TASK_ENABLED.get()) {
 //            manager.add(new TaskFrKettle());
