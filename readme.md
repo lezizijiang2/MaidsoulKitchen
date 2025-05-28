@@ -1,116 +1,21 @@
-# [农耕与烹饪：车万女仆拓展](./readme.zh.md) | Farm And Cook: Touhou Little Maid Addon
- A [touhoulittlemaid](https://github.com/TartaricAcid/TouhouLittleMaid) addon mod, is designed to teach maids how to use other mods for cooking and farming.
+# Farm And Cook: Touhou Little Maid Addon | [农耕与烹饪：车万女仆拓展](./readme.zh.md)
+
+This is an addon mod for [Touhou Little Maid](https://github.com/TartaricAcid/TouhouLittleMaid), aiming to teach maids
+how to use cooking and farming features from other mods.
 
 ## Notice
-  - Due to the author's personal reasons, the development progress will be extremely slow (maybe the pit will be abandoned...)
-  - If you want to play as soon as possible, you can click `Star` and find the latest version of the auto-build on the [Releases](https://github.com/Wall-ev/TouhouLittleMaidAddon/releases) page
-  - If you download the auto-build version ,you need to make backups before playing to avoid losing your property.
-  - This project might be abandoned at any time, so if you're up for it (if you can handle this mess - it's really bad...), you can take over this project.
 
-## Progress
-- [ ] Cook
-    - [x] Farmer's Delight
-        - [x] Cooking Pot
-        - [x] Cutting Board
-    - [x] Miner's Delight
-        - [x] Copper Pot
-    - [x] Brewin' And Chewin'
-        - [x] Key
-    - [x] Youkai's Homecoming
-        - [x] Moka Pot
-        - [x] Kettle 
-        - [x] Fermentation Tank 
-        - [x] Drying Rack 
-    - [ ] Cuisine Delight
-    - [ ] My Nether's Delight
-    - [x] Vinery
-        - [x] Fermentation Barrel
-    - [x] Candelight
-        - [x] Cooking Pot
-        - [x] Cooking Pan
-    - [x] Beach Party
-        - [x] Mini Fridge
-        - [x] Cabinet
-    - [x] Bakery
-        - [x] Small Cooking Pot
-        - [x] Stove
-    - [x] Herbalbrews
-        - [x] Tea Kettle 
-        - [x] Cauldron
-    - [x] DrinkBeer
-        - [x] Beer Barrel
-    - [x] Crock Pot
-        - [x] Crock Pot
-    - [ ] Fruit Stack
-    - [x] Kitchen Karrot
-        - [x] Air Compressor
-        - [x] Brewing Barrel
-    - [ ] Minecraft
-        - [x] Furnace
-        - [ ] Brewing Stand
-- [ ] Farm
-    - [x] Berry
-        - [x] Simple Farming
-        - [x] Vinery
-    - [x] Fruit
-        - [x] Simple Farming
-        - [x] Fruit Stack
-        - [x] Vinery
-- [ ] Other
-    - [x] Serene Seasons
-    - [x] Thirst
-- [ ] Backpack Renderer
-    - [x] let'do banner
+- Due to personal reasons, the development progress will be extremely slow (it might be abandoned at any time...)
+- If you want to play as soon as possible, you can give a `Star` and find the latest auto-built version on
+  the [Releases](https://github.com/Wall-ev/TouhouLittleMaidAddon/releases) page.
+- If you download the auto-built version, please make backups before playing to avoid any property loss.
+- This project may be abandoned at any time. If you wish (and can accept this mess—it's really poorly written...), you
+  are welcome to take over the project.
 
-## 1.21 迁移进度
-- [ ] Cook
-    - [x] Farmer's Delight
-        - [x] Cooking Pot 配置正常，工作正常
-        - [x] Cutting Board 配置正常，工作正常
-    - [ ] Miner's Delight
-        - [ ] Copper Pot 不兼容 1.21
-    - [ ] Brewin' And Chewin'
-        - [ ] Key 不兼容 1.21
-    - [x] Youkai's Homecoming
-        - [x] Moka Pot 配置正常，工作未测试
-        - [x] Kettle 配置正常，工作未测试
-        - [x] Fermentation Tank 配置正常，工作未测试
-        - [x] Drying Rack 配置正常，工作未测试
-    - [ ] Cuisine Delight 未测试
-    - [x] My Nether's Delight 未测试
-    - [ ] Vinery
-        - [ ] Fermentation Barrel 不兼容 1.21
-    - [x] Candelight
-        - [x] Cooking Pot 不兼容 1.21
-        - [x] Cooking Pan 不兼容 1.21
-    - [x] Beach Party
-        - [x] Mini Fridge 不兼容 1.21
-        - [x] Cabinet 不兼容 1.21
-    - [x] Bakery
-        - [x] Small Cooking Pot 不兼容 1.21
-        - [x] Stove 不兼容 1.21
-    - [x] Herbalbrews
-        - [x] Tea Kettle 不兼容 1.21
-        - [x] Cauldron 不兼容 1.21
-    - [x] DrinkBeer 
-        - [x] Beer Barrel 未测试
-    - [ ] Crock Pot 不兼容 1.21
-        - [ ] Crock Pot 不兼容 1.21(存在1.21.1版本，未发布)
-    - [ ] Fruit Stack 有这玩意？
-    - [x] Kitchen Karrot
-        - [x] Air Compressor 不兼容 1.21
-        - [x] Brewing Barrel 不兼容 1.21
-    - [ ] Minecraft
-        - [x] Furnace 未测试
-        - [ ] Brewing Stand
-- [ ] Farm
-    - [x] Berry
-        - [x] Simple Farming 不兼容 1.21
-        - [x] Vinery 不兼容 1.21
-    - [x] Fruit
-        - [x] Simple Farming 不兼容 1.21
-        - [x] Fruit Stack 不兼容 1.21
-        - [x] Vinery 不兼容 1.21
-- [ ] Other
-    - [ ] Serene Seasons
-    - [ ] Thirst 未测试
+## Branch Features
+
+- Based on the upstream 1.21.1 branch
+- Added recipe sorting options: you can choose among `Random`, `Saturation Priority`, `Food Level Priority`, and
+  `Ingredient Quantity Priority`
+- Increased the interaction distance between the gap and the cooking core to three times the working range
+- Added support for TOM's Simple Storage, Farmer's Delight Cabinet, and HandCrafted's Cabinet.

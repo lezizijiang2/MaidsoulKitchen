@@ -50,7 +50,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: 1.21-snapshot-${{ github.ref_name }}-${{ steps.create_timestamp.outputs.timestamp }}
-          name: "Release for branch ${{ github.ref_name }} at ${{ steps.create_timestamp.outputs.timestamp }}"
+          name: "1.21-snapshot-${{ github.ref_name }}-${{ steps.create_timestamp.outputs.timestamp }}"
           body: |
             Branch: ${{ github.ref_name }}
             ${{ github.event.head_commit.message }}
