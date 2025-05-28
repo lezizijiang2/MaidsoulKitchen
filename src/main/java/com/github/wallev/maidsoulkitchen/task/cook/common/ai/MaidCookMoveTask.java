@@ -107,7 +107,13 @@ public class MaidCookMoveTask<B extends BlockEntity, R extends Recipe<? extends 
                         if (maid.isWithinRestriction(mutableBlockPos) && shouldMoveTo(worldIn, maid, mutableBlockPos)
 //                                && checkPathReach(maid, mutableBlockPos)
                                 && checkOwnerPos(maid, mutableBlockPos)) {
-                            MemoryUtil.rememberWorkPos(maid, mutableBlockPos.immutable(), this.movementSpeed, 0);
+                            // 获取目标方块位置（烹饪设备位置）
+                            BlockPos targetBlockPos = mutableBlockPos.immutable();
+
+                            // 计算女仆应该站立的位置
+                            BlockPos standingPos = calculateStandingPosition(worldIn, targetBlockPos);
+
+                            MemoryUtil.rememberWorkPos(maid, standingPos, targetBlockPos, this.movementSpeed, 0);
 //                            debugInfo(maid, mutableBlockPos);
                             this.setNextCheckTickCount(5);
                             return;
@@ -116,6 +122,52 @@ public class MaidCookMoveTask<B extends BlockEntity, R extends Recipe<? extends 
                 }
             }
         }
+    }
+
+    /**
+     * 计算女仆应该站立的位置
+     * 对于不完整方块（如砧板、煎锅），女仆应该站在方块旁边，而不是上方
+     */
+    private BlockPos calculateStandingPosition(ServerLevel worldIn, BlockPos targetPos) {
+        BlockState targetBlockState = worldIn.getBlockState(targetPos);
+
+        // 检查目标方块是否是不完整方块（高度小于1）
+        if (!targetBlockState.isCollisionShapeFullBlock(worldIn, targetPos)) {
+            // 对于不完整方块，寻找一个相邻的可站立位置
+            BlockPos[] adjacentPositions = {
+                    targetPos.north(),
+                    targetPos.south(),
+                    targetPos.east(),
+                    targetPos.west()
+            };
+
+            for (BlockPos adjacentPos : adjacentPositions) {
+                // 检查相邻位置是否可以站立
+                if (isValidStandingPosition(worldIn, adjacentPos)) {
+                    return adjacentPos;
+                }
+            }
+        }
+
+        // 对于完整方块或找不到合适相邻位置时，站在方块上方
+        return targetPos;
+    }
+
+    /**
+     * 检查指定位置是否是有效的站立位置
+     */
+    private boolean isValidStandingPosition(ServerLevel worldIn, BlockPos pos) {
+        // 检查脚下的方块是否是固体
+        BlockState groundState = worldIn.getBlockState(pos.below());
+        if (!groundState.isSolid()) {
+            return false;
+        }
+
+        // 检查站立位置和头部位置是否为空
+        BlockState standingState = worldIn.getBlockState(pos);
+        BlockState headState = worldIn.getBlockState(pos.above());
+
+        return standingState.isAir() && headState.isAir();
     }
 
     private void debugInfo(EntityMaid maid, BlockPos pos) {
