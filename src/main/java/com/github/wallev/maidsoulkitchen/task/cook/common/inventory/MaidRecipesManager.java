@@ -790,6 +790,10 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
         extraStartRecipe(recipe.value(), available, canMake, single, itemTimes, invIngredient);
 
         for (Ingredient ingredient : ingredients) {
+            // 不知道有什么负面影响，但是不跳过的话会导致kk空气压缩机无法正常识别材料
+            if (ingredient.isEmpty()) {
+                continue;
+            }
             boolean hasIngredient = false;
             for (Item item : available.keySet()) {
                 ItemStack stack = item.getDefaultInstance();
