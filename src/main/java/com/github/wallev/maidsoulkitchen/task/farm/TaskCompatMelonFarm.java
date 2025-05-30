@@ -1,45 +1,44 @@
 package com.github.wallev.maidsoulkitchen.task.farm;
 
 import com.github.tartaricacid.touhoulittlemaid.datagen.EnchantmentKeys;
-import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
-import com.github.wallev.maidsoulkitchen.api.task.IAddonFarmTask;
-import com.github.wallev.maidsoulkitchen.api.event.MaidMkTaskEnableEvent;
-import com.github.wallev.maidsoulkitchen.inventory.container.maid.CompatMelonConfigContainer;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskMelon;
 import com.github.tartaricacid.touhoulittlemaid.inventory.container.AbstractMaidContainer;
+import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
 import com.github.wallev.maidsoulkitchen.event.MelonConfigEvent;
+import com.github.wallev.maidsoulkitchen.inventory.container.maid.CompatMelonConfigContainer;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.util.BlockUtil;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
-import net.neoforged.neoforge.common.NeoForge;
 
-import static com.github.wallev.maidsoulkitchen.util.BlockUtil.getId;
+import java.util.List;
 
-public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTask, IAddonFarmTask {
+public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTask {
+
     @Override
-    public boolean isEnable(EntityMaid maid) {
-        MaidMkTaskEnableEvent maidMkTaskEnableEvent = new MaidMkTaskEnableEvent(maid, this);
-        NeoForge.EVENT_BUS.post(maidMkTaskEnableEvent);
-        return maidMkTaskEnableEvent.isEnable();
+    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
+        return super.createBrainTasks(maid);
     }
 
     @Override

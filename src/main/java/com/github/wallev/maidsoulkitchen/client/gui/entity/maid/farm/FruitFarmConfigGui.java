@@ -2,9 +2,9 @@ package com.github.wallev.maidsoulkitchen.client.gui.entity.maid.farm;
 
 import com.github.tartaricacid.touhoulittlemaid.client.gui.widget.button.TouhouImageButton;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarm;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarmHandler;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.IHandlerInfo;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmHandler;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
+import com.github.wallev.maidsoulkitchen.api.task.farm.IHandlerInfo;
 import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.MaidTaskConfigGui;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.button.CFRuleButton;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.button.ResultInfo;
@@ -56,7 +56,7 @@ public class FruitFarmConfigGui extends MaidTaskConfigGui<FruitFarmConfigContain
     @Override
     protected void initAdditionData() {
         super.initAdditionData();
-        this.handlers = (List<ICompatFarmHandler>) Arrays.stream(((ICompatFarm<?, ?>) task)
+        this.handlers = (List<ICompatFarmHandler>) Arrays.stream(((ICompatFarmTask<?, ?>) task)
                 .getManagerHandlerValues())
                 .map(IFarmHandlerManager::getFarmHandler)
                 .filter(ICompatFarmHandler::canLoad)

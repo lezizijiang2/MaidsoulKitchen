@@ -1,16 +1,16 @@
 package com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming;
 
+import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.mixin.youkaishomecoming.KettleBlockAccessor;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.TaskFdPot;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.github.wallev.maidsoulkitchen.util.FakePlayerUtil;
-import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
-import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
 import com.mojang.datafixers.util.Pair;
 import dev.xkmc.youkaishomecoming.content.pot.kettle.KettleBlockEntity;
 import dev.xkmc.youkaishomecoming.content.pot.kettle.KettleRecipe;
@@ -25,6 +25,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
@@ -121,6 +123,16 @@ public class TaskYhcTeaKettle extends TaskFdPot<KettleBlockEntity, KettleRecipe>
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
+    public List<Ingredient> getContainers(KettleRecipe rec) {
+        ItemStack outputContainer = rec.getOutputContainer();
+        if (outputContainer.isEmpty()) {
+            return List.of();
+        }
+        return List.of(Ingredient.of(outputContainer));
+    }
+
+    @Override
     public void tryInsertItem(ServerLevel serverLevel, EntityMaid entityMaid, KettleBlockEntity blockEntity, MaidRecipesManager<KettleRecipe> maidRecipesManager) {
         if(this.needWater(blockEntity)) return;
         super.tryInsertItem(serverLevel, entityMaid, blockEntity, maidRecipesManager);
@@ -159,11 +171,7 @@ public class TaskYhcTeaKettle extends TaskFdPot<KettleBlockEntity, KettleRecipe>
 
         ItemStack containerInputStack = inventory.getStackInSlot(getContainerStackSlot());
         //当厨锅没有物品，又有杯具在时，就取出杯具
-        if (!hasInput(inventory) && !containerInputStack.isEmpty()) {
-            return true;
-        }
-
-        return false;
+        return !hasInput(inventory) && !containerInputStack.isEmpty();
     }
 
     public boolean needWater(KettleBlockEntity kettleBlockEntity) {

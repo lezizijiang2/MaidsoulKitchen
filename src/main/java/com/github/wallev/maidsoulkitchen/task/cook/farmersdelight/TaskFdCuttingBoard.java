@@ -3,7 +3,8 @@ package com.github.wallev.maidsoulkitchen.task.cook.farmersdelight;
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
-import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.client.tooltip.RecipeDataTooltip;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
@@ -28,15 +29,19 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
+import org.jetbrains.annotations.NotNull;
 import vectorwing.farmersdelight.common.block.entity.CuttingBoardBlockEntity;
 import vectorwing.farmersdelight.common.crafting.CuttingBoardRecipe;
 import vectorwing.farmersdelight.common.registry.ModBlocks;
 import vectorwing.farmersdelight.common.registry.ModRecipeTypes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +59,7 @@ public class TaskFdCuttingBoard implements ICookTask<CuttingBoardBlockEntity, Cu
     }
 
     @Override
-    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
+    public @NotNull List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
         if (maid.level.isClientSide) {
             return Collections.emptyList();
         }
@@ -80,10 +85,7 @@ public class TaskFdCuttingBoard implements ICookTask<CuttingBoardBlockEntity, Cu
             return true;
         }
 
-        if (blockEntity.getStoredItem().isEmpty() && !recManager.getRecipesIngredients().isEmpty()) {
-            return true;
-        }
-        return false;
+        return blockEntity.getStoredItem().isEmpty() && !recManager.getRecipesIngredients().isEmpty();
     }
 
     private boolean hasBoardStackTool(EntityMaid maid, CuttingBoardBlockEntity blockEntity) {
@@ -200,8 +202,18 @@ public class TaskFdCuttingBoard implements ICookTask<CuttingBoardBlockEntity, Cu
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public List<Component> getWarnComponent() {
         return List.of(Component.translatable("gui.maidsoulkitchen.btn.cook_guide.info.warn").withStyle(ChatFormatting.YELLOW),
                 Component.translatable("gui.maidsoulkitchen.btn.cook_guide.info.warn.cuttingboard"));
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public RecipeDataTooltip.TooltipRecIngredient getTooltipRecResultIngredient(Recipe<?> recipe, EntityMaid maid) {
+        List<List<RecipeDataTooltip.IngredientSourceType>> result = new ArrayList<>();
+        result.add(List.of(RecipeDataTooltip.IngredientSourceType.PICKUP));
+        int resultRuleMatchIndex = 0;
+        RecipeDataTooltip.TooltipRecIngredient tooltipRecResultIngredient = new RecipeDataTooltip.TooltipRecIngredient(List.of(Ingredient.of(this.getResultItem(recipe, maid.level.registryAccess()))), result, RecipeDataTooltip.IngredientType.OUTPUT, resultRuleMatchIndex);
+        return tooltipRecResultIngredient;
     }
 }

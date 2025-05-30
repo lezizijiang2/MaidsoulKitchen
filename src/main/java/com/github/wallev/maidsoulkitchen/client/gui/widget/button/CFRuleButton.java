@@ -1,9 +1,9 @@
 package com.github.wallev.maidsoulkitchen.client.gui.widget.button;
 
-import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarmHandler;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.IHandlerInfo;
 import com.github.tartaricacid.touhoulittlemaid.api.client.gui.ITooltipButton;
+import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmHandler;
+import com.github.wallev.maidsoulkitchen.api.task.farm.IHandlerInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;

@@ -80,6 +80,8 @@ dependencies {
         implementation fg.deobf("maven.modrinth:sophisticated-core:${sophisticated_core_version}-${mod_loader},${minecraft_version}")
     if (!sophisticated_storage_version.isEmpty())
         implementation fg.deobf("maven.modrinth:sophisticated-storage:${sophisticated_storage_version}-${mod_loader},${minecraft_version}")
+    if (!ae2_version.isEmpty())
+        compileOnly fg.deobf("maven.modrinth:ae2:${ae2_version}-${mod_loader},${minecraft_version}")
 }
 
 // 联动(其他)
@@ -146,8 +148,8 @@ dependencies {
 
 // api
 dependencies {
-//    if (!architectury_version.isEmpty())
-//        implementation fg.deobf("dev.architectury:architectury-${mod_loader}:${architectury_version}")
+    if (!architectury_version.isEmpty())
+        implementation fg.deobf("dev.architectury:architectury-${mod_loader}:${architectury_version}")
     if (!kiwi_version.isEmpty())
         runtimeOnly fg.deobf("maven.modrinth:kiwi:${kiwi_version}-${mod_loader},${minecraft_version}")
 }
@@ -158,6 +160,11 @@ dependencies {
         runtimeOnly fg.deobf("maven.modrinth:appleskin:${appleskin_version}-${mod_loader},${minecraft_version}")
     if (!nbtedit_reborn_version.isEmpty())
         runtimeOnly fg.deobf("maven.modrinth:nbtedit-reborn:${nbtedit_reborn_version}-${mod_loader},${minecraft_version}")
+}
+
+dependencies {
+//    if (!pneumaticcraft_repressurized_version.isEmpty())
+//        implementation fg.deobf("maven.modrinth:pneumaticcraft-repressurized:${pneumaticcraft_repressurized_version}-${mod_loader},${minecraft_version}")
 }
 
 

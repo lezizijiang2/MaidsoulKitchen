@@ -2,7 +2,7 @@ package com.github.wallev.maidsoulkitchen.task.cook.barbequesdelight;
 
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
@@ -25,6 +25,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,11 +47,7 @@ public class TaskBdBasin implements ICookTask<BasinBlockEntity, SkeweringRecipe<
             return true;
         }
 
-        if (!recManager.getRecipesIngredients().isEmpty()) {
-            return true;
-        }
-
-        return false;
+        return !recManager.getRecipesIngredients().isEmpty();
     }
 
     @Override
@@ -59,7 +56,7 @@ public class TaskBdBasin implements ICookTask<BasinBlockEntity, SkeweringRecipe<
     }
 
     @Override
-    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
+    public @NotNull List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
         if (maid.level().isClientSide) {
             return Collections.emptyList();
         }

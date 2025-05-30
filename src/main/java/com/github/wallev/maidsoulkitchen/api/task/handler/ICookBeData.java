@@ -1,4 +1,4 @@
-package com.github.wallev.maidsoulkitchen.api.task.v1.handler;
+package com.github.wallev.maidsoulkitchen.api.task.handler;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;

@@ -1,7 +1,7 @@
 package com.github.wallev.maidsoulkitchen.task.farm.handler;
 
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarmHandler;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.IHandlerInfo;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmHandler;
+import com.github.wallev.maidsoulkitchen.api.task.farm.IHandlerInfo;
 
 public interface IFarmHandlerManager<T extends ICompatFarmHandler & IHandlerInfo> {
 

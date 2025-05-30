@@ -1,4 +1,4 @@
-package com.github.wallev.maidsoulkitchen.api.task.v1.cook;
+package com.github.wallev.maidsoulkitchen.api.task.cook;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.task.cook.common.bestate.IBaseCookItemHandlerBe;
@@ -61,11 +61,7 @@ public interface IFdPotCook<B extends BlockEntity, R extends Recipe<? extends Re
 
         ItemStack containerInputStack = inventory.getStackInSlot(getContainerStackSlot());
         //当厨锅没有物品，又有杯具在时，就取出杯具
-        if (!hasInput(inventory) && !containerInputStack.isEmpty()) {
-            return true;
-        }
-
-        return false;
+        return !hasInput(inventory) && !containerInputStack.isEmpty();
     }
 
     @NotNull

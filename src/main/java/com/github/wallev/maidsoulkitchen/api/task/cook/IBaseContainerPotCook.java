@@ -1,4 +1,4 @@
-package com.github.wallev.maidsoulkitchen.api.task.v1.cook;
+package com.github.wallev.maidsoulkitchen.api.task.cook;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.task.cook.common.bestate.IBaseCookContainerBe;
@@ -41,11 +41,7 @@ public interface IBaseContainerPotCook<B extends BlockEntity, R extends Recipe<?
 
         // 能做饭现在和有输入（也就是厨锅现在有物品再里面但是不符合配方
 //        LOGGER.info("hasInput: {} {}", b, hasInput(inventory));
-        if (inputCanTake(b, inventory)) {
-            return true;
-        }
-
-        return false;
+        return inputCanTake(b, inventory);
     }
 
     default boolean inputCanTake(boolean beInnerCanCook, Container inventory){

@@ -3,11 +3,10 @@ package com.github.wallev.maidsoulkitchen.entity.data.inner.task;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeInput;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
 public class CookData implements ITaskData {
@@ -105,13 +104,15 @@ public class CookData implements ITaskData {
     }
 
     public List<String> getRecs() {
-        if (this.mode.equals(Mode.WHITELIST.name)) {
+        if (this.isWhitelistMode()) {
             return this.whitelistRecs;
-        } else if (this.mode.equals(Mode.BLACKLIST.name)) {
-            return this.blacklistRecs;
         } else {
-            return Collections.emptyList();
+            return this.blacklistRecs;
         }
+    }
+
+    public boolean isWhitelistMode() {
+        return Mode.byName(this.mode()).isWhitelistMode();
     }
 
     public enum Mode {
@@ -122,6 +123,18 @@ public class CookData implements ITaskData {
 
         Mode(String name) {
             this.name = name;
+        }
+
+        public static boolean isWhitelistMode(String name) {
+            return byName(name).isWhitelistMode();
+        }
+
+        public static Mode byName(String name) {
+            return Mode.valueOf(name.toUpperCase(Locale.ENGLISH));
+        }
+
+        public boolean isWhitelistMode() {
+            return this == WHITELIST;
         }
     }
 }

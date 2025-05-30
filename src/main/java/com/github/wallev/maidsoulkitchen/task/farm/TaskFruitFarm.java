@@ -1,26 +1,25 @@
 package com.github.wallev.maidsoulkitchen.task.farm;
 
+import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.api.TaskBookEntryType;
-import com.github.wallev.maidsoulkitchen.api.task.IAddonFarmTask;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarm;
-import com.github.wallev.maidsoulkitchen.api.task.IFakePlayerTask;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
-import com.github.wallev.maidsoulkitchen.api.event.MaidMkTaskEnableEvent;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.FruitFarmConfigContainer;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
-import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCompatFarmPlantTask;
-import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCompatFruitMoveTask;
+import com.github.wallev.maidsoulkitchen.task.farm.ai.MaidCompatFarmPlantTask;
+import com.github.wallev.maidsoulkitchen.task.farm.ai.MaidCompatFruitMoveTask;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.IFarmHandlerManager;
-import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
-import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.fruit.FruitHandler;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.fruit.FruitHandlerManager;
+import com.github.wallev.maidsoulkitchen.util.fakeplayer.WrappedMaidFakePlayer;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.player.Inventory;
@@ -29,14 +28,14 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.List;
 
+import static com.github.wallev.maidsoulkitchen.MaidsoulKitchen.LOGGER;
 import static com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid.BLACK_LIST;
 
 
-public class TaskFruitFarm implements ICompatFarm<FruitHandler, FruitData>, IFakePlayerTask, IAddonFarmTask {
+public class TaskFruitFarm implements ICompatFarmTask<FruitHandler, FruitData> {
     @Override
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
         if (maid.level.isClientSide) return Lists.newArrayList();
@@ -52,15 +51,16 @@ public class TaskFruitFarm implements ICompatFarm<FruitHandler, FruitData>, IFak
 
     @Override
     public boolean canHarvest(EntityMaid maid, BlockPos cropPos, BlockState cropState, FruitHandler handler) {
-//        LOGGER.info("TaskFruitFarm cropState: " + cropState);
         return handler != null && !BLACK_LIST.contains(cropState.getBlock()) && handler.canHarvest(maid, cropPos, cropState);
     }
 
     @Override
     public void harvest(EntityMaid maid, BlockPos cropPos, BlockState cropState, FruitHandler handler) {
-//        LOGGER.info("TaskFruitFarm start harvestWithoutDestroy " + cropState);
-
-        IFakePlayerTask.maidRightClick(maid, cropPos);
+        InteractionResult result = WrappedMaidFakePlayer.get(maid).useOnByHand(cropPos);
+        if (result == InteractionResult.PASS) {
+            BLACK_LIST.add(cropState.getBlock());
+            LOGGER.warn(BLACK_LIST.toString());
+        }
     }
 
     @Override
@@ -81,13 +81,6 @@ public class TaskFruitFarm implements ICompatFarm<FruitHandler, FruitData>, IFak
     @Override
     public ItemStack getIcon() {
         return Items.APPLE.getDefaultInstance();
-    }
-
-    @Override
-    public boolean isEnable(EntityMaid maid) {
-        MaidMkTaskEnableEvent maidMkTaskEnableEvent = new MaidMkTaskEnableEvent(maid, this);
-        NeoForge.EVENT_BUS.post(maidMkTaskEnableEvent);
-        return maidMkTaskEnableEvent.isEnable();
     }
 
     @Override

@@ -4,12 +4,13 @@ import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
 import com.mojang.datafixers.util.Pair;
 import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class MaidMkTaskEnableEvent extends Event {
+public class MaidMkTaskEnableEvent extends Event implements ICancellableEvent {
     private final EntityMaid maid;
     private final IMaidsoulKitchenTask maidsoulKitchenTask;
     private boolean isEnable = true;

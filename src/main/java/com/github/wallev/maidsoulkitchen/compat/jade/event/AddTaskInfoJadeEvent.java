@@ -1,14 +1,14 @@
 package com.github.wallev.maidsoulkitchen.compat.jade.event;
 
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarm;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.IHandlerInfo;
+import com.github.tartaricacid.touhoulittlemaid.api.event.AddJadeInfoEvent;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
+import com.github.wallev.maidsoulkitchen.api.task.farm.IHandlerInfo;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FarmData;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.farm.TaskFruitFarm;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.IFarmHandlerManager;
-import com.github.tartaricacid.touhoulittlemaid.api.event.AddJadeInfoEvent;
-import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -29,7 +29,7 @@ public class AddTaskInfoJadeEvent {
         EntityMaid maid = event.getMaid();
         ITooltip tooltip = event.getTooltip();
 
-        if (!(maid.getTask() instanceof ICompatFarm<?, ?> farmTask)) return;
+        if (!(maid.getTask() instanceof ICompatFarmTask<?, ?> farmTask)) return;
         if (farmTask.getUid().equals(TaskInfo.FRUIT_FARM.uid)) {
             // todo: sync
             FruitData fruitData = maid.getOrCreateData(((TaskFruitFarm) farmTask).getCookDataKey(), new FruitData());

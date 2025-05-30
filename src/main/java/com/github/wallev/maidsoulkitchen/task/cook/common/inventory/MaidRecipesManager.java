@@ -5,7 +5,7 @@ import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.inventory.chest.ChestManager;
 import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
-import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
@@ -324,7 +324,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
 
                 List<ItemStack> itemStacks = ingredientAmount.get(item);
                 if (itemStacks == null) continue;
-                
+
                 for (ItemStack itemStack : itemStacks) {
                     if (itemStack.isEmpty()) continue;
                     int count = itemStack.getCount();
@@ -356,7 +356,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
                 }
             }
         }
-        
+
         // 更新所有箱子的状态
         for (BlockPos ingredientPo : ingredientPos) {
             if (isPosZone(ingredientPo)) continue;
@@ -371,11 +371,8 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     }
 
     private boolean isPosZone(BlockPos ingredientPo) {
-        float maxDistance = maid.getRestrictRadius();
-        if (maid.distanceToSqr(ingredientPo.getX(), ingredientPo.getY(), ingredientPo.getZ()) > (maxDistance * maxDistance)) {
-            return true;
-        }
-        return false;
+        float maxDistance = maid.getRestrictRadius() * 2;
+        return maid.distanceToSqr(ingredientPo.getX(), ingredientPo.getY(), ingredientPo.getZ()) > (maxDistance * maxDistance);
     }
 
     private boolean init() {
@@ -889,6 +886,8 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
         ICookInventory cookInv = this.getCookInv();
         if (cookInv != null) {
             cookInv.syncInv();
+        } else {
+            MaidsoulKitchen.LOGGER.error("CookInv is null!");
         }
     }
 

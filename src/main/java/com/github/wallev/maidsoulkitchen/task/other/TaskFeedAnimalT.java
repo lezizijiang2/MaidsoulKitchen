@@ -1,15 +1,15 @@
 package com.github.wallev.maidsoulkitchen.task.other;
 
-import com.github.tartaricacid.touhoulittlemaid.inventory.container.AbstractMaidContainer;
-import com.github.tartaricacid.touhoulittlemaid.inventory.container.task.DefaultMaidTaskConfigContainer;
-import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
-import com.github.wallev.maidsoulkitchen.task.TaskInfo;
-import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidFeedAnimalTaskT;
 import com.github.tartaricacid.touhoulittlemaid.api.task.IAttackTask;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitSounds;
+import com.github.tartaricacid.touhoulittlemaid.inventory.container.AbstractMaidContainer;
+import com.github.tartaricacid.touhoulittlemaid.inventory.container.task.DefaultMaidTaskConfigContainer;
 import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
 import com.github.tartaricacid.touhoulittlemaid.util.SoundUtil;
+import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
+import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.task.other.ai.MaidFeedAnimalTaskT;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
@@ -17,7 +17,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.behavior.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -27,13 +30,15 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.github.wallev.maidsoulkitchen.config.subconfig.TaskConfig.FEED_SINGLE_ANIMAL_MAX_NUMBER;
 
@@ -74,19 +79,15 @@ public class TaskFeedAnimalT implements IAttackTask, IMaidsoulKitchenTask {
     }
 
     private Optional<? extends LivingEntity> findFirstValidAttackTarget(EntityMaid maid) {
+        maid.getLookControl().setLookAt(maid.getRestrictCenter().getCenter());
+        Map<EntityType<?>, List<Animal>> typeAnimals = maid.getBrain().getMemory(MemoryModuleType.NEAREST_LIVING_ENTITIES)
+                .orElse(Collections.emptyList()).stream()
+                .filter(e -> maid.isWithinRestriction(e.blockPosition()))
+                .filter(e -> e instanceof Animal && e.isAlive())
+                .map(Animal.class::cast)
+                .collect(Collectors.groupingBy(Entity::getType));
 
-        List<LivingEntity> list = this.getEntities(maid)
-                .find(e -> maid.isWithinRestriction(e.blockPosition()))
-                .filter(livingEntity -> livingEntity instanceof Animal)
-                .filter(Entity::isAlive)
-                .toList();
-
-        Map<EntityType<?>, List<Animal>> resourceLocationListHashMap = new HashMap<>();
-        for (LivingEntity livingEntity : list) {
-            resourceLocationListHashMap.computeIfAbsent(livingEntity.getType(), k -> Lists.newArrayList()).add((Animal) livingEntity);
-        }
-
-        for (List<Animal> value : resourceLocationListHashMap.values()) {
+        for (List<Animal> value : typeAnimals.values()) {
             if (value.size() >= (FEED_SINGLE_ANIMAL_MAX_NUMBER.get() - 2)) {
                 return value.stream().filter(e -> maid.isWithinRestriction(e.blockPosition()))
                         .filter(e -> !e.isBaby())
@@ -105,18 +106,19 @@ public class TaskFeedAnimalT implements IAttackTask, IMaidsoulKitchenTask {
     }
 
     @Override
-    public List<Pair<String, Predicate<EntityMaid>>> getConditionDescription(EntityMaid maid) {
+    public @NotNull List<Pair<String, Predicate<EntityMaid>>> getConditionDescription(@NotNull EntityMaid maid) {
         return Lists.newArrayList(Pair.of("can_feed", Predicates.alwaysTrue()), Pair.of("assault_weapon", this::hasAssaultWeapon));
     }
 
-    public MenuProvider getTaskConfigGuiProvider(EntityMaid maid) {
+    public @NotNull MenuProvider getTaskConfigGuiProvider(EntityMaid maid) {
         final int entityId = maid.getId();
         return new MenuProvider() {
-            public Component getDisplayName() {
+            public @NotNull Component getDisplayName() {
                 return Component.literal("Maid Task Config Container");
             }
 
-            public AbstractMaidContainer createMenu(int index, Inventory playerInventory, Player player) {
+            @Override
+            public AbstractMaidContainer createMenu(int index, @NotNull Inventory playerInventory, @NotNull Player player) {
                 return new DefaultMaidTaskConfigContainer(index, playerInventory, entityId);
             }
 
@@ -143,7 +145,7 @@ public class TaskFeedAnimalT implements IAttackTask, IMaidsoulKitchenTask {
     }
 
     @Override
-    public String getBookEntry() {
+    public @NotNull String getBookEntry() {
         return "feed_animal_t";
     }
 }

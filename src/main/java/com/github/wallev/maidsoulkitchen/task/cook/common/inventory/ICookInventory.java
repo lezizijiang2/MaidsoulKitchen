@@ -1,7 +1,7 @@
 package com.github.wallev.maidsoulkitchen.task.cook.common.inventory;
 
-import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,9 +22,9 @@ public interface ICookInventory {
 
     void add(ItemStack stack);
 
-    public Map<Item, List<ItemStack>> getInventoryStack();
+    Map<Item, List<ItemStack>> getInventoryStack();
 
-    public Map<Item, Integer> getInventoryItem();
+    Map<Item, Integer> getInventoryItem();
 
     List<ItemStack> getLastInvStack();
     default IItemHandlerModifiable getAvailableInv(EntityMaid maid, BagType bagType) {

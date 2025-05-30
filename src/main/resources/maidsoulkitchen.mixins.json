@@ -13,6 +13,8 @@
   ],
   "mixins": [
     "brewinandchewin.KegBlockEntityMixin",
+    "cuisinedelight.CookingDataAccessor",
+    "cuisinedelight.CookingEntryAccessor",
     "drinkbeer.BeerBarrelBlockAccessor",
     "farmersdelight.CookingPotBlockEntityMixin",
     "forge.FluidTankAccessor",

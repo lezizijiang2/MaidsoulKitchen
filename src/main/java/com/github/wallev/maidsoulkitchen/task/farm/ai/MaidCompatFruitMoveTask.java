@@ -1,14 +1,14 @@
-package com.github.wallev.maidsoulkitchen.task.cook.common.ai;
+package com.github.wallev.maidsoulkitchen.task.farm.ai;
 
-import com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarm;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarmHandler;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.IHandlerInfo;
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.task.MaidCheckRateTask;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitEntities;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmHandler;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
+import com.github.wallev.maidsoulkitchen.api.task.farm.IHandlerInfo;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
+import com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -23,16 +23,17 @@ public class MaidCompatFruitMoveTask<T extends ICompatFarmHandler & IHandlerInfo
     private static final int MAX_DELAY_TIME = 120;
     private final float movementSpeed;
     private final int verticalSearchRange;
-    private final ICompatFarm<T, ?> task;
+    private final ICompatFarmTask<T, ?> task;
     private final T compatFarmHandler;
     protected int verticalSearchStart;
     private int searchStartY = 3;
     private boolean initSearchStartY = false;
-    public MaidCompatFruitMoveTask(EntityMaid maid, ICompatFarm<T, ?> task, float movementSpeed) {
+
+    public MaidCompatFruitMoveTask(EntityMaid maid, ICompatFarmTask<T, ?> task, float movementSpeed) {
         this(maid, task, movementSpeed, 2);
     }
 
-    public MaidCompatFruitMoveTask(EntityMaid maid, ICompatFarm<T, ?> task, float movementSpeed, int verticalSearchRange) {
+    public MaidCompatFruitMoveTask(EntityMaid maid, ICompatFarmTask<T, ?> task, float movementSpeed, int verticalSearchRange) {
         super(ImmutableMap.of(MemoryModuleType.WALK_TARGET, MemoryStatus.VALUE_ABSENT,
                 InitEntities.TARGET_POS.get(), MemoryStatus.VALUE_ABSENT));
         this.task = task;

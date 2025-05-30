@@ -34,7 +34,7 @@ public abstract class BasePotBlockEntityMixin implements IFdCbeAccessor<BasePotR
     @Override
     @SuppressWarnings("unchecked")
     public Optional<BasePotRecipe> tlmk$getMatchingRecipe(RecipeWrapper inventoryWrapper) {
-        return (Optional<BasePotRecipe>) getMatchingRecipe(inventoryWrapper).map(RecipeHolder::value);
+        return getMatchingRecipe(inventoryWrapper).map(RecipeHolder::value);
     }
 
     @Override

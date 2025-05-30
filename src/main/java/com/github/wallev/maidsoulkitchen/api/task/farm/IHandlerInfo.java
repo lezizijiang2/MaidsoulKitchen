@@ -1,4 +1,4 @@
-package com.github.wallev.maidsoulkitchen.api.task.v1.farm;
+package com.github.wallev.maidsoulkitchen.api.task.farm;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.task.farm.FarmType;

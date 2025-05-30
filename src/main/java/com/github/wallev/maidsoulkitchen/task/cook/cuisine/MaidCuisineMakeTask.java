@@ -49,7 +49,7 @@ public class MaidCuisineMakeTask extends Behavior<EntityMaid> {
     private int tickAll = 0;
     private int tickMax = 0;
     private int tickSpace = Integer.MAX_VALUE;
-    private List<Pair<Integer, ItemStack>> processTickStacks = new ArrayList<>();
+    private final List<Pair<Integer, ItemStack>> processTickStacks = new ArrayList<>();
     private ItemStack plateItem = ItemStack.EMPTY;
     private boolean end = false;
 
@@ -90,10 +90,7 @@ public class MaidCuisineMakeTask extends Behavior<EntityMaid> {
         Brain<EntityMaid> brain = maid.getBrain();
         return brain.getMemory(MkEntities.WORK_POS.get()).map(targetPos -> {
             Vec3 targetV3d = targetPos.currentPosition();
-            if (maid.distanceToSqr(targetV3d) > Math.pow(task.getCloseEnoughDist(), 2)) {
-                return false;
-            }
-            return true;
+            return !(maid.distanceToSqr(targetV3d) > Math.pow(task.getCloseEnoughDist(), 2));
         }).orElse(false);
     }
 

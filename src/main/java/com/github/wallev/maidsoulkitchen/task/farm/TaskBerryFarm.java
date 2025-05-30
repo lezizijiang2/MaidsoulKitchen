@@ -5,15 +5,13 @@ import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.MaidPathFindingBFS;
 import com.github.wallev.maidsoulkitchen.api.TaskBookEntryType;
 import com.github.wallev.maidsoulkitchen.api.event.MaidMkTaskEnableEvent;
-import com.github.wallev.maidsoulkitchen.api.task.IAddonFarmTask;
-import com.github.wallev.maidsoulkitchen.api.task.IFakePlayerTask;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarm;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.BerryData;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.BerryFarmConfigContainer;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
-import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCompatFarmMoveTask;
-import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCompatFarmPlantTask;
+import com.github.wallev.maidsoulkitchen.task.farm.ai.MaidCompatFarmMoveTask;
+import com.github.wallev.maidsoulkitchen.task.farm.ai.MaidCompatFarmPlantTask;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.IFarmHandlerManager;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.berry.BerryHandler;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.berry.BerryHandlerManager;
@@ -37,7 +35,7 @@ import java.util.List;
 import static com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid.BLACK_LIST;
 
 
-public class TaskBerryFarm implements ICompatFarm<BerryHandler, BerryData>, IFakePlayerTask, IAddonFarmTask {
+public class TaskBerryFarm implements ICompatFarmTask<BerryHandler, BerryData> {
     @Override
     public IFarmHandlerManager<BerryHandler>[] getManagerHandlerValues() {
         return BerryHandlerManager.values();

@@ -4,7 +4,7 @@ import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.task.MaidCheckRa
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitEntities;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
-import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.github.wallev.maidsoulkitchen.util.MemoryUtil;
 import com.google.common.collect.ImmutableMap;

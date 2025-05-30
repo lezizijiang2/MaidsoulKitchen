@@ -2,20 +2,21 @@ package com.github.wallev.maidsoulkitchen.task.cook.drinkbeer;
 
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.client.tooltip.RecipeDataTooltip;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
+import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
-import com.github.wallev.maidsoulkitchen.inventory.tooltip.AmountTooltip;
 import com.github.wallev.maidsoulkitchen.mixin.drinkbeer.BeerBarrelBlockAccessor;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.TaskBaseContainerCook;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipe;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
+import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import lekavar.lma.drinkbeer.blockentities.BeerBarrelBlockEntity;
 import lekavar.lma.drinkbeer.recipes.BrewingRecipe;
 import lekavar.lma.drinkbeer.registries.BlockRegistry;
 import lekavar.lma.drinkbeer.registries.RecipeRegistry;
-import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
@@ -23,10 +24,11 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
@@ -266,13 +268,19 @@ public class TaskDbBeerBarrel extends TaskBaseContainerCook<BeerBarrelBlockEntit
     }
 
     @Override
-    public Optional<TooltipComponent> getRecClientAmountTooltip(Recipe<?> recipe, boolean modeRandom, boolean overSize, CookData cookData) {
-        BrewingRecipe brewingRecipe = (BrewingRecipe) recipe;
-        ItemStack beerCup = brewingRecipe.getBeerCup();
-        List<Ingredient> ingres = this.getIngredients(recipe);
-        NonNullList<Ingredient> list = NonNullList.create();
-        list.addAll(ingres);
-        list.add(Ingredient.of(beerCup));
-        return ingres.isEmpty() ? Optional.empty() : Optional.of(new AmountTooltip(getRecipeId(recipe), list, modeRandom, overSize, cookData));
+    @OnlyIn(Dist.CLIENT)
+    public Optional<TooltipComponent> getRecClientAmountTooltip(RecipeHolder<?> recipe, boolean modeIsBlacklist, boolean overSize, CookData cookData, EntityMaid maid) {
+        List<Ingredient> ingres = Lists.newArrayList(this.getIngredients(recipe.value()));
+        ingres.add(Ingredient.of(((BrewingRecipe) recipe.value()).getBeerCup()));
+
+        List<List<RecipeDataTooltip.IngredientSourceType>> source = new ArrayList<>();
+        source.add(List.of(RecipeDataTooltip.IngredientSourceType.MAIN_HAND, RecipeDataTooltip.IngredientSourceType.OFF_HAND, RecipeDataTooltip.IngredientSourceType.MAID_BACKPACK));
+        source.add(List.of(RecipeDataTooltip.IngredientSourceType.HUB_INGREDIENT));
+        int ruleMatchIndex = maid.getMaidInv().getStackInSlot(4).is(MkItems.CULINARY_HUB.get()) ? 1 : 0;
+        RecipeDataTooltip.TooltipRecIngredient tooltipRecIngredient = new RecipeDataTooltip.TooltipRecIngredient(ingres, source, RecipeDataTooltip.IngredientType.MANDATORY, ruleMatchIndex);
+
+        RecipeDataTooltip.TooltipRecIngredient tooltipRecResultIngredient = getTooltipRecResultIngredient(recipe.value(), maid);
+        RecipeDataTooltip.TooltipRecipeData tooltipRecipeData = new RecipeDataTooltip.TooltipRecipeData(cookData, recipe.id().toString(), List.of(tooltipRecIngredient), tooltipRecResultIngredient, modeIsBlacklist, overSize);
+        return Optional.of(tooltipRecipeData);
     }
 }

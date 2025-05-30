@@ -1,8 +1,8 @@
 package com.github.wallev.maidsoulkitchen.client.gui.widget.button;
 
-import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
-import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
 import com.github.tartaricacid.touhoulittlemaid.api.task.IMaidTask;
+import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
+import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -20,7 +20,7 @@ import java.util.List;
 public class TaskInfoButton extends NormalTooltipButton {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
 
-    private IMaidTask task;
+    private final IMaidTask task;
 
     public TaskInfoButton(int pX, int pY, int pWidth, int pHeight, IMaidTask task) {
         super(pX, pY, pWidth, pHeight, task.getName(), getDesc(task), (b) -> {

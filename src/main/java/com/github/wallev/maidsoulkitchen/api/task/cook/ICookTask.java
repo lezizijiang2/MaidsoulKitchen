@@ -1,4 +1,4 @@
-package com.github.wallev.maidsoulkitchen.api.task.v1.cook;
+package com.github.wallev.maidsoulkitchen.api.task.cook;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitSounds;
@@ -7,10 +7,14 @@ import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
 import com.github.wallev.maidsoulkitchen.api.TaskBookEntryType;
 import com.github.wallev.maidsoulkitchen.api.event.MaidMkTaskEnableEvent;
 import com.github.wallev.maidsoulkitchen.api.task.IDataTask;
+import com.github.wallev.maidsoulkitchen.client.tooltip.RecipeDataTooltip.IngredientSourceType;
+import com.github.wallev.maidsoulkitchen.client.tooltip.RecipeDataTooltip.IngredientType;
+import com.github.wallev.maidsoulkitchen.client.tooltip.RecipeDataTooltip.TooltipRecIngredient;
+import com.github.wallev.maidsoulkitchen.client.tooltip.RecipeDataTooltip.TooltipRecipeData;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.init.MkEntities;
+import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CookConfigContainer;
-import com.github.wallev.maidsoulkitchen.inventory.tooltip.AmountTooltip;
 import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCookMakeTask;
 import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCookMoveTask;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cbaccessor.IRecipeExperinceAward;
@@ -36,17 +40,23 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.NeoForge;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends IMaidsoulKitchenTask, IDataTask<CookData> {
-
+    static void awardExperience(BlockEntity blockEntity, EntityMaid maid) {
+        if (blockEntity instanceof IRecipeExperinceAward iRecipeExperinceAward) {
+            iRecipeExperinceAward.tlmk$awardExperience(maid);
+        }
+    }
     @Override
-    default List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
+    default @NotNull List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
         if (maid.level.isClientSide) {
             return Collections.emptyList();
         }
@@ -81,10 +91,10 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Rec
     }
 
     @Override
-    default List<Pair<String, Predicate<EntityMaid>>> getEnableConditionDesc(EntityMaid maid) {
+    default @NotNull List<Pair<String, Predicate<EntityMaid>>> getEnableConditionDesc(@NotNull EntityMaid maid) {
         MaidMkTaskEnableEvent maidMkTaskEnableEvent = new MaidMkTaskEnableEvent(maid, this);
-        NeoForge.EVENT_BUS.post(maidMkTaskEnableEvent);
-        if (!maidMkTaskEnableEvent.isEnable()) {
+        var eventPosted = NeoForge.EVENT_BUS.post(maidMkTaskEnableEvent);
+        if (!eventPosted.isCanceled()) {
             return maidMkTaskEnableEvent.getEnableConditionDesc();
         }
 
@@ -94,9 +104,9 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Rec
     @Override
     default boolean isEnable(EntityMaid maid) {
         MaidMkTaskEnableEvent maidMkTaskEnableEvent = new MaidMkTaskEnableEvent(maid, this);
-        NeoForge.EVENT_BUS.post(maidMkTaskEnableEvent);
-        if (!maidMkTaskEnableEvent.isEnable()) {
-            return false;
+        var eventPosted = NeoForge.EVENT_BUS.post(maidMkTaskEnableEvent);
+        if (!eventPosted.isCanceled()) {
+            return maidMkTaskEnableEvent.isEnable();
         }
 
         return hasEnoughFavor(maid);
@@ -154,9 +164,18 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Rec
     }
 
     @OnlyIn(Dist.CLIENT)
-    default Optional<TooltipComponent> getRecClientAmountTooltip(Recipe<?> recipe, boolean modeRandom, boolean overSize, CookData cookData) {
-        List<Ingredient> ingres = this.getIngredients(recipe);
-        return ingres.isEmpty() ? Optional.empty() : Optional.of(new AmountTooltip(getRecipeId(recipe), ingres, modeRandom, overSize, cookData));
+    default Optional<TooltipComponent> getRecClientAmountTooltip(RecipeHolder<?> recipe, boolean modeIsBlacklist, boolean overSize, CookData cookData, EntityMaid maid) {
+        List<Ingredient> ingres = this.getIngredients(recipe.value());
+
+        List<List<IngredientSourceType>> source = new ArrayList<>();
+        source.add(List.of(IngredientSourceType.MAIN_HAND, IngredientSourceType.OFF_HAND, IngredientSourceType.MAID_BACKPACK));
+        source.add(List.of(IngredientSourceType.HUB_INGREDIENT));
+        int ruleMatchIndex = maid.getMaidInv().getStackInSlot(4).is(MkItems.CULINARY_HUB.get()) ? 1 : 0;
+        TooltipRecIngredient tooltipRecIngredient = new TooltipRecIngredient(ingres, source, IngredientType.MANDATORY, ruleMatchIndex);
+
+        TooltipRecIngredient tooltipRecResultIngredient = getTooltipRecResultIngredient(recipe.value(), maid);
+        TooltipRecipeData tooltipRecipeData = new TooltipRecipeData(cookData, recipe.id().toString(), List.of(tooltipRecIngredient), tooltipRecResultIngredient, modeIsBlacklist, overSize);
+        return Optional.of(tooltipRecipeData);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -165,6 +184,18 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Rec
         return recipeHolder.map(rRecipeHolder -> rRecipeHolder.id().toString()).orElse("");
     }
 
+
+    @OnlyIn(Dist.CLIENT)
+    default TooltipRecIngredient getTooltipRecResultIngredient(Recipe<?> recipe, EntityMaid maid) {
+        List<List<IngredientSourceType>> result = new ArrayList<>();
+        result.add(List.of(IngredientSourceType.MAIN_HAND, IngredientSourceType.OFF_HAND, IngredientSourceType.MAID_BACKPACK));
+        result.add(List.of(IngredientSourceType.HUB_OUTPUT));
+        int resultRuleMatchIndex = maid.getMaidInv().getStackInSlot(4).is(MkItems.CULINARY_HUB.get()) ? 1 : 0;
+        TooltipRecIngredient tooltipRecResultIngredient = new TooltipRecIngredient(List.of(Ingredient.of(this.getResultItem(recipe, maid.level.registryAccess()))), result, IngredientType.OUTPUT, resultRuleMatchIndex);
+        return tooltipRecResultIngredient;
+    }
+
+    @OnlyIn(Dist.CLIENT)
     default List<Component> getWarnComponent() {
         return Collections.emptyList();
     }
@@ -179,11 +210,5 @@ public interface ICookTask<B extends BlockEntity, R extends Recipe<? extends Rec
     default boolean enableEating(EntityMaid maid) {
         // 工作中禁止吃饭
         return !maid.getBrain().hasMemoryValue(MkEntities.WORK_POS.get());
-    }
-
-    static void awardExperience(BlockEntity blockEntity, EntityMaid maid) {
-        if (blockEntity instanceof IRecipeExperinceAward iRecipeExperinceAward) {
-            iRecipeExperinceAward.tlmk$awardExperience(maid);
-        }
     }
 }

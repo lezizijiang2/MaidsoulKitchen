@@ -1,4 +1,4 @@
-package com.github.wallev.maidsoulkitchen.api.task.v1.cook;
+package com.github.wallev.maidsoulkitchen.api.task.cook;
 
 import com.github.wallev.maidsoulkitchen.task.cook.common.action.IMaidAction;
 import com.mojang.datafixers.util.Pair;

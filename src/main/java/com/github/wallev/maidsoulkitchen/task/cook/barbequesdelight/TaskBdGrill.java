@@ -2,7 +2,7 @@ package com.github.wallev.maidsoulkitchen.task.cook.barbequesdelight;
 
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
@@ -26,6 +26,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -66,11 +67,7 @@ public class TaskBdGrill implements ICookTask<GrillBlockEntity, GrillingRecipe<?
         }
 
         // 烧烤架没有在烤东西，并且女仆身上有待烧烤的食物
-        if (blockEntity.isHeated() && !innerCanCook && !recManager.getRecipesIngredients().isEmpty()) {
-            return true;
-        }
-
-        return false;
+        return blockEntity.isHeated() && !innerCanCook && !recManager.getRecipesIngredients().isEmpty();
     }
 
     @Override
@@ -79,7 +76,7 @@ public class TaskBdGrill implements ICookTask<GrillBlockEntity, GrillingRecipe<?
     }
 
     @Override
-    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
+    public @NotNull List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
         if (maid.level().isClientSide) {
             return Collections.emptyList();
         }

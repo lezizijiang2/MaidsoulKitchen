@@ -2,9 +2,11 @@ package com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming;
 
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.client.tooltip.RecipeDataTooltip;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid;
+import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipe;
@@ -22,6 +24,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -33,6 +36,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.EmptyFluid;
 import net.minecraft.world.level.material.Fluid;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
@@ -144,10 +149,12 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
                     }
                 }
 
+                // 检查是否缺少材料
                 if (itemTimes.entrySet().stream().anyMatch(entry -> available.get(entry.getKey()) < entry.getValue())) {
                     return MaidRecipe.empty();
                 }
 
+                // 计算最大合成次数
                 int maxCount = 1;
 
                 List<Pair<Item, Integer>> ingredientMap = new ArrayList<>();
@@ -513,6 +520,31 @@ public class TaskYhcFermentationTank implements ICookTask<FermentationTankBlockE
             return sakeFluid.type.asStack(1);
         }
         return Items.AIR.getDefaultInstance();
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public Optional<TooltipComponent> getRecClientAmountTooltip(Recipe<?> recipe, boolean modeIsBlacklist, boolean overSize, CookData cookData, EntityMaid maid) {
+        List<Ingredient> ingres = this.getIngredients(recipe);
+
+        List<List<RecipeDataTooltip.IngredientSourceType>> ingreSources = new ArrayList<>();
+        ingreSources.add(Lists.newArrayList(RecipeDataTooltip.IngredientSourceType.MAIN_HAND, RecipeDataTooltip.IngredientSourceType.OFF_HAND, RecipeDataTooltip.IngredientSourceType.MAID_BACKPACK));
+        ingreSources.add(Lists.newArrayList(RecipeDataTooltip.IngredientSourceType.HUB_INGREDIENT));
+        int sourceRuleMatchIndex = maid.getMaidInv().getStackInSlot(4).is(MkItems.CULINARY_HUB.get()) ? 1 : 0;
+        RecipeDataTooltip.TooltipRecIngredient tooltipRecIngredient = new RecipeDataTooltip.TooltipRecIngredient(ingres, ingreSources, RecipeDataTooltip.IngredientType.MANDATORY, sourceRuleMatchIndex);
+
+        List<List<RecipeDataTooltip.IngredientSourceType>> containerSources = new ArrayList<>();
+        containerSources.add(Lists.newArrayList(RecipeDataTooltip.IngredientSourceType.MAIN_HAND, RecipeDataTooltip.IngredientSourceType.OFF_HAND, RecipeDataTooltip.IngredientSourceType.MAID_BACKPACK));
+        containerSources.add(Lists.newArrayList(RecipeDataTooltip.IngredientSourceType.HUB_OUTPUT_ADDITION));
+        int containerRuleMatchIndex = maid.getMaidInv().getStackInSlot(4).is(MkItems.CULINARY_HUB.get()) ? 1 : 0;
+        SimpleFermentationRecipe fermentationRecipe = (SimpleFermentationRecipe) recipe;
+        List<Ingredient> fluidContainers = FLUID_CONTAINERS.getOrDefault(fermentationRecipe.outputFluid.getFluid(), Collections.emptyList()).stream()
+                .map(Ingredient::of)
+                .toList();
+        RecipeDataTooltip.TooltipRecIngredient tooltipRecContainerSources = new RecipeDataTooltip.TooltipRecIngredient(fluidContainers, containerSources, RecipeDataTooltip.IngredientType.MAYBE, containerRuleMatchIndex);
+
+        RecipeDataTooltip.TooltipRecIngredient tooltipRecResultIngredient = getTooltipRecResultIngredient(recipe, maid);
+        RecipeDataTooltip.TooltipRecipeData tooltipRecipeData = new RecipeDataTooltip.TooltipRecipeData(cookData, recipe.toString(), List.of(tooltipRecIngredient, tooltipRecContainerSources), tooltipRecResultIngredient, modeIsBlacklist, overSize);
+        return Optional.of(tooltipRecipeData);
     }
 
     public record MaidFermentationRecipe(List<ItemStack> inFluids, List<Ingredient> inItems) {

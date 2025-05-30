@@ -42,6 +42,19 @@ neoForge {
 
     // 运行部分
     runs {
+        configureEach {
+            gameDirectory = project.file('run')
+            systemProperty 'neoforge.logging.markers', 'REGISTRIES'
+            systemProperty 'neoforge.logging.console.level', 'debug'
+            // 彩色日志
+            systemProperty 'terminal.jline', 'true'
+//            mods {
+//                "${mod_id}" {
+//                    source sourceSets.main
+//                }
+//            }
+        }
+
         client {
             client()
             gameDirectory = project.file('run/client')

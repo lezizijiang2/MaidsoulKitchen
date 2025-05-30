@@ -2,7 +2,8 @@ package com.github.wallev.maidsoulkitchen.task.cook.farmersdelight;
 
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.client.tooltip.RecipeDataTooltip;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
@@ -10,21 +11,23 @@ import com.github.wallev.maidsoulkitchen.task.cook.common.ai.MaidCookMoveTask;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CampfireCookingRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import vectorwing.farmersdelight.common.block.entity.SkilletBlockEntity;
 import vectorwing.farmersdelight.common.registry.ModItems;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,7 +79,7 @@ public class TaskFdSkillet implements ICookTask<SkilletBlockEntity, CampfireCook
     }
 
     @Override
-    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
+    public @NotNull List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
         if (maid.level.isClientSide) {
             return Collections.emptyList();
         }
@@ -93,5 +96,21 @@ public class TaskFdSkillet implements ICookTask<SkilletBlockEntity, CampfireCook
         return getRecipeHolders(level).stream()
                 .map(RecipeHolder::value)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public List<Component> getWarnComponent() {
+        return List.of(Component.translatable("gui.maidsoulkitchen.btn.cook_guide.info.warn").withStyle(ChatFormatting.YELLOW),
+                Component.translatable("gui.maidsoulkitchen.btn.cook_guide.info.warn.skillet"));
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public RecipeDataTooltip.TooltipRecIngredient getTooltipRecResultIngredient(Recipe<?> recipe, EntityMaid maid) {
+        List<List<RecipeDataTooltip.IngredientSourceType>> result = new ArrayList<>();
+        result.add(List.of(RecipeDataTooltip.IngredientSourceType.PICKUP));
+        int resultRuleMatchIndex = 0;
+        RecipeDataTooltip.TooltipRecIngredient tooltipRecResultIngredient = new RecipeDataTooltip.TooltipRecIngredient(List.of(Ingredient.of(this.getResultItem(recipe, maid.level.registryAccess()))), result, RecipeDataTooltip.IngredientType.OUTPUT, resultRuleMatchIndex);
+        return tooltipRecResultIngredient;
     }
 }

@@ -1,20 +1,20 @@
-package com.github.wallev.maidsoulkitchen.task.cook.common.ai;
+package com.github.wallev.maidsoulkitchen.task.farm.ai;
 
-import com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarm;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarmHandler;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.IHandlerInfo;
 import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.task.MaidMoveToBlockTask;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmHandler;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
+import com.github.wallev.maidsoulkitchen.api.task.farm.IHandlerInfo;
+import com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class MaidCompatFarmMoveTask<T extends ICompatFarmHandler & IHandlerInfo> extends MaidMoveToBlockTask {
-    private final ICompatFarm<T, ?> task;
+    private final ICompatFarmTask<T, ?> task;
     private final T compatFarmHandler;
 
-    public MaidCompatFarmMoveTask(EntityMaid maid, ICompatFarm<T, ?> task, float movementSpeed) {
+    public MaidCompatFarmMoveTask(EntityMaid maid, ICompatFarmTask<T, ?> task, float movementSpeed) {
         super(movementSpeed, 2);
         this.task = task;
         this.compatFarmHandler = task.getCompatHandler(maid);

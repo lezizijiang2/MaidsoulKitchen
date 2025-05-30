@@ -116,7 +116,6 @@ public class MaidGrillMakeTask extends Behavior<EntityMaid> {
                 if (nothing) {
                     this.stop(worldIn, maid, pGameTime);
                     this.maidRecipesManager.syncInv();
-                    return;
                 }
 
             }

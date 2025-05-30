@@ -7,7 +7,7 @@ package com.github.wallev.maidsoulkitchen.task.cook.brewinandchewin;
 
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.RegisterData;

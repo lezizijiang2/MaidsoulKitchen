@@ -203,7 +203,7 @@ public class MaidSkilletMakeTask extends Behavior<EntityMaid> {
                             maid.swing(InteractionHand.MAIN_HAND);
                         }
                     }
-                } else if (!((SkilletBlockEntity) blockEntity).hasStoredStack()) {
+                } else if (!skilletBlockEntity.hasStoredStack()) {
                     cookCount = 0;
                     // 如果没有在烹饪，尝试开始新的烹饪
                     if (skilletBlockEntity.isHeated()) {

@@ -1,9 +1,9 @@
 package com.github.wallev.maidsoulkitchen.task.farm.handler.fruit;
 
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.ICompatFarmHandler;
-import com.github.wallev.maidsoulkitchen.api.task.v1.farm.IHandlerInfo;
-import com.github.wallev.maidsoulkitchen.task.farm.FarmType;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmHandler;
+import com.github.wallev.maidsoulkitchen.api.task.farm.IHandlerInfo;
+import com.github.wallev.maidsoulkitchen.task.farm.FarmType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 

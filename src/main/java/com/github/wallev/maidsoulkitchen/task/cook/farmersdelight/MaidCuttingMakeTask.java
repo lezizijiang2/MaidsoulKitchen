@@ -41,14 +41,11 @@ public class MaidCuttingMakeTask extends Behavior<EntityMaid> {
         Brain<EntityMaid> brain = maid.getBrain();
         return brain.getMemory(MkEntities.WORK_POS.get()).map(targetPos -> {
             Vec3 targetV3d = targetPos.currentPosition();
-            if (maid.distanceToSqr(targetV3d) > Math.pow(task.getCloseEnoughDist(), 2)) {
-//                Optional<WalkTarget> walkTarget = brain.getMemory(MemoryModuleType.WALK_TARGET);
-//                if (walkTarget.isEmpty() || !walkTarget.get().getTarget().currentPosition().equals(targetV3d)) {
-//                    brain.eraseMemory(InitEntities.TARGET_POS.get());
-//                }
-                return false;
-            }
-            return true;
+            //                Optional<WalkTarget> walkTarget = brain.getMemory(MemoryModuleType.WALK_TARGET);
+            //                if (walkTarget.isEmpty() || !walkTarget.get().getTarget().currentPosition().equals(targetV3d)) {
+            //                    brain.eraseMemory(InitEntities.TARGET_POS.get());
+            //                }
+            return !(maid.distanceToSqr(targetV3d) > Math.pow(task.getCloseEnoughDist(), 2));
         }).orElse(false);
     }
 

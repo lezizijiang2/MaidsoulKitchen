@@ -1,9 +1,9 @@
 package com.github.wallev.maidsoulkitchen.task.cook.common;
 
-import com.github.wallev.maidsoulkitchen.api.task.v1.cook.IBaseContainerPotCook;
-import com.github.wallev.maidsoulkitchen.api.task.v1.cook.ICookTask;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.api.task.cook.IBaseContainerPotCook;
+import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
