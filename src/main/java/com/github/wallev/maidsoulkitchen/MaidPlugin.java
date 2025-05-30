@@ -1,6 +1,18 @@
 package com.github.wallev.maidsoulkitchen;
 
+import com.github.tartaricacid.touhoulittlemaid.api.ILittleMaid;
+import com.github.tartaricacid.touhoulittlemaid.api.LittleMaidExtension;
+import com.github.tartaricacid.touhoulittlemaid.block.multiblock.MultiBlockManager;
+import com.github.tartaricacid.touhoulittlemaid.client.overlay.MaidTipsOverlay;
+import com.github.tartaricacid.touhoulittlemaid.client.renderer.entity.EntityMaidRenderer;
+import com.github.tartaricacid.touhoulittlemaid.client.renderer.entity.GeckoEntityMaidRenderer;
 import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.ExtraMaidBrainManager;
+import com.github.tartaricacid.touhoulittlemaid.entity.backpack.BackpackManager;
+import com.github.tartaricacid.touhoulittlemaid.entity.data.TaskDataRegister;
+import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskManager;
+import com.github.tartaricacid.touhoulittlemaid.entity.task.meal.MaidMealManager;
+import com.github.tartaricacid.touhoulittlemaid.inventory.chest.ChestManager;
+import com.github.tartaricacid.touhoulittlemaid.item.bauble.BaubleManager;
 import com.github.wallev.maidsoulkitchen.chest.FarmDelightCabinet;
 import com.github.wallev.maidsoulkitchen.entity.ai.brain.MaidBrain;
 import com.github.wallev.maidsoulkitchen.foundation.utility.Mods;
@@ -8,18 +20,6 @@ import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.TaskRegister;
 import com.github.wallev.maidsoulkitchen.item.bauble.BurnProtectBauble;
-import com.github.tartaricacid.touhoulittlemaid.api.ILittleMaid;
-import com.github.tartaricacid.touhoulittlemaid.api.LittleMaidExtension;
-import com.github.tartaricacid.touhoulittlemaid.block.multiblock.MultiBlockManager;
-import com.github.tartaricacid.touhoulittlemaid.client.overlay.MaidTipsOverlay;
-import com.github.tartaricacid.touhoulittlemaid.client.renderer.entity.EntityMaidRenderer;
-import com.github.tartaricacid.touhoulittlemaid.client.renderer.entity.GeckoEntityMaidRenderer;
-import com.github.tartaricacid.touhoulittlemaid.entity.backpack.BackpackManager;
-import com.github.tartaricacid.touhoulittlemaid.entity.data.TaskDataRegister;
-import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskManager;
-import com.github.tartaricacid.touhoulittlemaid.entity.task.meal.MaidMealManager;
-import com.github.tartaricacid.touhoulittlemaid.inventory.chest.ChestManager;
-import com.github.tartaricacid.touhoulittlemaid.item.bauble.BaubleManager;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.Mob;
 import net.neoforged.api.distmarker.Dist;
@@ -53,8 +53,7 @@ public final class MaidPlugin implements ILittleMaid {
     @Override
     public void addChestType(ChestManager manager) {
         if (Mods.FD.isLoaded()) {
-            // 农夫乐事的橱柜并没有实现 NeoForge 的 Cap 系统 ，故禁用
-//            manager.add(new FarmDelightCabinet());
+            manager.add(new FarmDelightCabinet());
         }
     }
 
