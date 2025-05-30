@@ -143,7 +143,7 @@ public class MaidCookMoveTask<B extends BlockEntity, R extends Recipe<? extends 
 
             for (BlockPos adjacentPos : adjacentPositions) {
                 // 检查相邻位置是否可以站立
-                if (isValidStandingPosition(worldIn, adjacentPos)) {
+                if (isValidStandingPosition(worldIn, adjacentPos) || isValidStandingPosition(worldIn, adjacentPos.below())) {
                     return adjacentPos;
                 }
             }
