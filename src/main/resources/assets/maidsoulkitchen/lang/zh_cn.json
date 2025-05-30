@@ -341,7 +341,8 @@
   "gui.maidsoulkitchen.culinary_hub.config.clear_bind_poses.tooltip": "一键清除已绑定过的箱子的坐标",
   "gui.maidsoulkitchen.development": "(开发中)",
   "gui.maidsoulkitchen.sort_mode.default": "排序: 随机",
-  "gui.maidsoulkitchen.sort_mode.nutrition": "排序: 优先饥饿度",
-  "gui.maidsoulkitchen.sort_mode.saturation": "排序: 优先饱和度",
-  "gui.maidsoulkitchen.sort_mode.ingredients": "排序: 优先食材数量"
+  "gui.maidsoulkitchen.sort_mode.nutrition": "排序: 优先饥饿度高",
+  "gui.maidsoulkitchen.sort_mode.saturation": "排序: 优先饱和度高",
+  "gui.maidsoulkitchen.sort_mode.ingredients": "排序: 优先食材数量多",
+  "gui.maidsoulkitchen.sort_mode.result": "排序：优先食物数量少"
 }

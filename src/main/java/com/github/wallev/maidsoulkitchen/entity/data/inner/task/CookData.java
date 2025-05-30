@@ -165,7 +165,12 @@ public class CookData implements ITaskData {
         /**
          * 按可用食材数量排序（多到少）
          */
-        INGREDIENTS("ingredients");
+        INGREDIENTS("ingredients"),
+
+        /**
+         * 按配方结果数量排序（少到多）
+         */
+        RESULT("result");
 
         /**
          * 排序模式名称

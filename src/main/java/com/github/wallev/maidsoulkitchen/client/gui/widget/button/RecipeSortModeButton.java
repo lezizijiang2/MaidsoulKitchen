@@ -35,6 +35,7 @@ public class RecipeSortModeButton extends NormalTooltipButton {
             case NUTRITION -> Component.translatable("gui.maidsoulkitchen.sort_mode.nutrition");
             case SATURATION -> Component.translatable("gui.maidsoulkitchen.sort_mode.saturation");
             case INGREDIENTS -> Component.translatable("gui.maidsoulkitchen.sort_mode.ingredients");
+            case RESULT -> Component.translatable("gui.maidsoulkitchen.sort_mode.result");
         };
         return Tooltip.create(text);
     }

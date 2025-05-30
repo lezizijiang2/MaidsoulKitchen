@@ -344,5 +344,6 @@
   "gui.maidsoulkitchen.sort_mode.default": "Sort Mode: Random",
   "gui.maidsoulkitchen.sort_mode.nutrition": "Sort Mode: Nutrition (High to Low)",
   "gui.maidsoulkitchen.sort_mode.saturation": "Sort Mode: Saturation (High to Low)",
-  "gui.maidsoulkitchen.sort_mode.ingredients": "Sort Mode: Ingredients Count (High to Low)"
+  "gui.maidsoulkitchen.sort_mode.ingredients": "Sort Mode: Ingredients Count (High to Low)",
+  "gui.maidsoulkitchen.sort_mode.result": "Sort Mode: Result In Inventory (Low to High)"
 }

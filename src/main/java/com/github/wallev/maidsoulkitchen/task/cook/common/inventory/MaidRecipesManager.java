@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 /**
@@ -70,6 +71,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     protected int tryTime = 0;
     // 配方排序模式
     protected CookData.RecipeSortMode sortMode = CookData.RecipeSortMode.DEFAULT;
+    private Map<Item, Integer> availableIngredients = new HashMap<>();
 
     /**
      * 构造函数
@@ -248,6 +250,46 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     }
 
     /**
+     * 获取配方的产物数量
+     *
+     * @param recipe 配方
+     * @return 产物数量
+     */
+    protected int getRecipeResultCount(R recipe) {
+        Item resultItem = recipe.getResultItem(maid.registryAccess()).getItem();
+        if (hasCulinaryHub) {
+            List<BlockPos> ingredientPos = getBindingTypePoses(BagType.OUTPUT);
+            if (ingredientPos.isEmpty()) return 0;
+            AtomicInteger count = new AtomicInteger();
+            for (BlockPos ingredientPo : ingredientPos) {
+                BlockEntity blockEntity = level.getBlockEntity(ingredientPo);
+                if (blockEntity == null) continue;
+
+                for (IChestType type : ChestManager.getAllChestTypes()) {
+                    if (!type.isChest(blockEntity) || type.getOpenCount(maid.level, ingredientPo, blockEntity) > 0)
+                        continue;
+                    IItemHandler iItemHandler = level.getCapability(Capabilities.ItemHandler.BLOCK, ingredientPo, null);
+                    Optional.ofNullable(iItemHandler).ifPresent(beInv -> {
+                        for (int i = 0; i < beInv.getSlots(); i++) {
+                            ItemStack stackInSlot = beInv.getStackInSlot(i);
+                            if (stackInSlot.isEmpty()) continue;
+                            if (stackInSlot.is(resultItem)) {
+                                count.addAndGet(stackInSlot.getCount());
+                            }
+                        }
+                    });
+                    break;
+                }
+            }
+            return count.get();
+        } else {
+            return getMaidAvailableInv().entrySet().stream().filter(entry -> entry.getKey().equals(resultItem))
+                    .mapToInt(Map.Entry::getValue)
+                    .sum();
+        }
+    }
+
+    /**
      * 获取可用的配方列表并根据排序模式排序
      * @return 配方列表
      */
@@ -313,6 +355,13 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
                     return Integer.compare(count2, count1);
                 });
                 break;
+            case RESULT:
+                recipes.sort((r1, r2) -> {
+                    int count1 = getRecipeResultCount(r1);
+                    int count2 = getRecipeResultCount(r2);
+                    // 升序排序，目标产物数量少的优先
+                    return Integer.compare(count1, count2);
+                });
             default:
                 // 默认模式不进行排序
                 shuffle(recipes);
@@ -722,6 +771,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     protected void setRecIngres(List<MaidRecipe<R>> _make, Map<Item, Integer> available) {
         if (_make.isEmpty()) return;
         this.recipesIngredients = new ArrayList<>(_make);
+        this.availableIngredients = available;
     }
 
     /**
@@ -742,9 +792,7 @@ public class MaidRecipesManager<R extends Recipe<? extends RecipeInput>> {
     }
 
     /**
-     * 设置配方材料缓存
-     * @param _make 配方材料列表
-     * @param available 可用物品映射
+     * 重复配方
      */
     protected void repeat(List<MaidRecipe<R>> oriList, Map<Item, Integer> available, int times) {
         ArrayList<MaidRecipe<R>> oriRecipes = new ArrayList<>(oriList);
