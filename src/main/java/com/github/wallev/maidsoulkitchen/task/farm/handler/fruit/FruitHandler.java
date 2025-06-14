@@ -2,12 +2,12 @@ package com.github.wallev.maidsoulkitchen.task.farm.handler.fruit;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmHandler;
-import com.github.wallev.maidsoulkitchen.api.task.farm.IHandlerInfo;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatHandlerInfo;
 import com.github.wallev.maidsoulkitchen.task.farm.FarmType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class FruitHandler implements ICompatFarmHandler, IHandlerInfo {
+public abstract class FruitHandler implements ICompatFarmHandler, ICompatHandlerInfo {
     // 下一级处理者
     private FruitHandler nextHandler;
 

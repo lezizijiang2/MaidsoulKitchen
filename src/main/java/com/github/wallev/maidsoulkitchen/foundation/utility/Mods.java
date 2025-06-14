@@ -1,7 +1,13 @@
 package com.github.wallev.maidsoulkitchen.foundation.utility;
 
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLEnvironment;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
+
+import java.util.Optional;
 
 public enum Mods {
     PATCHOULI("patchouli"),
@@ -20,8 +26,9 @@ public enum Mods {
     MND("mynethersdelight"),
     CD("cuisinedelight"),
     BD("barbequesdelight"),
-    YHCD("youkaishomecoming"),
-    BNCD("brewinandchewin"),
+    YHCD("youkaishomecoming", "[3.0.8,)"),
+    BNCD("brewinandchewin", "[3.0.0,)"),
+    BNCD_LEGACY("brewinandchewin_legacy", "[,3.0.0)"),
     FRD("farmersrespite"),
 
     /*
@@ -29,10 +36,10 @@ public enum Mods {
      */
     DAPI("doapi"),
     DHB("herbalbrews"),
-    DV("vinery"),
+    DV("vinery", "[,1.4.28]"),
     DBP("beachparty"),
-    DCL("candlelight"),
-    DBK("bakery"),
+    DCL("candlelight", "[2.0.0,]"),
+    DBK("bakery", "[2.0.0,]"),
     DFC("farm_and_charm"),
 
 
@@ -54,24 +61,37 @@ public enum Mods {
 
     MC("minecraft") {
         @Override
-        public boolean isLoaded() {
+        public boolean isInstalled() {
             return true;
         }
-    };
+    },
+    KC("kaleidoscope_cookery");
 
     public final String modId;
     public final boolean isLoaded;
     Mods(String modId) {
         this.modId = modId;
-        this.isLoaded = this.isLoaded();
+        this.isLoaded = this.isInstalled();
     }
 
-    public boolean isLoaded() {
-        return ModList.get().isLoaded(modId);
+    Mods(String modId, String versionRange) {
+        this.modId = modId;
+        this.isLoaded = this.isInstalled(versionRange);
+    }
+
+    public static boolean hasLoaded(Mods... mods) {
+        ModList modList = ModList.get();
+        for (Mods mod : mods)
+            if (mod.isInstalled())
+                return true;
+        return false;
     }
 
     public ResourceLocation create(String path) {
         return ResourceLocation.fromNamespaceAndPath(modId, path);
+    }
+
+    public static void load() {
     }
 
     public static boolean allLoaded(String... modIds) {
@@ -90,12 +110,27 @@ public enum Mods {
         return false;
     }
 
-    public static boolean hasLoaded(Mods... mods) {
-        ModList modList = ModList.get();
-        for (Mods mod : mods)
-            if (mod.isLoaded())
-                return true;
-        return false;
+    public boolean isInstalled() {
+        return ModList.get().isLoaded(modId);
     }
 
+    // [x.x.x, )
+    protected boolean isInstalled(String spec) {
+        try {
+            VersionRange versionRange = VersionRange.createFromVersionSpec(spec);
+            Optional<? extends ModContainer> modContainer = ModList.get().getModContainerById(this.modId);
+            if (modContainer.isPresent()) {
+                if (versionRange.containsVersion(modContainer.get().getModInfo().getVersion())) {
+                    return true;
+                } else {
+                    // 开发环境下，version 是空的，所以需要额外判断
+                    return !FMLEnvironment.production;
+                }
+            }
+        } catch (InvalidVersionSpecificationException e) {
+            throw new RuntimeException(e);
+        }
+
+        return false;
+    }
 }

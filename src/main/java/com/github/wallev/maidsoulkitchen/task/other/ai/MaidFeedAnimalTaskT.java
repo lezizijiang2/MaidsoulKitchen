@@ -55,10 +55,6 @@ public class MaidFeedAnimalTaskT extends MaidCheckRateTask implements BehaviorCo
             if (feedEntity.isAlive() && feedEntity.closerThan(maid, 2)) {
                 ItemStack food = ItemsUtil.getStack(maid.getAvailableInv(false), feedEntity::isFood);
                 if (!food.isEmpty()) {
-                    // 很神秘的不起作用
-//                    TextChatBubbleData bubbleData = TextChatBubbleData.type2(food.copy().getDisplayName().copy());
-//                    maid.getChatBubbleManager().addChatBubble(bubbleData);
-
                     food.shrink(1);
                     maid.swing(InteractionHand.MAIN_HAND);
                     feedEntity.setInLove(null);

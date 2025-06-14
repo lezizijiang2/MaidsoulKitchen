@@ -156,6 +156,7 @@ idea {
 
 // libs自动依赖
 dependencies {
+
     if (file("libs/${minecraft_version}/implementation").exists()) {
         implementation fileTree(dir: "libs/${minecraft_version}/implementation", includes: ['*.jar'])
     }

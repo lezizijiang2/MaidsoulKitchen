@@ -4,7 +4,7 @@ import com.github.tartaricacid.touhoulittlemaid.datagen.EnchantmentKeys;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskMelon;
 import com.github.tartaricacid.touhoulittlemaid.inventory.container.AbstractMaidContainer;
-import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
+import com.github.wallev.maidsoulkitchen.api.task.IMaidsoulKitchenTask;
 import com.github.wallev.maidsoulkitchen.event.MelonConfigEvent;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CompatMelonConfigContainer;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
@@ -25,7 +25,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,6 +34,9 @@ import net.minecraft.world.level.material.FluidState;
 import java.util.List;
 
 public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTask {
+
+    public TaskCompatMelonFarm() {
+    }
 
     @Override
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
@@ -64,7 +66,7 @@ public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTa
     @Override
     public void harvest(EntityMaid maid, BlockPos cropPos, BlockState cropState) {
         Block block = cropState.getBlock();
-        if (cropState.is(Blocks.MELON)) {
+        if (MelonConfigEvent.MELON_STEM_MAP.containsKey(BlockUtil.getId(block))) {
             ItemStack mainHandItem = maid.getMainHandItem();
             RegistryAccess access = maid.level.registryAccess();
             if (EnchantmentKeys.getEnchantmentLevel(access, Enchantments.SILK_TOUCH, mainHandItem) > 0) {

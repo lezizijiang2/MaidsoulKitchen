@@ -4,7 +4,7 @@ import com.github.wallev.maidsoulkitchen.task.farm.handler.IFarmHandlerManager;
 
 public enum FruitHandlerManager implements IFarmHandlerManager<FruitHandler> {
 
-    COMPAT(new CompatFruitHandler());
+    COMPAT(new CompatFruitCompatHandler());
 
     private final FruitHandler fruitHandler;
 

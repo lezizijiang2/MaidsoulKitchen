@@ -1,25 +1,25 @@
 package com.github.wallev.maidsoulkitchen.item.bauble;
 
-import com.github.tartaricacid.touhoulittlemaid.network.NetworkHandler;
-import com.github.tartaricacid.touhoulittlemaid.network.message.ItemBreakPackage;
-import com.github.wallev.maidsoulkitchen.api.ILittleMaidBauble;
-import com.github.wallev.maidsoulkitchen.datagen.ModDamageTypeTags;
-import com.github.wallev.maidsoulkitchen.init.MkEffects;
 import com.github.tartaricacid.touhoulittlemaid.api.event.MaidAttackEvent;
 import com.github.tartaricacid.touhoulittlemaid.api.event.MaidDamageEvent;
 import com.github.tartaricacid.touhoulittlemaid.entity.item.EntityExtinguishingAgent;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.tartaricacid.touhoulittlemaid.network.message.ItemBreakPackage;
 import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
+import com.github.wallev.maidsoulkitchen.api.bauble.IMaidsoulKitchenBauble;
+import com.github.wallev.maidsoulkitchen.datagen.ModDamageTypeTags;
+import com.github.wallev.maidsoulkitchen.init.MkEffects;
+import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 
-public class BurnProtectBauble implements ILittleMaidBauble {
+public class BurnProtectBauble implements IMaidsoulKitchenBauble {
 
     public BurnProtectBauble() {
         NeoForge.EVENT_BUS.register(this);

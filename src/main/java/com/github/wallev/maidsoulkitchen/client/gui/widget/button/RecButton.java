@@ -6,6 +6,8 @@ import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
+import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
+import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,32 +20,32 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class RecButton extends TouhouStateSwitchButton implements ITooltipButton {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
+    // 构建虚拟 Slot, 用于支持 jei、rei、emi 等配方管理器查询成品相关信息.
+    protected final VirtualSlot virtualSlot;
     private final EntityMaid maid;
     private final ICookTask<?, ?> cookTask;
     private final CookData cookData;
-    // 构建虚拟 Slot, 用于支持 jei、rei、emi 等配方管理器查询成品相关信息.
-    protected final VirtualSlot virtualSlot;
+    private final MKRecipe<?> recipe;
     private final ItemStack stack;
-    private final RecipeHolder<?> recipe;
 
     @SuppressWarnings("all")
-    public RecButton(EntityMaid maid, ICookTask<?, ?> cookTask, CookData cookData, RecipeHolder<?> recipe, int pX, int pY) {
-
+    public RecButton(EntityMaid maid, ICookTask<?, ?> cookTask, CookData cookData, MKRecipe<?> recipe, int pX, int pY) {
         super(pX, pY, 20, 20, cookData.getRecs().contains(recipe.id().toString()));
         this.initTextureValues(179, 25, 22, 0, TEXTURE);
         this.maid = maid;
         this.cookTask = cookTask;
         this.recipe = recipe;
         this.cookData = cookData;
-        this.stack = cookTask.getResultItem(recipe.value(), maid.level.registryAccess());
+        this.stack = recipe.output();
         this.virtualSlot = new VirtualSlot(stack);
     }
 
@@ -53,10 +55,45 @@ public class RecButton extends TouhouStateSwitchButton implements ITooltipButton
     }
 
     @Override
-    public void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.renderWidget(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-        pGuiGraphics.renderItem(stack, this.getX() + 2, this.getY() + 2);
-        this.renderShadow(pGuiGraphics);
+    protected boolean clicked(double pMouseX, double pMouseY) {
+        boolean clicked = super.clicked(pMouseX, pMouseY);
+        if (clicked) {
+            if (Screen.hasControlDown() && !FMLEnvironment.production) {
+                this.debugGiveItem();
+                return false;
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 仅用于开发者调试，便捷获取配方所需的原材料
+     */
+    private void debugGiveItem() {
+        ArrayList<ItemStack> stacks = new ArrayList<>();
+        if (!recipe.inFluids().isEmpty()) {
+            stacks.add(recipe.inFluids().get(0));
+        }
+
+        List<ItemStack> list = recipe.inItems().stream()
+                .map(item -> {
+                    ItemStack[] items = item.ingredient.getItems();
+                    return items.length > 0 ? items[0] : ItemStack.EMPTY;
+                })
+                .toList();
+        stacks.addAll(list);
+
+        NetworkHandler.C2S.giveRecipeIngredient(stacks);
+    }
+
+
+    @Override
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        super.renderWidget(graphics, mouseX, mouseY, partialTick);
+        graphics.renderItem(stack, this.getX() + 2, this.getY() + 2);
+        this.renderShadow(graphics);
     }
 
     private void renderShadow(GuiGraphics graphics) {
@@ -110,13 +147,13 @@ public class RecButton extends TouhouStateSwitchButton implements ITooltipButton
         }
 
         boolean modeRandom = !cookData.mode().equals(CookData.Mode.WHITELIST.name);
-        Optional<TooltipComponent> recClientAmountTooltip = cookTask.getRecClientAmountTooltip(recipe, modeRandom, false, cookData, maid);
+        Optional<TooltipComponent> recClientAmountTooltip = this.getRecClientAmountTooltip(recipe, modeRandom, false, cookData, maid);
 
         pGuiGraphics.renderTooltip(mc.font, stackTooltip, recClientAmountTooltip, stack, pMouseX, pMouseY);
     }
 
-    public RecipeHolder<?> getRecipe() {
-        return recipe;
+    public Optional<TooltipComponent> getRecClientAmountTooltip(MKRecipe<?> recipe, boolean modeIsBlacklist, boolean overSize, CookData cookData, EntityMaid maid) {
+        return cookTask.recSerializerManager.getRecClientAmountTooltip(recipe, modeIsBlacklist, overSize, cookData, maid);
     }
 
     public static class VirtualSlot extends Slot {

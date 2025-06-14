@@ -21,7 +21,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ClipContext;
@@ -72,11 +71,6 @@ public class WrappedMaidFakePlayer extends FakePlayer {
         WrappedMaidFakePlayer fakePlayer = new WrappedMaidFakePlayer(maid);
         CACHE.put(maid.getUUID(), fakePlayer);
         return fakePlayer;
-    }
-
-    @Override
-    protected ItemCooldowns createItemCooldowns() {
-        return new WrappedMaidItemCooldowns(this);
     }
 
     @Override
@@ -151,7 +145,20 @@ public class WrappedMaidFakePlayer extends FakePlayer {
 
     @Override
     public void setItemInHand(InteractionHand pHand, ItemStack pStack) {
-        if (maid != null) {
+        if (maid == null) {
+            return;
+        }
+
+        // @todo：还待更多的测试
+        if (enableGhostItem) {
+            if (ItemStack.isSameItemSameComponents(this.ghostItem, pStack)) {
+                this.ghostItem.shrink(this.ghostItem.getCount() - pStack.getCount());
+            } else {
+                this.ghostItem.shrink(1);
+                this.addItem(pStack);
+            }
+
+        } else {
             maid.setItemInHand(pHand, pStack);
         }
     }
@@ -238,8 +245,21 @@ public class WrappedMaidFakePlayer extends FakePlayer {
         return this.useByHand(hand, this.getItemInHand(hand));
     }
 
+    public InteractionResult useByHand(InteractionHand hand, BlockPos pos) {
+        return this.useByHand(hand, this.getItemInHand(hand), pos);
+    }
+
     public InteractionResult useByHand(InteractionHand hand, ItemStack itemStack) {
         InteractionResult result = this.gameMode.useItem(this, maid.level, itemStack, hand);
+        if (result.shouldSwing()) {
+            this.swing(hand, true);
+        }
+        return result;
+    }
+
+    public InteractionResult useByHand(InteractionHand hand, ItemStack itemStack, BlockPos pos) {
+        BlockHitResult blockHitResult = this.getBlockHitResult(pos);
+        InteractionResult result = this.gameMode.useItemOn(this, maid.level, itemStack, hand, blockHitResult);
         if (result.shouldSwing()) {
             this.swing(hand, true);
         }
@@ -252,6 +272,9 @@ public class WrappedMaidFakePlayer extends FakePlayer {
             this.setGhostItem(itemStack);
             this.getInventory().setInvSupplier((maid0 -> inv));
             InteractionResult result = this.gameMode.useItemOn(this, maid.level, itemStack, InteractionHand.MAIN_HAND, blockHitResult);
+            if (result.shouldSwing()) {
+                this.swing(InteractionHand.MAIN_HAND, true);
+            }
             this.clearGhostItem();
             this.getInventory().resetInv();
             return result;
@@ -266,7 +289,32 @@ public class WrappedMaidFakePlayer extends FakePlayer {
             BlockHitResult blockHitResult = this.getBlockHitResult(pos);
             this.setGhostItem(itemStack);
             InteractionResult result = this.gameMode.useItemOn(this, maid.level, itemStack, InteractionHand.MAIN_HAND, blockHitResult);
+            if (result.shouldSwing()) {
+                this.swing(InteractionHand.MAIN_HAND, true);
+            }
             this.clearGhostItem();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return InteractionResult.FAIL;
+        }
+    }
+
+    public InteractionResult useOnByItem(BlockPos pos, ItemStack itemStack, boolean sneak) {
+        try {
+            if (sneak) {
+                this.setShiftKeyDown(true);
+            }
+            BlockHitResult blockHitResult = this.getBlockHitResult(pos);
+            this.setGhostItem(itemStack);
+            InteractionResult result = this.gameMode.useItemOn(this, maid.level, itemStack, InteractionHand.MAIN_HAND, blockHitResult);
+            if (result.shouldSwing()) {
+                this.swing(InteractionHand.MAIN_HAND, true);
+            }
+            this.clearGhostItem();
+            if (sneak) {
+                this.setShiftKeyDown(false);
+            }
             return result;
         } catch (Exception e) {
             e.printStackTrace();
@@ -277,8 +325,12 @@ public class WrappedMaidFakePlayer extends FakePlayer {
     public InteractionResult useOnByHand(BlockPos pos) {
         try {
             BlockHitResult blockHitResult = this.getBlockHitResult(pos);
-//            return this.gameMode.useItemOn(this, maid.level, this.getMainHandItem(), InteractionHand.MAIN_HAND, blockHitResult);
-            return this.gameMode.useItem(this, maid.level, this.getMainHandItem(), InteractionHand.MAIN_HAND);
+            InteractionResult result = this.gameMode.useItemOn(this, maid.level, this.getMainHandItem(), InteractionHand.MAIN_HAND, blockHitResult);
+            if (result.shouldSwing()) {
+                this.swing(InteractionHand.MAIN_HAND, true);
+            }
+            return result;
+//            return this.gameMode.useItem(this, maid.level, this.getMainHandItem(), InteractionHand.MAIN_HAND, blockHitResult);
         } catch (Exception e) {
             e.printStackTrace();
             return InteractionResult.FAIL;
@@ -288,7 +340,13 @@ public class WrappedMaidFakePlayer extends FakePlayer {
     public InteractionResult useOnByHand() {
         try {
             return maid.getBrain().getMemory(MemoryModuleType.LOOK_TARGET)
-                    .map(positionTracker -> this.useOnByHand(positionTracker.currentBlockPosition()))
+                    .map(positionTracker -> {
+                        InteractionResult result = this.useOnByHand(positionTracker.currentBlockPosition());
+                        if (result.shouldSwing()) {
+                            this.swing(InteractionHand.MAIN_HAND, true);
+                        }
+                        return result;
+                    })
                     .orElse(InteractionResult.FAIL);
         } catch (Exception e) {
             e.printStackTrace();
@@ -323,10 +381,20 @@ public class WrappedMaidFakePlayer extends FakePlayer {
     @ApiStatus.Experimental
     protected BlockHitResult getBlockHitResult(BlockPos pos) {
 //        this.getMainHandItem().useOn()
-//        return new BlockHitResult(maid.getLookAngle(), maid.getMotionDirection(), pos, false);
-        return getLivingEntityPOVHitResult(pos, ClipContext.Fluid.NONE);
+        return new BlockHitResult(maid.getLookAngle(), maid.getMotionDirection(), pos, false);
+//        return getLivingEntityPOVHitResult(pos, ClipContext.Fluid.NONE);
     }
 
+// 重写的目标是final， AT不知道为什么无法生效、、、反正没啥用先不管
+//    @Nullable
+//    public <T> T getCapability(EntityCapability<T, Void> capability) {
+//        if (maid != null && maid.isAlive() && capability == Capabilities.ItemHandler.ENTITY) {
+//            return (T) this.getInv();
+//        }
+//        return super.getCapability(capability);
+//    }
+
+    @ApiStatus.Experimental
     public BlockHitResult getLivingEntityPOVHitResult(BlockPos pos, ClipContext.Fluid fluidMode) {
         maid.getLookControl().setLookAt(pos.getCenter());
 

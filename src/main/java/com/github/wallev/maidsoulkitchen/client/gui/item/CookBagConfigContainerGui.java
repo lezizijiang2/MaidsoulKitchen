@@ -7,8 +7,6 @@ import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagConfigContainer;
 import com.github.wallev.maidsoulkitchen.item.ItemCulinaryHub;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
-import com.github.wallev.maidsoulkitchen.network.message.ClearCookBagBindPosesC2SPackage;
-import com.github.wallev.maidsoulkitchen.network.message.SetCookBagBindModeC2SPackage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -69,7 +67,7 @@ public class CookBagConfigContainerGui extends CookBagAbstractContainerGui<CookB
                 public void onClick(double pMouseX, double pMouseY) {
                     super.onClick(pMouseX, pMouseY);
                     bindMode = value.name;
-                    NetworkHandler.sendToServer(new SetCookBagBindModeC2SPackage(bindMode));
+                    NetworkHandler.C2S.setCookBagBindMode(bindMode);
                 }
 
                 @Override
@@ -89,7 +87,7 @@ public class CookBagConfigContainerGui extends CookBagAbstractContainerGui<CookB
         }
 
         Button clearButton = Button.builder(Component.translatable("gui.maidsoulkitchen.culinary_hub.config.clear_bind_poses").withStyle(ChatFormatting.YELLOW), b -> {
-                    NetworkHandler.sendToServer(new ClearCookBagBindPosesC2SPackage(0));
+                    NetworkHandler.C2S.clearCookBagBindPoses();
                     onClose();
                 })
                 .bounds(x, y += 22, 100, 20)

@@ -5,75 +5,64 @@ import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitEntities;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inventory.MaidRecipesManager;
+import com.github.wallev.maidsoulkitchen.init.MkEntities;
+import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidRecipesManager2;
+import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.AbstractCookRule;
+import com.github.wallev.maidsoulkitchen.util.ErrorUtil;
 import com.github.wallev.maidsoulkitchen.util.MemoryUtil;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.behavior.BlockPosTracker;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
-import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class MaidCookMoveTask<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends MaidCheckRateTask {
+import static com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask.checkOwnerPos;
+import static com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask.getSearchPos;
+
+public class MaidCookMoveTask<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends MaidCheckRateTask implements BehaviorControl<EntityMaid> {
     private static final int MAX_DELAY_TIME = 120;
     private final float movementSpeed;
     private final int verticalSearchRange;
     private final ICookTask<B, R> task;
-    private final MaidRecipesManager<R> maidRecipesManager;
+    private final MaidRecipesManager2<R> rm;
+    private final AbstractCookRule<B, R> rule;
+    private final CookBeBase<B> cookBe;
     protected int verticalSearchStart;
 
-    public MaidCookMoveTask(ICookTask<B, R> task, MaidRecipesManager<R> maidRecipesManager) {
-        this(task, 0.5f, 2, maidRecipesManager);
+
+    public MaidCookMoveTask(ICookTask<B, R> task, MaidRecipesManager2<R> rm, AbstractCookRule<B, R> rule, CookBeBase<B> cookBe) {
+        this(task, rm, rule, cookBe, ICookTask.MOVE_SPEED, ICookTask.VERTICAL_SEARCH_RANGE);
     }
 
-    public MaidCookMoveTask(ICookTask<B, R> task, float movementSpeed, int verticalSearchRange, MaidRecipesManager<R> maidRecipesManager) {
+    public MaidCookMoveTask(ICookTask<B, R> task, MaidRecipesManager2<R> rm, AbstractCookRule<B, R> rule, CookBeBase<B> cookBe, float movementSpeed, int verticalSearchRange) {
         super(ImmutableMap.of(MemoryModuleType.WALK_TARGET, MemoryStatus.VALUE_ABSENT,
-                InitEntities.TARGET_POS.get(), MemoryStatus.VALUE_ABSENT));
+                InitEntities.TARGET_POS.get(), MemoryStatus.VALUE_ABSENT,
+                MkEntities.WORK_POS.get(), MemoryStatus.VALUE_ABSENT));
         this.task = task;
+        this.rm = rm;
+        this.rule = rule;
+        this.cookBe = cookBe;
+
         this.movementSpeed = movementSpeed;
         this.verticalSearchRange = verticalSearchRange;
         this.setMaxCheckRate(MAX_DELAY_TIME);
-        this.maidRecipesManager = maidRecipesManager;
-    }
-
-    private static void setWalkAndLookTargetMemories(LivingEntity pLivingEntity, BlockPos walkPos, BlockPos lookPos, float pSpeed, int pDistance) {
-        pLivingEntity.getBrain().setMemory(MemoryModuleType.WALK_TARGET, new WalkTarget(walkPos, pSpeed, pDistance));
-        pLivingEntity.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, new BlockPosTracker(lookPos));
-        
-        pLivingEntity.getBrain().setMemory(InitEntities.TARGET_POS.get(), new BlockPosTracker(lookPos));
-    }
-
-    private static BlockPos getSearchPos(EntityMaid maid) {
-        return maid.hasRestriction() ? maid.getRestrictCenter() : maid.blockPosition().below();
-    }
-
-    public MaidRecipesManager<R> getMaidRecipesManager() {
-        return maidRecipesManager;
-    }
-
-    private boolean checkOwnerPos(EntityMaid maid, BlockPos mutableBlockPos) {
-        if (maid.isHomeModeEnable()) {
-            return true;
-        }
-        return maid.getOwner() != null && mutableBlockPos.closerToCenterThan(maid.getOwner().position(), 8);
     }
 
     @Override
     protected void start(ServerLevel worldIn, EntityMaid maid, long pGameTime) {
-        if (maid != this.maidRecipesManager.getMaid()) {
-            return;
-        }
-        this.searchForDestination(worldIn, maid);
+        ErrorUtil.safeRun(maid, () -> {
+            this.searchForDestination(worldIn, maid);
+        });
     }
 
     private boolean processRecipeManager() {
-        return this.maidRecipesManager.checkAndCreateRecipesIngredients();
+        return this.rm.checkAndCreateRecipesIngredients();
     }
 
     @SuppressWarnings("unchecked")
@@ -82,10 +71,11 @@ public class MaidCookMoveTask<B extends BlockEntity, R extends Recipe<? extends 
         if (blockEntity == null) {
             return false;
         }
-        if (this.task.isCookBE(blockEntity)) {
+        if (cookBe.isCookBe(blockEntity)) {
             boolean processed = this.processRecipeManager();
             if (!processed) return false;
-            return this.task.shouldMoveTo(worldIn, this.maidRecipesManager.getMaid(), (B) blockEntity, maidRecipesManager);
+            cookBe.setBe((B) blockEntity);
+            return this.rule.canMoveTo(cookBe, rm);
         }
         return false;
     }

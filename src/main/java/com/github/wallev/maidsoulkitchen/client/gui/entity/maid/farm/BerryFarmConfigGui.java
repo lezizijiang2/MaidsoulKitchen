@@ -4,7 +4,7 @@ import com.github.tartaricacid.touhoulittlemaid.client.gui.widget.button.TouhouI
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmHandler;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
-import com.github.wallev.maidsoulkitchen.api.task.farm.IHandlerInfo;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatHandlerInfo;
 import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.MaidTaskConfigGui;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.button.CFRuleButton;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.button.ResultInfo;
@@ -12,7 +12,7 @@ import com.github.wallev.maidsoulkitchen.client.gui.widget.button.Zone;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.BerryData;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.BerryFarmConfigContainer;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
-import com.github.wallev.maidsoulkitchen.network.message.ActionBerryFarmRuleC2SPackage;
+import com.github.wallev.maidsoulkitchen.network.packet.c2s.ActionBerryFarmRuleC2SPackage;
 import com.github.wallev.maidsoulkitchen.task.farm.TaskBerryFarm;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.IFarmHandlerManager;
 import net.minecraft.ChatFormatting;
@@ -103,9 +103,9 @@ public class BerryFarmConfigGui extends MaidTaskConfigGui<BerryFarmConfigContain
         for (int i = index; i < Math.min(handlers.size(), index + limitSize); i++) {
             ICompatFarmHandler handler = handlers.get(i);
             if (!handler.canLoad()) continue;
-            String handlerUid = ((IHandlerInfo) handler).getUid().toString();
+            String handlerUid = ((ICompatHandlerInfo) handler).getUid().toString();
             boolean contains = farmTaskInfo.rules().contains(handlerUid);
-            CFRuleButton cfRuleButton = new CFRuleButton((IHandlerInfo) handler, handler, contains, startX, startY, this.getTaskTooltips((IHandlerInfo) handler)) {
+            CFRuleButton cfRuleButton = new CFRuleButton((ICompatHandlerInfo) handler, handler, contains, startX, startY, this.getTaskTooltips((ICompatHandlerInfo) handler)) {
                 @Override
                 public void onClick(double pMouseX, double pMouseY) {
                     this.isSelected = !this.isSelected;
@@ -157,7 +157,7 @@ public class BerryFarmConfigGui extends MaidTaskConfigGui<BerryFarmConfigContain
         return Mth.clamp((float) (solIndex * (1.0 / ((this.handlers.size() - 1) / limitSize))), 0, 1);
     }
 
-    private List<Component> getTaskTooltips(IHandlerInfo iHandlerInfo) {
+    private List<Component> getTaskTooltips(ICompatHandlerInfo iHandlerInfo) {
         List<Component> desc = iHandlerInfo.getDescription(maid);
         if (!desc.isEmpty()) {
             desc.add(0, Component.translatable("task.touhou_little_maid.desc.title").withStyle(ChatFormatting.GOLD));

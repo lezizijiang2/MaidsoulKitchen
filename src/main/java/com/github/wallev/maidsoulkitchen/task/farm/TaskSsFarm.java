@@ -2,7 +2,7 @@ package com.github.wallev.maidsoulkitchen.task.farm;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskNormalFarm;
-import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
+import com.github.wallev.maidsoulkitchen.api.task.IMaidsoulKitchenTask;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -34,13 +34,18 @@ public class TaskSsFarm extends TaskNormalFarm implements IMaidsoulKitchenTask {
     }
 
     @Override
+    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
+        return super.createBrainTasks(maid);
+    }
+
+    @Override
     public ResourceLocation getUid() {
         return TaskInfo.SERENESEASONS_FARM.uid;
     }
 
     @Override
-    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
-        return super.createBrainTasks(maid);
+    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createRideBrainTasks(EntityMaid maid) {
+        return IMaidsoulKitchenTask.super.createRideBrainTasks(maid);
     }
 
     @Override

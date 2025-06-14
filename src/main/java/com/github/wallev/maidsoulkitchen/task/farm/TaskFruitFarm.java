@@ -2,8 +2,8 @@ package com.github.wallev.maidsoulkitchen.task.farm;
 
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.wallev.maidsoulkitchen.api.TaskBookEntryType;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
+import com.github.wallev.maidsoulkitchen.compat.patchouli.entry.TaskBookEntryType;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.FruitFarmConfigContainer;
@@ -32,7 +32,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.List;
 
 import static com.github.wallev.maidsoulkitchen.MaidsoulKitchen.LOGGER;
-import static com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid.BLACK_LIST;
 
 
 public class TaskFruitFarm implements ICompatFarmTask<FruitHandler, FruitData> {

@@ -1,11 +1,8 @@
 package com.github.wallev.maidsoulkitchen.item;
 
-import com.github.tartaricacid.touhoulittlemaid.TouhouLittleMaid;
 import com.github.tartaricacid.touhoulittlemaid.api.bauble.IChestType;
-import com.github.tartaricacid.touhoulittlemaid.entity.passive.TabIndex;
-import com.github.tartaricacid.touhoulittlemaid.init.InitDataComponent;
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.inventory.chest.ChestManager;
-import com.github.tartaricacid.touhoulittlemaid.inventory.container.config.MaidConfigContainer;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
@@ -13,7 +10,6 @@ import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagAbstrac
 import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagConfigContainer;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagContainer;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.ListCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -47,10 +43,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.github.tartaricacid.touhoulittlemaid.init.InitDataComponent.STORAGE_DATA_TAG;
 import static net.minecraft.core.registries.Registries.DATA_COMPONENT_TYPE;
 
 public class ItemCulinaryHub extends Item implements MenuProvider {
+    public static final int BIND_SIZE = 3;
+    private static final int INV_SLOT = 4;
     private static final int COOK_BAG_SIZE = getCookBagSize();
     private static final String CONTAINER_TAG = "container";
     private static final String BIND_MODE_TAG = "binding_mode";
@@ -64,10 +61,17 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
                     .networkSynchronized(ByteBufCodecs.fromCodec(Codec.list(BlockPos.CODEC)))
                     .build());
 
-    public static final int BIND_SIZE = 3;
-
     public ItemCulinaryHub() {
         super(new Item.Properties().stacksTo(1));
+    }
+
+    public static boolean hasItem(EntityMaid maid) {
+        return getItem(maid).isEmpty();
+    }
+
+    public static ItemStack getItem(EntityMaid maid) {
+        ItemStack stack = maid.getMaidInv().getStackInSlot(INV_SLOT);
+        return stack.is(MkItems.CULINARY_HUB.get()) ? stack : ItemStack.EMPTY;
     }
 
     public static void removeModePoses(ItemStack stack) {

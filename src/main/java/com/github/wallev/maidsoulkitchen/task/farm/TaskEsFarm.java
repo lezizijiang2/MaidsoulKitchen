@@ -2,7 +2,7 @@ package com.github.wallev.maidsoulkitchen.task.farm;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskNormalFarm;
-import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
+import com.github.wallev.maidsoulkitchen.api.task.IMaidsoulKitchenTask;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
@@ -33,14 +33,15 @@ public class TaskEsFarm extends TaskNormalFarm implements IMaidsoulKitchenTask {
     }
 
     @Override
+    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
+        return super.createBrainTasks(maid);
+    }
+
+    @Override
     public ResourceLocation getUid() {
         return TaskInfo.ECLIPTICSSEASONS_FARM.uid;
     }
 
-    @Override
-    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
-        return super.createBrainTasks(maid);
-    }
 
     @Override
     public String getBookEntry() {

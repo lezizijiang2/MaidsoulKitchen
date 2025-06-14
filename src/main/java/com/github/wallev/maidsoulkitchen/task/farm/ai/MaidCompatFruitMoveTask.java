@@ -6,20 +6,20 @@ import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitEntities;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmHandler;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
-import com.github.wallev.maidsoulkitchen.api.task.farm.IHandlerInfo;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatHandlerInfo;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
-import com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.behavior.BlockPosTracker;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class MaidCompatFruitMoveTask<T extends ICompatFarmHandler & IHandlerInfo> extends MaidCheckRateTask {
+public class MaidCompatFruitMoveTask<T extends ICompatFarmHandler & ICompatHandlerInfo> extends MaidCheckRateTask implements BehaviorControl<EntityMaid> {
     private static final int MAX_DELAY_TIME = 120;
     private final float movementSpeed;
     private final int verticalSearchRange;
@@ -28,7 +28,6 @@ public class MaidCompatFruitMoveTask<T extends ICompatFarmHandler & IHandlerInfo
     protected int verticalSearchStart;
     private int searchStartY = 3;
     private boolean initSearchStartY = false;
-
     public MaidCompatFruitMoveTask(EntityMaid maid, ICompatFarmTask<T, ?> task, float movementSpeed) {
         this(maid, task, movementSpeed, 2);
     }
@@ -76,7 +75,6 @@ public class MaidCompatFruitMoveTask<T extends ICompatFarmHandler & IHandlerInfo
             initSearchStartY = true;
             searchStartY = entityMaid.getOrCreateData(((TaskDataKey<FruitData>)task.getCookDataKey()), new FruitData()).searchYOffset();
         }
-        ((IAddonMaid) entityMaid).tlmk$initFakePlayer();
     }
 
     protected boolean checkPathReach(EntityMaid maid, BlockPos pos) {

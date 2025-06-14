@@ -20,6 +20,7 @@ import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.TaskRegister;
 import com.github.wallev.maidsoulkitchen.item.bauble.BurnProtectBauble;
+import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.Mob;
 import net.neoforged.api.distmarker.Dist;
@@ -28,6 +29,10 @@ import net.neoforged.api.distmarker.OnlyIn;
 @LittleMaidExtension
 public final class MaidPlugin implements ILittleMaid {
 
+    public MaidPlugin() {
+        TaskInfo.init();
+    }
+
     @Override
     public void addMaidTask(TaskManager manager) {
         TaskRegister.init(manager);
@@ -35,7 +40,7 @@ public final class MaidPlugin implements ILittleMaid {
 
     @Override
     public void bindMaidBauble(BaubleManager manager) {
-        if (Mods.MC.isLoaded()) {
+        if (Mods.MC.isLoaded) {
             manager.bind(MkItems.BURN_PROTECT_BAUBLE, new BurnProtectBauble());
         }
     }
@@ -52,7 +57,7 @@ public final class MaidPlugin implements ILittleMaid {
 
     @Override
     public void addChestType(ChestManager manager) {
-        if (Mods.FD.isLoaded()) {
+        if (Mods.FD.isLoaded) {
             manager.add(new FarmDelightCabinet());
         }
     }

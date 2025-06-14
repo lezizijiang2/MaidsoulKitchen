@@ -4,13 +4,13 @@ import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.task.MaidMoveToB
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmHandler;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
-import com.github.wallev.maidsoulkitchen.api.task.farm.IHandlerInfo;
-import com.github.wallev.maidsoulkitchen.entity.passive.IAddonMaid;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatHandlerInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class MaidCompatFarmMoveTask<T extends ICompatFarmHandler & IHandlerInfo> extends MaidMoveToBlockTask {
+public class MaidCompatFarmMoveTask<T extends ICompatFarmHandler & ICompatHandlerInfo> extends MaidMoveToBlockTask implements BehaviorControl<EntityMaid> {
     private final ICompatFarmTask<T, ?> task;
     private final T compatFarmHandler;
 
@@ -31,7 +31,6 @@ public class MaidCompatFarmMoveTask<T extends ICompatFarmHandler & IHandlerInfo>
 
     @Override
     protected boolean shouldMoveTo(ServerLevel serverLevel, EntityMaid entityMaid, BlockPos blockPos) {
-        ((IAddonMaid)entityMaid).tlmk$initFakePlayer();
         BlockState cropState = serverLevel.getBlockState(blockPos);
         return this.task.canHarvest(entityMaid, blockPos, cropState, this.compatFarmHandler);
     }

@@ -8,12 +8,12 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(value = AirCompressorBlockEntity.class, remap = false)
 public interface AirCompressorBlockEntityAccessor {
-    @Invoker
-    RecipeHolder<AirCompressorRecipe> callGetRecipeFromItems();
+    @Invoker("getRecipeFromItems")
+    RecipeHolder<AirCompressorRecipe> mk$getRecipeFromItems();
 
-    @Invoker
-    boolean callIsStarted();
+    @Invoker("isStarted")
+    boolean mk$isStarted();
 
-    @Invoker
-    boolean callHasEnergy();
+    @Invoker("hasEnergy")
+    boolean mk$hasEnergy();
 }

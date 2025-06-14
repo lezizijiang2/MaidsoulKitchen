@@ -3,8 +3,8 @@ package com.github.wallev.maidsoulkitchen.entity.data.inner.task;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
@@ -17,8 +17,8 @@ public class CookData implements ITaskData {
             LIST_CODEC.fieldOf("BlacklistRecs").forGetter(CookData::blacklistRecs)
     ).apply(instance, CookData::new));
     private String mode;
-    private List<String> whitelistRecs;
-    private List<String> blacklistRecs;
+    private final List<String> whitelistRecs;
+    private final List<String> blacklistRecs;
 
     public CookData() {
         this(Lists.newArrayList());
@@ -38,57 +38,27 @@ public class CookData implements ITaskData {
         this.blacklistRecs = blacklistRecs;
     }
 
-    public void addRec(String rec, String mode) {
-        if (mode.equals(Mode.WHITELIST.name)) {
-            this.whitelistRecs.add(rec);
-        } else if (mode.equals(Mode.BLACKLIST.name)) {
-            this.blacklistRecs.add(rec);
-        }
-    }
-
-    public void removeRec(String rec, String mode) {
-        if (mode.equals(Mode.WHITELIST.name)) {
-            this.whitelistRecs.remove(rec);
-        } else if (mode.equals(Mode.BLACKLIST.name)) {
-            this.blacklistRecs.remove(rec);
-        }
-    }
-
     public void addOrRemoveRec(String rec, String mode) {
-        if (mode.equals(Mode.WHITELIST.name)) {
-            if (this.whitelistRecs.contains(rec)) {
-                this.whitelistRecs.remove(rec);
-            } else {
-                this.whitelistRecs.add(rec);
+        switch (mode) {
+            case "whitelist" -> {
+                if (this.whitelistRecs.contains(rec)) {
+                    this.whitelistRecs.remove(rec);
+                } else {
+                    this.whitelistRecs.add(rec);
+                }
             }
-        } else if (mode.equals(Mode.BLACKLIST.name)) {
-            if (this.blacklistRecs.contains(rec)) {
-                this.blacklistRecs.remove(rec);
-            } else {
-                this.blacklistRecs.add(rec);
+            case "blacklist" -> {
+                if (this.blacklistRecs.contains(rec)) {
+                    this.blacklistRecs.remove(rec);
+                } else {
+                    this.blacklistRecs.add(rec);
+                }
             }
         }
-    }
-
-    public void setWhitelistRecs(List<String> whitelistRecs) {
-        this.whitelistRecs = whitelistRecs;
-    }
-
-    public void setBlacklistRecs(List<String> blacklistRecs) {
-        this.blacklistRecs = blacklistRecs;
     }
 
     public void setMode(String mode) {
         this.mode = mode;
-    }
-
-    public List<String> recs(String mode) {
-        if (mode.equals(Mode.WHITELIST.name)) {
-            return this.whitelistRecs;
-        } else if (mode.equals(Mode.BLACKLIST.name)) {
-            return this.blacklistRecs;
-        }
-        return Collections.emptyList();
     }
 
     public List<String> whitelistRecs() {
@@ -112,7 +82,23 @@ public class CookData implements ITaskData {
     }
 
     public boolean isWhitelistMode() {
-        return Mode.byName(this.mode()).isWhitelistMode();
+        return Mode.byName(this.mode).isWhitelistMode();
+    }
+
+    public boolean canCook(String recId) {
+        switch (this.mode) {
+            case "whitelist" -> {
+                return this.whitelistRecs.contains(recId);
+            }
+            case "blacklist" -> {
+                return !this.blacklistRecs.contains(recId);
+            }
+        }
+        return false;
+    }
+
+    public boolean canCook(RecipeHolder<?> r) {
+        return this.canCook(r.id().toString());
     }
 
     public enum Mode {

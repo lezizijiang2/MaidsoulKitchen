@@ -8,8 +8,7 @@ import com.github.wallev.maidsoulkitchen.client.gui.widget.button.*;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CookConfigContainer;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
-import com.github.wallev.maidsoulkitchen.network.message.ActionCookDataRecC2SPackage;
-import com.github.wallev.maidsoulkitchen.network.message.SetCookDataC2SPackage;
+import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
@@ -54,9 +53,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     protected final Zone resultDisplay = new Zone(6, 44, 152, 86);
     protected final Zone scrollDisplay = new Zone(161, 44, 9, 86);
     protected final ResultInfo ref = new ResultInfo(4, 7, 20, 20, 2, 2);
-    @SuppressWarnings("rawtypes")
-    private final List<RecipeHolder> recipeList = new ArrayList<>();
-    private final List<RecButton> recButtons = new ArrayList<>();
+    private final List<MKRecipe<?>> recipeList = new ArrayList<>();
     private EditBox searchBox;
     private CookData cookData;
     private ICookTask<?, ?> cookTask;
@@ -88,28 +85,16 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     }
 
     @SuppressWarnings("all")
-    private List<? extends RecipeHolder<?>> collectRecs() {
+    private List<MKRecipe<?>> collectRecs() {
         switch (displayMode) {
             case CAN_COOK -> {
-                Predicate<RecipeHolder<?>> recTest = cookData.isWhitelistMode() ? recipe -> {
-                    return cookData.getRecs().contains(recipe.id().toString());
-                } : recipe -> {
-                    return !cookData.getRecs().contains(recipe.id().toString());
-                };
-
                 return this.getRecsByMode(recipe -> {
-                    return recTest.test(recipe);
+                    return cookData.canCook(recipe);
                 });
             }
             case NOT_COOK -> {
-                Predicate<RecipeHolder<?>> recTest = cookData.isWhitelistMode() ? recipe -> {
-                    return !cookData.getRecs().contains(recipe.id().toString());
-                } : recipe -> {
-                    return cookData.getRecs().contains(recipe.id().toString());
-                };
-
                 return this.getRecsByMode(recipe -> {
-                    return recTest.test(recipe);
+                    return !cookData.canCook(recipe);
                 });
             }
         }
@@ -117,13 +102,14 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     }
 
     @SuppressWarnings("all")
-    private List<? extends RecipeHolder<?>> getRecsByMode(Predicate<RecipeHolder<?>> recipeTest) {
+    private List<MKRecipe<?>> getRecsByMode(Predicate<RecipeHolder<?>> recipeTest) {
         Level level = maid.level;
         RegistryAccess registryAccess = level.registryAccess();
-        return cookTask.getRecipeHolders(level).stream()
+        List<? extends MKRecipe<?>> list = cookTask.getRecipes(level).stream()
                 .filter(recipe -> {
-                    return recipeTest.test(recipe);
+                    return recipeTest.test(recipe.rec());
                 }).toList();
+        return (List<MKRecipe<?>>) list;
     }
 
     private void setDisplayMode(DisplayMode mode) {
@@ -131,17 +117,20 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     }
 
     @SuppressWarnings("all")
-    private List<? extends RecipeHolder<?>> getDefaultRecs() {
+    private List<MKRecipe<?>> getDefaultRecs() {
         Level level = maid.level;
         RegistryAccess registryAccess = level.registryAccess();
+        List<? extends MKRecipe<?>> allRecipe = cookTask.getRecipes(level);
         if (searchBox != null && StringUtils.isNotBlank(searchBox.getValue())) {
             String search = this.searchBox.getValue().toLowerCase(Locale.US);
-            return cookTask.getRecipeHolders(level).stream()
+            List<? extends MKRecipe<?>> list = allRecipe.stream()
                     .filter(recipe -> {
-                        return cookTask.getResultItem(recipe.value(), registryAccess).getDisplayName().getString().toLowerCase(Locale.US).contains(search);
+                        return recipe.output().getDisplayName().getString().toLowerCase(Locale.US).contains(search);
                     }).toList();
+
+            return (List<MKRecipe<?>>) list;
         } else {
-            return cookTask.getRecipeHolders(level);
+            return (List<MKRecipe<?>>) allRecipe;
         }
     }
 
@@ -192,7 +181,22 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     private List<Component> getDisplayModeTooltips() {
         List<Component> components = Lists.newArrayList(Component.literal("点击可搜索，再次点击收回!"), Component.literal("滚动切换显示模式！"));
         for (DisplayMode value : DisplayMode.values()) {
-            components.add(value.getComponent(displayMode));
+
+            MutableComponent component = value.getComponent(displayMode);
+            int size = 0;
+            switch (value) {
+                case CAN_COOK -> {
+                    size = this.getRecsByMode((r) -> cookData.canCook(r)).size();
+                }
+                case NOT_COOK -> {
+                    size = this.getRecsByMode((r) -> !cookData.canCook(r)).size();
+                }
+                case DEFAULT -> {
+                    size = this.getDefaultRecs().size();
+                }
+
+            }
+            components.add(component.append("(" + size + ")"));
         }
         return components;
     }
@@ -226,6 +230,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -434,17 +439,14 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
 
     private void setAndSyncMode(String mode) {
         cookData.setMode(mode);
-        NetworkHandler.sendToServer(new SetCookDataC2SPackage(maid.getId(), cookTask.getCookDataKey().getKey(), mode));
+        NetworkHandler.C2S.setCookDataMode(maid.getId(), cookTask.getCookDataKey().getKey(), mode);
     }
 
     private void setAndSyncMode(boolean isSelected) {
         setAndSyncMode(isSelected ? CookData.Mode.WHITELIST.name : CookData.Mode.BLACKLIST.name);
     }
 
-    @SuppressWarnings("rawtypes")
     private void addResultInfo() {
-        this.recButtons.clear();
-
         int startX = visualZone.startX() + resultDisplay.startX();
         int startY = visualZone.startY() + resultDisplay.startY();
 
@@ -454,13 +456,13 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
                 if (index >= this.recipeList.size()) {
                     return;
                 }
-                RecipeHolder recipe = this.recipeList.get(index++);
+                MKRecipe<?> recipe = this.recipeList.get(index++);
                 int x = startX + (ref.rowWidth() + ref.rowSpacing()) * col;
                 int y = startY + (ref.colHeight() + ref.colSpacing()) * row;
                 RecButton recButton = new RecButton(maid, (ICookTask<?, ?>) task, cookData, recipe, x, y) {
                     @Override
                     public void onClick(double pMouseX, double pMouseY) {
-                        arAndSyncRec((getRecipe()).id().toString());
+                        arAndSyncRec(recipe.id().toString());
                         this.toggleState();
                     }
 
@@ -471,15 +473,13 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
                     }
                 };
                 this.addRenderableWidget(recButton);
-
-                this.recButtons.add(recButton);
             }
         }
     }
 
     private void arAndSyncRec(String rec) {
         cookData.addOrRemoveRec(rec, this.cookData.mode());
-        NetworkHandler.sendToServer(new ActionCookDataRecC2SPackage(maid.getId(), cookTask.getCookDataKey().getKey(), rec, this.cookData.mode()));
+        NetworkHandler.C2S.actionCookDataRec(maid.getId(), cookTask.getCookDataKey().getKey(), rec, this.cookData.mode());
     }
 
     // 161, 25 189, 74

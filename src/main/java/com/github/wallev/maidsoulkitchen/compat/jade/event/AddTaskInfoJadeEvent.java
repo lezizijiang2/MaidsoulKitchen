@@ -3,7 +3,7 @@ package com.github.wallev.maidsoulkitchen.compat.jade.event;
 import com.github.tartaricacid.touhoulittlemaid.api.event.AddJadeInfoEvent;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
-import com.github.wallev.maidsoulkitchen.api.task.farm.IHandlerInfo;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatHandlerInfo;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FarmData;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
@@ -42,7 +42,7 @@ public class AddTaskInfoJadeEvent {
         List<String> farmTaskRulesList = farmData.rules();
 
         for (IFarmHandlerManager<?> handler : farmTask.getManagerHandlerValues()) {
-            IHandlerInfo farmHandler = handler.getFarmHandler();
+            ICompatHandlerInfo farmHandler = handler.getFarmHandler();
             ResourceLocation uid = farmHandler.getUid();
             if (!farmTaskRulesList.contains(uid.toString())) continue;
             MutableComponent translatable = Component.translatable("top.maidsoulkitchen.entity_maid.farm.rule");

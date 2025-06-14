@@ -4,7 +4,7 @@ import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitEntities;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmHandler;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
-import com.github.wallev.maidsoulkitchen.api.task.farm.IHandlerInfo;
+import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatHandlerInfo;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -19,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
 
-public class MaidCompatFarmPlantTask<T extends ICompatFarmHandler & IHandlerInfo> extends Behavior<EntityMaid> {
+public class MaidCompatFarmPlantTask<T extends ICompatFarmHandler & ICompatHandlerInfo> extends Behavior<EntityMaid> {
 
     private final ICompatFarmTask<T, ?> task;
     private final T compatFarmHandler;

@@ -3,7 +3,7 @@ package com.github.wallev.maidsoulkitchen.util.fakeplayer;
 import com.github.tartaricacid.touhoulittlemaid.api.task.IMaidTask;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
-import com.github.wallev.maidsoulkitchen.api.IMaidsoulKitchenTask;
+import com.github.wallev.maidsoulkitchen.api.task.IMaidsoulKitchenTask;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
@@ -298,7 +298,7 @@ public class WrappedMaidInventory extends Inventory {
     /******************************* UnsupportedOperation *************************************/
     @Override
     public int getContainerSize() {
-        return 0;
+        return this.getInv().getSlots();
     }
 
     @Override
@@ -351,7 +351,7 @@ public class WrappedMaidInventory extends Inventory {
 
     @Override
     public ItemStack getItem(int index) {
-        return ItemStack.EMPTY;
+        return this.getInv().getStackInSlot(index);
     }
 
     @Override
@@ -361,15 +361,23 @@ public class WrappedMaidInventory extends Inventory {
 
     @Override
     public void setItem(int index, ItemStack stack) {
+        this.getInv().setStackInSlot(index, stack);
     }
 
     @Override
     public ItemStack removeItem(int index, int pCount) {
-        return ItemStack.EMPTY;
+        return this.getInv().getStackInSlot(index).split(pCount);
     }
 
     @Override
     public int getFreeSlot() {
-        return 0;
+        IItemHandlerModifiable inv = this.getInv();
+        for (int i = 0; i < inv.getSlots(); i++) {
+            if (inv.getStackInSlot(i).isEmpty()) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }

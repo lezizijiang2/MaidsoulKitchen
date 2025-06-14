@@ -1,16 +1,12 @@
 package com.github.wallev.maidsoulkitchen.init;
 
-import com.github.wallev.maidsoulkitchen.compat.cloth.ClothCompat;
 import com.github.wallev.maidsoulkitchen.compat.jade.JadeCompat;
 import com.github.wallev.maidsoulkitchen.compat.patchouli.PatchouliCompat;
 import com.github.wallev.maidsoulkitchen.compat.top.TopCompat;
 import com.github.wallev.maidsoulkitchen.foundation.utility.Mods;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
-import net.neoforged.fml.loading.FMLEnvironment;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public final class CompatRegistry {
@@ -22,7 +18,7 @@ public final class CompatRegistry {
     }
 
     private static void checkModLoad(Mods mod, Runnable runnable) {
-        if (mod.isLoaded()) {
+        if (mod.isLoaded) {
             runnable.run();
         }
     }
