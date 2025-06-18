@@ -1,116 +1,38 @@
-# [农耕与烹饪：车万女仆拓展](./readme.zh.md) | Farm And Cook: Touhou Little Maid Addon
- A [touhoulittlemaid](https://github.com/TartaricAcid/TouhouLittleMaid) addon mod, is designed to teach maids how to use other mods for cooking and farming.
+<h1 align="center">
+ <span>农耕与烹饪：车万女仆拓展</span>
+ <span>|</span>
+ <a href="./readme.en.md">
+      <span>Maidsoul Kitchen</span>
+ </a>
+ <br>
+	<a href="https://www.curseforge.com/minecraft/mc-mods/maidsoul-kitchen/files"><img src="https://cf.way2muchnoise.eu/versions/1162577(c70039).svg" alt="Supported Versions"></a>
+	<a href="https://github.com/Wall-ev/MaidsoulKitchen/blob/1.20.1-dev/LICENSE"><img src="https://img.shields.io/github/license/Wall-ev/MaidsoulKitchen?style=flat&color=900c3f" alt="License"></a>  
+	<a href="https://www.curseforge.com/minecraft/mc-mods/maidsoul-kitchen"><img src="http://cf.way2muchnoise.eu/maidsoul-kitchen.svg" alt="CF"></a>
+    <a href="https://modrinth.com/mod/maidsoul-kitchen"><img src="https://img.shields.io/modrinth/dt/maidsoul-kitchen?logo=modrinth&label=&suffix=%20&style=flat&color=242629&labelColor=5ca424&logoColor=1c1c1c" alt="Modrinth"></a>
+</h1>
 
-## Notice
-  - Due to the author's personal reasons, the development progress will be extremely slow (maybe the pit will be abandoned...)
-  - If you want to play as soon as possible, you can click `Star` and find the latest version of the auto-build on the [Releases](https://github.com/Wall-ev/TouhouLittleMaidAddon/releases) page
-  - If you download the auto-build version ,you need to make backups before playing to avoid losing your property.
-  - This project might be abandoned at any time, so if you're up for it (if you can handle this mess - it's really bad...), you can take over this project.
+这里是一个[车万女仆](https://github.com/TartaricAcid/TouhouLittleMaid)附属模组，旨在让女仆学会使用其他模组的烹饪和作物的耕种
 
-## Progress
-- [ ] Cook
-    - [x] Farmer's Delight
-        - [x] Cooking Pot
-        - [x] Cutting Board
-    - [x] Miner's Delight
-        - [x] Copper Pot
-    - [x] Brewin' And Chewin'
-        - [x] Key
-    - [x] Youkai's Homecoming
-        - [x] Moka Pot
-        - [x] Kettle 
-        - [x] Fermentation Tank 
-        - [x] Drying Rack 
-    - [ ] Cuisine Delight
-    - [ ] My Nether's Delight
-    - [x] Vinery
-        - [x] Fermentation Barrel
-    - [x] Candelight
-        - [x] Cooking Pot
-        - [x] Cooking Pan
-    - [x] Beach Party
-        - [x] Mini Fridge
-        - [x] Cabinet
-    - [x] Bakery
-        - [x] Small Cooking Pot
-        - [x] Stove
-    - [x] Herbalbrews
-        - [x] Tea Kettle 
-        - [x] Cauldron
-    - [x] DrinkBeer
-        - [x] Beer Barrel
-    - [x] Crock Pot
-        - [x] Crock Pot
-    - [ ] Fruit Stack
-    - [x] Kitchen Karrot
-        - [x] Air Compressor
-        - [x] Brewing Barrel
-    - [ ] Minecraft
-        - [x] Furnace
-        - [ ] Brewing Stand
-- [ ] Farm
-    - [x] Berry
-        - [x] Simple Farming
-        - [x] Vinery
-    - [x] Fruit
-        - [x] Simple Farming
-        - [x] Fruit Stack
-        - [x] Vinery
-- [ ] Other
-    - [x] Serene Seasons
-    - [x] Thirst
-- [ ] Backpack Renderer
-    - [x] let'do banner
+## 开发提示
 
-## 1.21 迁移进度
-- [ ] Cook
-    - [x] Farmer's Delight
-        - [x] Cooking Pot 配置正常，工作正常
-        - [x] Cutting Board 配置正常，工作正常
-    - [ ] Miner's Delight
-        - [ ] Copper Pot 不兼容 1.21
-    - [ ] Brewin' And Chewin'
-        - [ ] Key 不兼容 1.21
-    - [x] Youkai's Homecoming
-        - [x] Moka Pot 配置正常，工作未测试
-        - [x] Kettle 配置正常，工作未测试
-        - [x] Fermentation Tank 配置正常，工作未测试
-        - [x] Drying Rack 配置正常，工作未测试
-    - [ ] Cuisine Delight 未测试
-    - [x] My Nether's Delight 未测试
-    - [ ] Vinery
-        - [ ] Fermentation Barrel 不兼容 1.21
-    - [x] Candelight
-        - [x] Cooking Pot 不兼容 1.21
-        - [x] Cooking Pan 不兼容 1.21
-    - [x] Beach Party
-        - [x] Mini Fridge 不兼容 1.21
-        - [x] Cabinet 不兼容 1.21
-    - [x] Bakery
-        - [x] Small Cooking Pot 不兼容 1.21
-        - [x] Stove 不兼容 1.21
-    - [x] Herbalbrews
-        - [x] Tea Kettle 不兼容 1.21
-        - [x] Cauldron 不兼容 1.21
-    - [x] DrinkBeer 
-        - [x] Beer Barrel 未测试
-    - [ ] Crock Pot 不兼容 1.21
-        - [ ] Crock Pot 不兼容 1.21(存在1.21.1版本，未发布)
-    - [ ] Fruit Stack 有这玩意？
-    - [x] Kitchen Karrot
-        - [x] Air Compressor 不兼容 1.21
-        - [x] Brewing Barrel 不兼容 1.21
-    - [ ] Minecraft
-        - [x] Furnace 未测试
-        - [ ] Brewing Stand
-- [ ] Farm
-    - [x] Berry
-        - [x] Simple Farming 不兼容 1.21
-        - [x] Vinery 不兼容 1.21
-    - [x] Fruit
-        - [x] Simple Farming 不兼容 1.21
-        - [x] Fruit Stack 不兼容 1.21
-        - [x] Vinery 不兼容 1.21
-- [ ] Other
-    - [ ] Serene Seasons
-    - [ ] Thirst 未测试
+- 由于目前使用到了AspectJ，所以如果有类使用到了`util.debug.annotation`下的注解，热重载只能使用`idea`自带的重载，使用
+  `Single Hotswap`会失效且崩溃
+
+## 警告
+
+目前，该项目还存在很多问题：分支管理不善、代码成了堆积如山的垃圾、问题管理等等......<p>
+请原谅理解，项目会在半年后重构一正常情况下([
+`2.0-dev`](https://github.com/Wall-ev/MaidsoulKitchen/tree/1.20.1-2.0-dev))...
+
+## 注意
+
+- 由于作者个人原因，开发进度会及其缓慢（保不准会弃坑...）
+- 如果您想尽快游玩，可以点个`Star`，在[Releases](https://github.com/Wall-ev/TouhouLittleMaidAddon/releases)页面找到自动构建好的最新版，
+- 如果您下载了自动构建的版本，那么在游玩前需要做好备份措施，以免损失财产。
+- 这个项目随时会弃坑，如果你想（你能接受这个烂摊子——水平极烂的话...），你可以接手这个项目。
+
+## 致谢
+
+[`TartaricAcid`](https://github.com/TartaricAcid): 包括但不限于技术上的支持</p>
+[`Pajinyi`](https://space.bilibili.com/9322946): 美术支持</p>
+[`lezizijiang2`](https://github.com/lezizijiang2): 1.21.1的迁移
