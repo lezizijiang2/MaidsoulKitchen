@@ -1,6 +1,8 @@
 package com.github.wallev.maidsoulkitchen.network;
 
 import com.github.wallev.maidsoulkitchen.network.packet.c2s.*;
+import com.github.wallev.maidsoulkitchen.network.packet.s2c.RenderMaidHubZoneS2CPackage;
+import com.github.wallev.maidsoulkitchen.network.packet.s2c.SetCookBagBindModeS2CPackage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +16,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.List;
 
-public class NetworkHandler {
+public final class NetworkHandler {
     private static final String VERSION = "1.0.0";
 
     public static void registerPacket(final RegisterPayloadHandlersEvent event) {
@@ -30,7 +32,9 @@ public class NetworkHandler {
         registrar.playToServer(ToggleCookBagGuiSideTabC2SPackage.TYPE, ToggleCookBagGuiSideTabC2SPackage.STREAM_CODEC, ToggleCookBagGuiSideTabC2SPackage::handle);
 
         registrar.playToClient(SetCookBagBindModeS2CPackage.TYPE, SetCookBagBindModeS2CPackage.STREAM_CODEC, SetCookBagBindModeS2CPackage::handle);
+        registrar.playToClient(RenderMaidHubZoneS2CPackage.TYPE, RenderMaidHubZoneS2CPackage.STREAM_CODEC, RenderMaidHubZoneS2CPackage::handle);
     }
+
 
     public static void sendToNearby(Entity entity, CustomPacketPayload toSend) {
         if (entity.level instanceof ServerLevel) {
@@ -70,6 +74,10 @@ public class NetworkHandler {
             sendToServer(new ActionCookDataRecC2SPackage(entityId, dataKey, rec, mode));
         }
 
+        public static void actionCookDataRecs(int entityId, ResourceLocation dataKey, List<String> rec, boolean add) {
+            sendToServer(new ActionCookDataRecsC2SPackage(entityId, dataKey, rec, add));
+        }
+
         public static void setFruitFarmSearchYOffset(int entityId, ResourceLocation dataKey, int searchYOffset) {
             sendToServer(new SetFruitFarmSearchYOffsetC2SPackage(entityId, dataKey, searchYOffset));
         }
@@ -92,7 +100,9 @@ public class NetworkHandler {
     }
 
     public static class S2C {
-
+        public static void renderMaidHubZone(int maidId, ServerPlayer player) {
+            sendToClient(player, new RenderMaidHubZoneS2CPackage(maidId));
+        }
     }
 
     public static class SAC {

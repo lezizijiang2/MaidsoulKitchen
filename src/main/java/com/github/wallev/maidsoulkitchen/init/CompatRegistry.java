@@ -3,7 +3,7 @@ package com.github.wallev.maidsoulkitchen.init;
 import com.github.wallev.maidsoulkitchen.compat.jade.JadeCompat;
 import com.github.wallev.maidsoulkitchen.compat.patchouli.PatchouliCompat;
 import com.github.wallev.maidsoulkitchen.compat.top.TopCompat;
-import com.github.wallev.maidsoulkitchen.foundation.utility.Mods;
+import com.github.wallev.maidsoulkitchen.util.modutility.Mods;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;

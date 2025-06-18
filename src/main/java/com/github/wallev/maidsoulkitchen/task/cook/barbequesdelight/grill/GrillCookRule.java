@@ -1,9 +1,8 @@
 package com.github.wallev.maidsoulkitchen.task.cook.barbequesdelight.grill;
 
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemInventory;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidRecipesManager2;
-import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.AbstractCookRule;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidCookManager;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.TickCookRule;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidItem;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidRec;
@@ -24,7 +23,7 @@ public class GrillCookRule extends TickCookRule<GrillBlockEntity, GrillingRecipe
     }
 
     @Override
-    public boolean canMoveTo(CookBeBase<GrillBlockEntity> cookBeBase, MaidRecipesManager2<GrillingRecipe<?>> rm) {
+    public boolean canMoveTo(CookBeBase<GrillBlockEntity> cookBeBase, MaidCookManager<GrillingRecipe<?>> cm) {
         boolean innerCanCook = false;
         GrillBlockEntity blockEntity = cookBeBase.getBe();
 
@@ -49,23 +48,23 @@ public class GrillCookRule extends TickCookRule<GrillBlockEntity, GrillingRecipe
         }
 
         // 烧烤架没有在烤东西，并且女仆身上有待烧烤的食物
-        return blockEntity.isHeated() && !innerCanCook && rm.hasMaidRecs(cookBeBase);
+        return blockEntity.isHeated() && !innerCanCook && cm.hasMaidRecs(cookBeBase);
     }
 
     @Override
-    public void cookMake(CookBeBase<GrillBlockEntity> cookBeBase, MaidRecipesManager2<GrillingRecipe<?>> rm) {
-        this.init(cookBeBase, rm);
-        if (rm.hasMaidRecs(cookBeBase)) {
-            ItemInventory itemInventory = rm.getItemInventory();
-            MaidRec maidRec = rm.pollMaidRec(cookBeBase);
+    public void cookMake(CookBeBase<GrillBlockEntity> cookBeBase, MaidCookManager<GrillingRecipe<?>> cm) {
+        this.init(cookBeBase, cm);
+        if (cm.hasMaidRecs(cookBeBase)) {
+            ItemInventory itemInventory = cm.getItemInventory();
+            MaidRec maidRec = cm.pollMaidRec(cookBeBase);
             MaidItem maidItem = maidRec.maidItems().get(0);
             this.grillStack = contItemStack(maidItem, itemInventory);
         }
     }
 
     @Override
-    public void tickCookMake(CookBeBase<GrillBlockEntity> cookBeBase, MaidRecipesManager2<GrillingRecipe<?>> rm) {
-        IItemHandlerModifiable outputInv = rm.getOutputInv();
+    public void tickCookMake(CookBeBase<GrillBlockEntity> cookBeBase, MaidCookManager<GrillingRecipe<?>> cm) {
+        IItemHandlerModifiable outputInv = cm.getOutputInv();
 
         boolean nothing = true;
         GrillBlockEntity.ItemEntry[] itemEntries = be.entries;
@@ -114,18 +113,18 @@ public class GrillCookRule extends TickCookRule<GrillBlockEntity, GrillingRecipe
     }
 
     @Override
-    public boolean tickCan(CookBeBase<GrillBlockEntity> cookBeBase, MaidRecipesManager2<GrillingRecipe<?>> rm) {
-        return super.tickCan(cookBeBase, rm);
+    public boolean tickCan(CookBeBase<GrillBlockEntity> cookBeBase, MaidCookManager<GrillingRecipe<?>> cm) {
+        return super.tickCan(cookBeBase, cm);
     }
 
     @Override
-    public void tickStop(CookBeBase<GrillBlockEntity> cookBeBase, MaidRecipesManager2<GrillingRecipe<?>> rm) {
-        super.tickStop(cookBeBase, rm);
+    public void tickStop(CookBeBase<GrillBlockEntity> cookBeBase, MaidCookManager<GrillingRecipe<?>> cm) {
+        super.tickStop(cookBeBase, cm);
         grillStack = ItemStack.EMPTY;
     }
 
     @Override
-    public AbstractCookRule<GrillBlockEntity, GrillingRecipe<?>> getOrCreate() {
+    protected TickCookRule<GrillBlockEntity, GrillingRecipe<?>> create() {
         return new GrillCookRule();
     }
 }

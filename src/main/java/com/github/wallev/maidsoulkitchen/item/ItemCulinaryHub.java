@@ -1,8 +1,6 @@
 package com.github.wallev.maidsoulkitchen.item;
 
-import com.github.tartaricacid.touhoulittlemaid.api.bauble.IChestType;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.tartaricacid.touhoulittlemaid.inventory.chest.ChestManager;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
@@ -35,7 +33,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +47,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static net.minecraft.core.registries.Registries.DATA_COMPONENT_TYPE;
 
 public class ItemCulinaryHub extends Item implements MenuProvider {
+    public static final float WORK_RANGE = 2.5f;
+    public static final int OUTPUT_INV_SLOT_SIZE = outputSlotSize();
     public static final int BIND_SIZE = 3;
+    public static final BagType[] INPUT_BAG_TYPES = inputBags();
+    public static final int INPUT_INV_SLOT_SIZE = inputSlotSize();
     private static final int INV_SLOT = 4;
     private static final int COOK_BAG_SIZE = getCookBagSize();
     private static final String CONTAINER_TAG = "container";
@@ -65,6 +70,22 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
         super(new Item.Properties().stacksTo(1));
     }
 
+    private static BagType[] inputBags() {
+        return new BagType[]{BagType.INGREDIENT, BagType.START_ADDITION, BagType.INGREDIENT_ADDITION, BagType.OUTPUT_ADDITION};
+    }
+
+    private static int inputSlotSize() {
+        int slot = 0;
+        for (BagType inputBagType : INPUT_BAG_TYPES) {
+            slot += inputBagType.size;
+        }
+        return slot;
+    }
+
+    private static int outputSlotSize() {
+        return BagType.OUTPUT.size;
+    }
+
     public static boolean hasItem(EntityMaid maid) {
         return getItem(maid).isEmpty();
     }
@@ -74,12 +95,56 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
         return stack.is(MkItems.CULINARY_HUB.get()) ? stack : ItemStack.EMPTY;
     }
 
+    public static CombinedInvWrapper getInputInv(HolderLookup.Provider provider, ItemStack hubStack) {
+        ItemStackHandler[] handlers = new ItemStackHandler[INPUT_BAG_TYPES.length];
+        if (hubStack.is(MkItems.CULINARY_HUB.get())) {
+            CompoundTag tag = hubStack.getOrDefault(STORAGE_DATA_TAG, new CompoundTag());
+            if (tag == null || !tag.contains(CONTAINER_TAG, Tag.TAG_COMPOUND)) {
+                int i = 0;
+                for (BagType type : INPUT_BAG_TYPES) {
+                    ItemStackHandler handler = new ItemStackHandler(type.size * 9);
+                    handlers[i] = handler;
+                }
+            } else {
+                CompoundTag compound = tag.getCompound(CONTAINER_TAG);
+                int i = 0;
+                for (BagType type : INPUT_BAG_TYPES) {
+                    ItemStackHandler handler = new ItemStackHandler(type.size * 9);
+                    if (compound.contains(type.name, Tag.TAG_COMPOUND)) {
+                        handler.deserializeNBT(provider, compound.getCompound(type.name));
+                    }
+                    handlers[i++] = handler;
+                }
+            }
+        }
+        return new CombinedInvWrapper(handlers);
+    }
+
+    public static ItemStackHandler getOutputInv(HolderLookup.Provider provider, ItemStack hubStack) {
+        if (hubStack.is(MkItems.CULINARY_HUB.get())) {
+            CompoundTag tag = hubStack.getOrDefault(STORAGE_DATA_TAG, new CompoundTag());
+            if (!tag.contains(CONTAINER_TAG, Tag.TAG_COMPOUND)) {
+                return new ItemStackHandler(OUTPUT_INV_SLOT_SIZE);
+            } else {
+                CompoundTag compound = tag.getCompound(CONTAINER_TAG);
+
+                BagType output = BagType.OUTPUT;
+                ItemStackHandler handler = new ItemStackHandler(output.size * 9);
+                if (compound.contains(output.name, Tag.TAG_COMPOUND)) {
+                    handler.deserializeNBT(provider, compound.getCompound(output.name));
+                }
+                return handler;
+            }
+        }
+        return new ItemStackHandler(OUTPUT_INV_SLOT_SIZE);
+    }
+
     public static void removeModePoses(ItemStack stack) {
         if (stack.is(MkItems.CULINARY_HUB.get())) {
             CompoundTag tag = stack.getOrDefault(STORAGE_DATA_TAG, new CompoundTag());
             CompoundTag compound = tag.getCompound(BIND_POS_TAG);
 
-            for (BagType value : BagType.values()) {
+            for (BagType value : BagType.VALS) {
                 compound.remove(value.name);
             }
 
@@ -136,7 +201,7 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
                 CompoundTag tag1 = tag.getCompound(BIND_POS_TAG);
 
                 HashMap<BagType, List<BlockPos>> typeListHashMap = new HashMap<>();
-                for (BagType value : BagType.values()) {
+                for (BagType value : BagType.VALS) {
                     ListTag list = tag1.getList(value.name, Tag.TAG_INT_ARRAY);
                     List<BlockPos> poses = list.stream().map(tag2 -> readBlockPos((IntArrayTag)tag2)).toList();
                     typeListHashMap.put(value, poses);
@@ -168,7 +233,7 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
 
     private static int getCookBagSize() {
         int size = 0;
-        for (BagType value : BagType.values()) {
+        for (BagType value : BagType.VALS) {
             size += value.size * 9;
         }
         return size;
@@ -179,13 +244,13 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
         if (stack.is(MkItems.CULINARY_HUB.get())) {
             CompoundTag tag = stack.getOrDefault(STORAGE_DATA_TAG, new CompoundTag());
             if (tag == null || !tag.contains(CONTAINER_TAG, Tag.TAG_COMPOUND)) {
-                for (BagType value : BagType.values()) {
+                for (BagType value : BagType.VALS) {
                     ItemStackHandler handler = new ItemStackHandler(value.size * 9);
                     bagTypeItemStackHandlerHashMap.put(value, handler);
                 }
             } else {
                 CompoundTag compound = tag.getCompound(CONTAINER_TAG);
-                for (BagType value : BagType.values()) {
+                for (BagType value : BagType.VALS) {
                     ItemStackHandler handler = new ItemStackHandler(value.size * 9);
                     if (compound.contains(value.name, Tag.TAG_COMPOUND)) {
                         handler.deserializeNBT(provider, compound.getCompound(value.name));
@@ -281,6 +346,15 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
         };
     }
 
+    /**
+     * 凡是含有 {@link Capabilities.ItemHandler.BLOCK} 都可以
+     */
+    @SuppressWarnings("all")
+    @Nullable
+    public static IItemHandler getBeInv(BlockEntity blockEntity) {
+        return blockEntity.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, blockEntity.getBlockPos(), null);
+    }
+
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Level worldIn = context.getLevel();
@@ -296,22 +370,20 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
             return super.useOn(context);
         }
 
-        // TLM
-        for (IChestType allChestType : ChestManager.getAllChestTypes()) {
-            if (allChestType.isChest(te) && allChestType.canOpenByPlayer(te, player)) {
-                ItemStack stack = player.getMainHandItem();
-                String bindMode = getBindMode(stack);
-                List<BlockPos> bindModePoses = getBindModePoses(stack, bindMode);
-                if (bindModePoses.size() >= BIND_SIZE && !bindModePoses.contains(pos)) {
-                    if (context.getLevel().isClientSide) {
-                        player.sendSystemMessage(Component.translatable("message.maidsoulkitchen.culinary_hub.bine_type_max"));
-                    }
-                    return InteractionResult.sidedSuccess(worldIn.isClientSide);
+        IItemHandler beInv = getBeInv(te);
+        if (beInv != null) {
+            ItemStack stack = player.getMainHandItem();
+            String bindMode = getBindMode(stack);
+            List<BlockPos> bindModePoses = getBindModePoses(stack, bindMode);
+            if (bindModePoses.size() >= BIND_SIZE && !bindModePoses.contains(pos)) {
+                if (context.getLevel().isClientSide) {
+                    player.sendSystemMessage(Component.translatable("message.maidsoulkitchen.culinary_hub.bine_type_max"));
                 }
-                if (!bindMode.isEmpty()) {
-                    actionModePos(stack, bindMode, pos);
-                    return InteractionResult.sidedSuccess(worldIn.isClientSide);
-                }
+                return InteractionResult.sidedSuccess(worldIn.isClientSide);
+            }
+            if (!bindMode.isEmpty()) {
+                actionModePos(stack, bindMode, pos);
+                return InteractionResult.sidedSuccess(worldIn.isClientSide);
             }
         }
 
@@ -363,12 +435,24 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
 
         Map<BagType, List<BlockPos>> bindPoses = ItemCulinaryHub.getBindPoses(stack);
         List<BagType> leftBindBagTypes = new ArrayList<>();
-        bindPoses.forEach((type, poses) -> {
-            if (poses.isEmpty() && !(type == BagType.INGREDIENT_ADDITION || type == BagType.START_ADDITION)) {
-                leftBindBagTypes.add(type);
+        for (Map.Entry<BagType, List<BlockPos>> entry : bindPoses.entrySet()) {
+            BagType type = entry.getKey();
+
+            boolean canDisplay = true;
+            for (BagType displayVal : BagType.DISPLAY_VALS) {
+                if (displayVal != type) {
+                    canDisplay = false;
+                    break;
+                }
             }
-        });
-        if (bindPoses.isEmpty() || leftBindBagTypes.size() == BagType.values().length - 2) {
+            if (!canDisplay) {
+                continue;
+            }
+
+            leftBindBagTypes.add(type);
+        }
+
+        if (bindPoses.isEmpty() || leftBindBagTypes.size() == BagType.VALS.length - 2) {
             tooltip.add(Component.empty());
             tooltip.add(Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.warn").withStyle(ChatFormatting.YELLOW));
             tooltip.add(Component.translatable("tooltips.maidsoulkitchen.culinary_hub.desc.warn.empty").withStyle(ChatFormatting.GRAY));

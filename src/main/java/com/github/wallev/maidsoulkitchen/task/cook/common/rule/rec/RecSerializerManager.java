@@ -3,11 +3,11 @@ package com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.client.tooltip.RecipeDataTooltip;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
-import com.github.wallev.maidsoulkitchen.foundation.utility.RecIngredient;
 import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.item.ItemCulinaryHub;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemDefinition;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidConditionRecipesManager2;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.IndexRange;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ingredient.RecIngredient;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemDefinition;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
 import com.github.wallev.maidsoulkitchen.util.ItemStackUtil;
 import com.google.common.collect.Lists;
@@ -44,9 +44,9 @@ public class RecSerializerManager<R extends Recipe<? extends RecipeInput>> {
         return RecipeInfoProvider.getInstance();
     }
 
-    public LinkedList<MaidRec> createMaidRecs(List<MKRecipe<R>> recs, Map<ItemDefinition, Long> available, BiConsumer<MKRecipe<R>, MaidConditionRecipesManager2.IndexRange> successAdd, Predicate<MKRecipe<R>> rIsValid) {
+    public LinkedList<MaidRec> createMaidRecs(List<MKRecipe<R>> recs, Map<ItemDefinition, Long> available, BiConsumer<MKRecipe<R>, IndexRange> successAdd, Predicate<MKRecipe<R>> rIsValid, Predicate<Map<ItemDefinition, ItemAmount>> itemUse) {
         LinkedList<MaidRec> maidRecs = new LinkedList<>();
-        MaidConditionRecipesManager2.IndexRange indexRange = new MaidConditionRecipesManager2.IndexRange();
+        IndexRange indexRange = new IndexRange();
 
         int index = 0;
         for (MKRecipe<R> r : recs) {
@@ -54,7 +54,12 @@ public class RecSerializerManager<R extends Recipe<? extends RecipeInput>> {
                 continue;
             }
 
-            List<MaidRec> maidRec = this.createMaidRec(r, available);
+            boolean[] canContinueMake = {true};
+            List<MaidRec> maidRec = this.createMaidRec(r, available, canContinueMake, itemUse);
+            if (!canContinueMake[0]) {
+                break;
+            }
+
             int size = maidRec.size();
             if (size > 0) {
                 maidRecs.addAll(maidRec);
@@ -68,12 +73,19 @@ public class RecSerializerManager<R extends Recipe<? extends RecipeInput>> {
     }
 
     @SuppressWarnings("all")
-    protected List<MaidRec> createMaidRec(MKRecipe<R> r, Map<ItemDefinition, Long> available) {
+    protected List<MaidRec> createMaidRec(MKRecipe<R> r, Map<ItemDefinition, Long> available, boolean[] canContinueMake, Predicate<Map<ItemDefinition, ItemAmount>> itemUse) {
         List<ItemDefinition> invIngredient = new ArrayList<>();
         Map<ItemDefinition, ItemAmount> itemTimes = new HashMap<>();
         boolean[] single = {false};
 
-        return recProcess(r, available, invIngredient, single, itemTimes);
+        List<MaidRec> maidRecs = recProcess(r, available, invIngredient, single, itemTimes);
+        if (!maidRecs.isEmpty()) {
+            boolean needContinueMake = itemUse.test(itemTimes);
+            if (!needContinueMake) {
+                canContinueMake[0] = false;
+            }
+        }
+        return maidRecs;
     }
 
     protected List<MaidRec> recProcess(MKRecipe<R> r, Map<ItemDefinition, Long> available, List<ItemDefinition> invIngredient, boolean[] single, Map<ItemDefinition, ItemAmount> itemTimes) {
@@ -138,7 +150,9 @@ public class RecSerializerManager<R extends Recipe<? extends RecipeInput>> {
         }
 
         for (ItemDefinition definition : invIngredient) {
-            int minAmount = itemTimes.get(definition).getAmount();
+            ItemAmount itemAmount = itemTimes.get(definition);
+            itemAmount.setRecAmount(recAmount);
+            int minAmount = itemAmount.getAmount();
 
             int count = amount * minAmount;
             maidItems.add(new MaidItem(definition, count));
@@ -161,7 +175,9 @@ public class RecSerializerManager<R extends Recipe<? extends RecipeInput>> {
         }
 
         for (ItemDefinition definition : invIngredient) {
-            int minAmount = itemTimes.get(definition).getAmount();
+            ItemAmount itemAmount = itemTimes.get(definition);
+            itemAmount.setRecAmount(recAmount);
+            int minAmount = itemAmount.getAmount();
 
             int count = amount * minAmount;
             maidItems.add(new MaidItem(definition, count));
@@ -387,5 +403,9 @@ public class RecSerializerManager<R extends Recipe<? extends RecipeInput>> {
             return false;
         }
 
+        @SuppressWarnings("unchecked")
+        public final <RP0 extends RecipeInfoProvider<R0>, R0 extends Recipe<? extends RecipeInput>> RP0 to() {
+            return (RP0) this;
+        }
     }
 }

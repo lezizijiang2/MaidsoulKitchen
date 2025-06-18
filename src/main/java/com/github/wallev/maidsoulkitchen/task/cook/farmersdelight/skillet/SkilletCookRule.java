@@ -1,8 +1,8 @@
 package com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.skillet;
 
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemInventory;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidRecipesManager2;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidCookManager;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.AbstractCookRule;
 import com.github.wallev.maidsoulkitchen.util.MaidUtil;
 import net.minecraft.world.item.crafting.CampfireCookingRecipe;
@@ -16,22 +16,22 @@ public class SkilletCookRule extends AbstractCookRule<SkilletBlockEntity, Campfi
     }
 
     @Override
-    public boolean canMoveTo(CookBeBase<SkilletBlockEntity> cookBeBase, MaidRecipesManager2<CampfireCookingRecipe> rm) {
+    public boolean canMoveTo(CookBeBase<SkilletBlockEntity> cookBeBase, MaidCookManager<CampfireCookingRecipe> rc) {
         SkilletBlockEntity cuttingBoard = cookBeBase.getBe();
 
-        return !cuttingBoard.hasStoredStack() && cuttingBoard.isHeated() && rm.hasMaidRecs(cookBeBase);
+        return !cuttingBoard.hasStoredStack() && cuttingBoard.isHeated() && rc.hasMaidRecs(cookBeBase);
     }
 
     @Override
-    public void cookMake(CookBeBase<SkilletBlockEntity> cookBeBase, MaidRecipesManager2<CampfireCookingRecipe> rm) {
+    public void cookMake(CookBeBase<SkilletBlockEntity> cookBeBase, MaidCookManager<CampfireCookingRecipe> rc) {
         boolean pickAction = false;
 
         // 放入烹饪的原材料
-        if (cookBeBase.cookStateMatch() && !cookBeBase.recMatch() && rm.hasMaidRecs(cookBeBase)) {
-            ItemInventory itemInventory = rm.getItemInventory();
-            cookBeBase.insertInputs(rm.pollMaidRec(cookBeBase), itemInventory);
+        if (cookBeBase.cookStateMatch() && !cookBeBase.recMatch() && rc.hasMaidRecs(cookBeBase)) {
+            ItemInventory itemInventory = rc.getItemInventory();
+            cookBeBase.insertInputs(rc.pollMaidRec(cookBeBase), itemInventory);
             cookBeBase.markChanged();
-            rm.getItemInventory().markDirty();
+            rc.getItemInventory().markDirty();
 
             pickAction = true;
         }

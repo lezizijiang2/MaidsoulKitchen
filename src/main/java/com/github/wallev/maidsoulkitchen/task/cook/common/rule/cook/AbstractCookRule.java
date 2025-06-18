@@ -1,7 +1,7 @@
 package com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook;
 
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidRecipesManager2;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidCookManager;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -14,18 +14,18 @@ public abstract class AbstractCookRule<B extends BlockEntity, R extends Recipe<?
     protected AbstractCookRule() {
     }
 
-    public abstract boolean canMoveTo(CookBeBase<B> cookBeBase, MaidRecipesManager2<R> rm);
+    public abstract boolean canMoveTo(CookBeBase<B> cookBeBase, MaidCookManager<R> cm);
 
-    public abstract void cookMake(CookBeBase<B> cookBeBase, MaidRecipesManager2<R> rm);
+    public abstract void cookMake(CookBeBase<B> cookBeBase, MaidCookManager<R> cm);
 
-    public boolean tickCan(CookBeBase<B> cookBeBase, MaidRecipesManager2<R> rm) {
+    public boolean tickCan(CookBeBase<B> cookBeBase, MaidCookManager<R> cm) {
         return false;
     }
 
-    public void tickCookMake(CookBeBase<B> cookBeBase, MaidRecipesManager2<R> rm) {
+    public void tickCookMake(CookBeBase<B> cookBeBase, MaidCookManager<R> cm) {
     }
 
-    public void tickStop(CookBeBase<B> cookBeBase, MaidRecipesManager2<R> rm) {
+    public void tickStop(CookBeBase<B> cookBeBase, MaidCookManager<R> cm) {
     }
 
     /**
@@ -33,5 +33,7 @@ public abstract class AbstractCookRule<B extends BlockEntity, R extends Recipe<?
      *
      * @return 如果需要 <strong>tick</strong> 执行，那就返回新的实例；反之返回单例。
      */
-    public abstract AbstractCookRule<B, R> getOrCreate();
+    public AbstractCookRule<B, R> getOrCreate() {
+        return this;
+    }
 }

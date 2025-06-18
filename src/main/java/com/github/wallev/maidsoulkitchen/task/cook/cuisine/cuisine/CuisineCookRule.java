@@ -5,9 +5,8 @@ import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
 import com.github.wallev.maidsoulkitchen.mixin.cuisinedelight.CookingDataAccessor;
 import com.github.wallev.maidsoulkitchen.mixin.cuisinedelight.CookingEntryAccessor;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemInventory;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidRecipesManager2;
-import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.AbstractCookRule;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidCookManager;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.TickCookRule;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidItem;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidRec;
@@ -80,36 +79,36 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
     }
 
     @Override
-    public boolean canMoveTo(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidRecipesManager2<BaseCuisineRecipe<?>> rm) {
+    public boolean canMoveTo(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> cm) {
         CuisineSkilletBlockEntity blockEntity = cookBeBase.getBe();
-        CombinedInvWrapper maidAvailableInv = rm.getMaid().getAvailableInv(true);
+        CombinedInvWrapper maidAvailableInv = cm.getMaid().getAvailableInv(true);
         if (!blockEntity.isCooking() && blockEntity.canCook()
                 && ItemsUtil.findStackSlot(maidAvailableInv, stack -> stack.is(CDItems.SPATULA.get())) > -1
                 && ItemsUtil.findStackSlot(maidAvailableInv, stack -> stack.is(CDItems.PLATE.get())) > -1
-                && rm.hasMaidRecs(cookBeBase)) {
+                && cm.hasMaidRecs(cookBeBase)) {
             return true;
         }
 
-        return canExtractFood(cookBeBase, rm);
+        return canExtractFood(cookBeBase, cm);
     }
 
     @Override
-    public void cookMake(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidRecipesManager2<BaseCuisineRecipe<?>> rm) {
-        this.init(cookBeBase, rm);
+    public void cookMake(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> cm) {
+        this.init(cookBeBase, cm);
         CuisineSkilletBlockEntity cuisineSkilletBlockEntity = cookBeBase.getBe();
         CombinedInvWrapper maidAvailableInv = maid.getAvailableInv(true);
         int plateSlot = ItemsUtil.findStackSlot(maidAvailableInv, itemStack -> itemStack.is(CDItems.PLATE.get()));
         if (plateSlot > -1) {
             plateItem = maidAvailableInv.getStackInSlot(plateSlot);
-            if (!foodExistAndTake(cookBeBase, rm)) {
-                this.tickStop(cookBeBase, rm);
+            if (!foodExistAndTake(cookBeBase, cm)) {
+                this.tickStop(cookBeBase, cm);
                 cuisineSkilletBlockEntity.sync();
                 return;
             }
         }
 
-        if (plateItem == null || plateItem.getCount() < 1 || !rm.hasMaidRecs(cookBeBase)) {
-            this.tickStop(cookBeBase, rm);
+        if (plateItem == null || plateItem.getCount() < 1 || !cm.hasMaidRecs(cookBeBase)) {
+            this.tickStop(cookBeBase, cm);
             cuisineSkilletBlockEntity.sync();
             return;
         }
@@ -123,10 +122,10 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
             maid.setItemInHand(InteractionHand.MAIN_HAND, maidAvailableInv.getStackInSlot(stackSlot));
         }
 
-        MaidRec maidRec = rm.pollMaidRec(cookBeBase);
-        ItemInventory itemInventory = rm.getItemInventory();
+        MaidRec maidRec = cm.pollMaidRec(cookBeBase);
+        ItemInventory itemInventory = cm.getItemInventory();
         if (maidRec == null) {
-            this.tickStop(cookBeBase, rm);
+            this.tickStop(cookBeBase, cm);
             cuisineSkilletBlockEntity.sync();
             return;
         }
@@ -158,12 +157,12 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
     }
 
     @Override
-    public boolean tickCan(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidRecipesManager2<BaseCuisineRecipe<?>> rm) {
-        return super.tickCan(cookBeBase, rm) && !end;
+    public boolean tickCan(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> cm) {
+        return super.tickCan(cookBeBase, cm) && !end;
     }
 
     @Override
-    public void tickCookMake(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidRecipesManager2<BaseCuisineRecipe<?>> rm) {
+    public void tickCookMake(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> cm) {
         tickAll++;
 
         CuisineSkilletBlockEntity cuisineSkilletBlockEntity = cookBeBase.getBe();
@@ -194,7 +193,7 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
             CookedFoodData food = CookedFoodData.of(data);
             ItemStack foodStack = BaseCuisineRecipe.findBestMatch(worldIn, food);
             plateItem.shrink(1);
-            ItemHandlerHelper.insertItemStacked(rm.getOutputInv(), foodStack, false);
+            ItemHandlerHelper.insertItemStacked(cm.getOutputInv(), foodStack, false);
 
             cuisineSkilletBlockEntity.cookingData = new CookingData();
             cuisineSkilletBlockEntity.sync();
@@ -208,8 +207,8 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
     }
 
     @Override
-    public void tickStop(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidRecipesManager2<BaseCuisineRecipe<?>> rm) {
-        super.tickStop(cookBeBase, rm);
+    public void tickStop(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> cm) {
+        super.tickStop(cookBeBase, cm);
         this.tickAll = 0;
         this.tickMax = 0;
         this.tickSpace = Integer.MAX_VALUE;
@@ -218,7 +217,7 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
         this.end = false;
     }
 
-    private boolean foodExistAndTake(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidRecipesManager2<BaseCuisineRecipe<?>> rm) {
+    private boolean foodExistAndTake(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> rm) {
         CuisineSkilletBlockEntity cuisineSkilletBlockEntity = cookBeBase.getBe();
         CookingData cookingData = cuisineSkilletBlockEntity.cookingData;
         List<CookingData.CookingEntry> contents = cookingData.contents;
@@ -250,7 +249,7 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
         return true;
     }
 
-    public boolean canExtractFood(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidRecipesManager2<BaseCuisineRecipe<?>> rm) {
+    public boolean canExtractFood(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> rm) {
         CuisineSkilletBlockEntity blockEntity = cookBeBase.getBe();
         EntityMaid maid = rm.getMaid();
         CombinedInvWrapper maidAvailableInv = maid.getAvailableInv(true);
@@ -289,7 +288,7 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
     }
 
     @Override
-    public AbstractCookRule<CuisineSkilletBlockEntity, BaseCuisineRecipe<?>> getOrCreate() {
+    protected TickCookRule<CuisineSkilletBlockEntity, BaseCuisineRecipe<?>> create() {
         return new CuisineCookRule();
     }
 }

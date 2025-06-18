@@ -20,9 +20,12 @@ build
 # other
 eclipse
 run
+run-data
 
 # Files from Forge MDK
 forge*changelog.txt
 /log/
 /run-data/
 /runs/
+
+ajcore*.txt

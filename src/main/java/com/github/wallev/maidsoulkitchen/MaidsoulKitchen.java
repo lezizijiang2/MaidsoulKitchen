@@ -11,11 +11,13 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(MaidsoulKitchen.MOD_ID)
 public final class MaidsoulKitchen {
+    public static boolean DEBUG = !FMLEnvironment.production;
     public static final String MOD_ID = "maidsoulkitchen";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 

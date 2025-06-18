@@ -2,6 +2,7 @@ package com.github.wallev.maidsoulkitchen.network.packet.c2s;
 
 import com.github.wallev.maidsoulkitchen.item.ItemCulinaryHub;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
+import com.github.wallev.maidsoulkitchen.network.packet.s2c.SetCookBagBindModeS2CPackage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

@@ -1,10 +1,9 @@
 package com.github.wallev.maidsoulkitchen.task.cook.barbequesdelight.basin;
 
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemDefinition;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemInventory;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidRecipesManager2;
-import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.AbstractCookRule;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidCookManager;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemDefinition;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.TickCookRule;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidItem;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidRec;
@@ -33,23 +32,23 @@ public class BasinCookRule extends TickCookRule<BasinBlockEntity, SkeweringRecip
     }
 
     @Override
-    public boolean canMoveTo(CookBeBase<BasinBlockEntity> cookBeBase, MaidRecipesManager2<SkeweringRecipe<?>> rm) {
+    public boolean canMoveTo(CookBeBase<BasinBlockEntity> cookBeBase, MaidCookManager<SkeweringRecipe<?>> cm) {
 //        BasinBlockEntity be = cookBeBase.getBe();
 //        if(!be.items.isEmpty()) {
 //            return true;
 //        }
 
-        return rm.hasMaidRecs(cookBeBase);
+        return cm.hasMaidRecs(cookBeBase);
     }
 
     @Override
-    public void cookMake(CookBeBase<BasinBlockEntity> cookBeBase, MaidRecipesManager2<SkeweringRecipe<?>> rm) {
-        this.init(cookBeBase, rm);
+    public void cookMake(CookBeBase<BasinBlockEntity> cookBeBase, MaidCookManager<SkeweringRecipe<?>> cm) {
+        this.init(cookBeBase, cm);
 
-        IItemHandlerModifiable inputInv = rm.getInputInv();
+        IItemHandlerModifiable inputInv = cm.getInputInv();
         BasinBlockEntity be = cookBeBase.getBe();
-        MaidRec maidRec = rm.pollMaidRec(cookBeBase);
-        Map<ItemDefinition, LinkedList<ItemStack>> invIngredients = rm.getInvIngredients();
+        MaidRec maidRec = cm.pollMaidRec(cookBeBase);
+        Map<ItemDefinition, LinkedList<ItemStack>> invIngredients = cm.getInvIngredients();
 
         List<MaidItem> maidItems = maidRec.maidItems();
 
@@ -77,7 +76,7 @@ public class BasinCookRule extends TickCookRule<BasinBlockEntity, SkeweringRecip
         }
         this.container = be.items.getItem(0);
 
-        ItemInventory itemInventory = rm.getItemInventory();
+        ItemInventory itemInventory = cm.getItemInventory();
         MaidItem tool = maidItems.get(0);
         ItemStack toolItem = contItemStack(tool, itemInventory);
         this.swapItem(InteractionHand.MAIN_HAND, toolItem, maid, inputInv);
@@ -90,17 +89,17 @@ public class BasinCookRule extends TickCookRule<BasinBlockEntity, SkeweringRecip
             this.side = maid.getItemInHand(InteractionHand.OFF_HAND);
         }
 
-        rm.getItemInventory().markDirty();
+        cm.getItemInventory().markDirty();
     }
 
     @Override
-    public void tickCookMake(CookBeBase<BasinBlockEntity> cookBeBase, MaidRecipesManager2<SkeweringRecipe<?>> rm) {
+    public void tickCookMake(CookBeBase<BasinBlockEntity> cookBeBase, MaidCookManager<SkeweringRecipe<?>> cm) {
         if (tick++ % 5 != 0) {
             return;
         }
 
         Level worldIn = be.getLevel();
-        IItemHandlerModifiable outputInv = rm.getOutputInv();
+        IItemHandlerModifiable outputInv = cm.getOutputInv();
 
         var input = new SkeweringInput(tool, container, side);
         var optional = worldIn.getRecipeManager().getRecipeFor(BBQDRecipes.RT_SKR.get(), input, worldIn);
@@ -115,15 +114,15 @@ public class BasinCookRule extends TickCookRule<BasinBlockEntity, SkeweringRecip
     }
 
     @Override
-    public void tickStop(CookBeBase<BasinBlockEntity> cookBeBase, MaidRecipesManager2<SkeweringRecipe<?>> rm) {
-        super.tickStop(cookBeBase, rm);
+    public void tickStop(CookBeBase<BasinBlockEntity> cookBeBase, MaidCookManager<SkeweringRecipe<?>> cm) {
+        super.tickStop(cookBeBase, cm);
         this.tool = ItemStack.EMPTY;
         this.container = ItemStack.EMPTY;
         this.side = ItemStack.EMPTY;
     }
 
     @Override
-    public AbstractCookRule<BasinBlockEntity, SkeweringRecipe<?>> getOrCreate() {
+    protected TickCookRule<BasinBlockEntity, SkeweringRecipe<?>> create() {
         return new BasinCookRule();
     }
 }

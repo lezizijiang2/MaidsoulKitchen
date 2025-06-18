@@ -17,11 +17,10 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.fml.common.Mod;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = MaidsoulKitchen.MOD_ID, value = Dist.CLIENT)
-public final class CookBagPosRenderEvent {
+public class CookBagPosRenderEvent {
     @SubscribeEvent
     public static void onRender(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
@@ -33,7 +32,7 @@ public final class CookBagPosRenderEvent {
             if (!mainStack.is(MkItems.CULINARY_HUB.get())) {
                 return;
             }
-            for (BagType value : BagType.values()) {
+            for (BagType value : BagType.DISPLAY_VALS) {
                 BagType.ColorA color = value.color;
                 for (BlockPos pos : ItemCulinaryHub.getBindModePoses(mainStack, value.name)) {
                     Vec3 position = event.getCamera().getPosition().reverse();

@@ -1,16 +1,19 @@
 package com.github.wallev.maidsoulkitchen.client.gui.widget.button;
 
-import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.tartaricacid.touhoulittlemaid.api.client.gui.ITooltipButton;
+import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.List;
 
+@OnlyIn(Dist.CLIENT)
 public class CookBagGuiSideTabButton extends Button implements ITooltipButton {
     private static final ResourceLocation SIDE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/culinary_hub_gui_right_side.png");
     private static final int V_OFFSET = 107;

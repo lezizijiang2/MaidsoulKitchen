@@ -2,8 +2,8 @@ package com.github.wallev.maidsoulkitchen.client.init;
 
 import com.github.wallev.maidsoulkitchen.client.tooltip.NormalAmountTooltip;
 import com.github.wallev.maidsoulkitchen.client.tooltip.RecipeDataTooltip;
-import com.github.wallev.maidsoulkitchen.foundation.utility.Mods;
 import com.github.wallev.maidsoulkitchen.inventory.tooltip.AmountTooltip;
+import com.github.wallev.maidsoulkitchen.util.modutility.Mods;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

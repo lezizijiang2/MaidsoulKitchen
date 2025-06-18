@@ -1,9 +1,8 @@
 package com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook;
 
-import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemInventory;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidRecipesManager2;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidCookManager;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory;
 import com.github.wallev.maidsoulkitchen.util.ItemStackUtil;
 import com.github.wallev.maidsoulkitchen.util.MaidUtil;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +22,7 @@ public class WaterFdPotCookRule<B extends BlockEntity, R extends Recipe<? extend
         return (WaterFdPotCookRule<B, R>) INSTANCE;
     }
 
-    public boolean canMoveTo(CookBeBase<B> cookBeBase, MaidRecipesManager2<R> rm) {
+    public boolean canMoveTo(CookBeBase<B> cookBeBase, MaidCookManager<R> cm) {
         boolean canTakeResult = cookBeBase.canTakeResult();
         boolean hasResult = cookBeBase.hasResult();
         // 有成品
@@ -35,7 +34,7 @@ public class WaterFdPotCookRule<B extends BlockEntity, R extends Recipe<? extend
         // 有待取出成品(有条件取出)和对应的餐具
         if (hasMeal) {
             ItemStack needContainer = cookBeBase.getNeedContainer();
-            if (!needContainer.isEmpty() && rm.hasItemFromOutputAddition(needContainer)) {
+            if (!needContainer.isEmpty() && cm.hasItem(needContainer)) {
                 return true;
             }
         }
@@ -43,7 +42,7 @@ public class WaterFdPotCookRule<B extends BlockEntity, R extends Recipe<? extend
         boolean hasEnoughFluid = cookBeBase.hasFluid();
         List<ItemStack> activeItemStacks = cookBeBase.getActiveItems();
         // 厨具满足烹饪的外部条件和有符合配方的原材料
-        boolean hasFuel = rm.hasItem(BagType.START_ADDITION, itemStack -> {
+        boolean hasFuel = cm.hasItem(itemStack -> {
             return ItemStackUtil.isItem(activeItemStacks, itemStack);
         });
 
@@ -51,7 +50,7 @@ public class WaterFdPotCookRule<B extends BlockEntity, R extends Recipe<? extend
         boolean recMatch = cookBeBase.recMatch();
         // 厨具满足烹饪的外部条件和有符合配方的原材料
         if (matchCookState && (hasEnoughFluid || hasFuel) && !recMatch) {
-            boolean hasMaidRecs = rm.hasMaidRecs(cookBeBase);
+            boolean hasMaidRecs = cm.hasMaidRecs(cookBeBase);
             if (hasMaidRecs) {
                 return true;
             }
@@ -72,12 +71,11 @@ public class WaterFdPotCookRule<B extends BlockEntity, R extends Recipe<? extend
         return !hasInputs && hasContainer;
     }
 
-    public void cookMake(CookBeBase<B> cookBeBase, MaidRecipesManager2<R> rm) {
+    public void cookMake(CookBeBase<B> cookBeBase, MaidCookManager<R> cm) {
         boolean pickAction = false;
 
-        IItemHandlerModifiable inputInv = rm.getInputInv();
-        IItemHandlerModifiable outputInv = rm.getOutputInv();
-        IItemHandlerModifiable outputAdditionInv = rm.getOutputAdditionInv();
+        IItemHandlerModifiable inputInv = cm.getInputInv();
+        IItemHandlerModifiable outputInv = cm.getOutputInv();
 
         ItemStack meal = cookBeBase.getMeal();
         ItemStack nowContainer = cookBeBase.getNowContainer();
@@ -85,11 +83,11 @@ public class WaterFdPotCookRule<B extends BlockEntity, R extends Recipe<? extend
         if (!meal.isEmpty()) {
             // 取出餐具（不匹配）
             if (!nowContainer.isEmpty()) {
-                cookBeBase.takeItem(nowContainer, outputAdditionInv);
+                cookBeBase.takeItem(nowContainer, inputInv);
             }
 
             ItemStack needContainer = cookBeBase.getNeedContainer();
-            ItemStack outputAdditionItem = rm.getItemFromOutputAddition(needContainer);
+            ItemStack outputAdditionItem = cm.getItem(needContainer);
             // 放入餐具
             cookBeBase.insertContainer(outputAdditionItem);
             cookBeBase.markChanged();
@@ -122,7 +120,7 @@ public class WaterFdPotCookRule<B extends BlockEntity, R extends Recipe<? extend
 
         // 取出餐具
         if (!matchCookState && !recMatch && !nowContainer.isEmpty()) {
-            cookBeBase.takeItem(nowContainer, outputAdditionInv);
+            cookBeBase.takeItem(nowContainer, inputInv);
             cookBeBase.markChanged();
 
             pickAction = true;
@@ -131,16 +129,16 @@ public class WaterFdPotCookRule<B extends BlockEntity, R extends Recipe<? extend
         boolean hasEnoughFluid = cookBeBase.hasFluid();
         List<ItemStack> activeItemStacks = cookBeBase.getActiveItems();
         // 厨具满足烹饪的外部条件和有符合配方的原材料
-        ItemStack fuel = rm.getItem(BagType.START_ADDITION, itemStack -> {
+        ItemStack fuel = cm.getItem(itemStack -> {
             return ItemStackUtil.isItem(activeItemStacks, itemStack);
         });
 
         // 放入烹饪的原材料
-        if (matchCookState && (hasEnoughFluid || !fuel.isEmpty()) && !recMatch && rm.hasMaidRecs(cookBeBase)) {
-            ItemInventory itemInventory = rm.getItemInventory();
-            cookBeBase.insertInputs(rm.pollMaidRec(cookBeBase), itemInventory);
+        if (matchCookState && (hasEnoughFluid || !fuel.isEmpty()) && !recMatch && cm.hasMaidRecs(cookBeBase)) {
+            ItemInventory itemInventory = cm.getItemInventory();
+            cookBeBase.insertInputs(cm.pollMaidRec(cookBeBase), itemInventory);
             cookBeBase.markChanged();
-            rm.getItemInventory().markDirty();
+            cm.getItemInventory().markDirty();
             recMatch = true;
 
             pickAction = true;
@@ -149,7 +147,7 @@ public class WaterFdPotCookRule<B extends BlockEntity, R extends Recipe<? extend
         if (recMatch && !hasEnoughFluid && !fuel.isEmpty()) {
             cookBeBase.useItem(fuel, () -> {
                 return cookBeBase.hasFluid();
-            });
+            }, outputInv);
             cookBeBase.markChanged();
         }
 
@@ -159,8 +157,4 @@ public class WaterFdPotCookRule<B extends BlockEntity, R extends Recipe<? extend
 
     }
 
-    @Override
-    public WaterFdPotCookRule<B, R> getOrCreate() {
-        return this;
-    }
 }
