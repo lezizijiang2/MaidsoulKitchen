@@ -1,13 +1,11 @@
 package com.github.wallev.maidsoulkitchen.mixin.youkaishomecoming;
 
-import com.github.wallev.maidsoulkitchen.task.cook.common.cbaccessor.IFdCbeAccessor;
-import com.github.wallev.maidsoulkitchen.task.cook.common.cbaccessor.IRecipeExperinceAward;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.inv.ICookBeAccessor;
 import dev.xkmc.youkaishomecoming.content.pot.base.BasePotBlockEntity;
 import dev.xkmc.youkaishomecoming.content.pot.base.BasePotRecipe;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -18,10 +16,15 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Mixin(value = BasePotBlockEntity.class, remap = false)
-public abstract class BasePotBlockEntityMixin implements IFdCbeAccessor<BasePotRecipe>, IRecipeExperinceAward, ICookBeAccessor {
+public abstract class BasePotBlockEntityMixin implements ICookBeAccessor {
+
+    @Shadow
+    @Final
+    private Object2IntOpenHashMap<ResourceLocation> usedRecipeTracker;
 
     @Shadow
     protected abstract Optional<RecipeHolder<BasePotRecipe>> getMatchingRecipe(RecipeWrapper inventoryWrapper);
@@ -30,28 +33,19 @@ public abstract class BasePotBlockEntityMixin implements IFdCbeAccessor<BasePotR
     protected abstract boolean canCook(BasePotRecipe recipe);
 
     @Shadow
-    public abstract List<RecipeHolder<BasePotRecipe>> getUsedRecipesAndPopExperience(Level level, Vec3 pos);
-
-    @Shadow @Final private Object2IntOpenHashMap<ResourceLocation> usedRecipeTracker;
+    public abstract List<Recipe<?>> getUsedRecipesAndPopExperience(Level level, Vec3 pos);
 
     @Shadow
     public abstract ItemStackHandler getInventory();
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Optional<BasePotRecipe> tlmk$getMatchingRecipe(RecipeWrapper inventoryWrapper) {
-        return getMatchingRecipe(inventoryWrapper).map(RecipeHolder::value);
+    public Map<ResourceLocation, Integer> kl$usedRecipeTracker() {
+        return usedRecipeTracker;
     }
 
     @Override
-    public boolean tlmk$canCook(BasePotRecipe recipe) {
-        return canCook(recipe);
-    }
-
-    @Override
-    public void tlmk$awardExperience(Entity entity) {
-        this.getUsedRecipesAndPopExperience(entity.level(), entity.position());
-        this.usedRecipeTracker.clear();
+    public void kl$getUsedRecipesAndPopExperience(Level level, Vec3 pos) {
+        this.getUsedRecipesAndPopExperience(level, pos);
     }
 
     @Override

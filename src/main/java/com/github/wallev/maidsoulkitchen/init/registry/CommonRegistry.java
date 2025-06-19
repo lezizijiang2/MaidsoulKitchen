@@ -1,6 +1,6 @@
 package com.github.wallev.maidsoulkitchen.init.registry;
 
-import com.github.wallev.maidsoulkitchen.debug.EnableMaidDebug;
+import com.github.wallev.maidsoulkitchen.debug.tlm.EnableMaidDebug;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;

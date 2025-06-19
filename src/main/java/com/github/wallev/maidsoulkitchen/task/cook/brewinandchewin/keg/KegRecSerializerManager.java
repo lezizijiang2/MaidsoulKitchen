@@ -29,7 +29,9 @@ import java.util.*;
 
 
 public class KegRecSerializerManager extends FluidRecSerializerManager<KegFermentingRecipe> {
-    public KegRecSerializerManager() {
+    private static final KegRecSerializerManager INSTANCE = new KegRecSerializerManager();
+
+    protected KegRecSerializerManager() {
         super(BnCRecipeTypes.FERMENTING);
     }
 
@@ -65,6 +67,10 @@ public class KegRecSerializerManager extends FluidRecSerializerManager<KegFermen
         return fluidItems;
     }
 
+    public static RecSerializerManager<KegFermentingRecipe> getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     protected void initFluidRecs(Level level) {
         Map<Fluid, List<Pair<ItemStack, Integer>>> fluidItems1 = new HashMap<>();
@@ -87,7 +93,7 @@ public class KegRecSerializerManager extends FluidRecSerializerManager<KegFermen
         for (Item item : BuiltInRegistries.ITEM) {
             ItemStack defaultInstance = item.getDefaultInstance().copy();
             IFluidHandlerItem iFluidHandlerItem = defaultInstance.getCapability(Capabilities.FluidHandler.ITEM);
-            if (iFluidHandlerItem != null && iFluidHandlerItem instanceof FluidBucketWrapper fluidBucketWrapper) {
+            if (iFluidHandlerItem instanceof FluidBucketWrapper fluidBucketWrapper) {
                 FluidStack fluidStack = fluidBucketWrapper.getFluid();
                 Fluid rawFluid = fluidStack.getFluid();
 

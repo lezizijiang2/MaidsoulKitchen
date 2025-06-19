@@ -14,10 +14,10 @@ import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.itemdown.HubItemDown;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.itemdown.IItemDown;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.itemdown.MaidItemDown;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.itemdown.RecDataUse;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.maid.IMaidCookInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.maid.MaidCookBagInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.maid.MaidInventory;
-import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.ItemAmount;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidRec;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.RecSerializerManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
@@ -49,6 +49,8 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
     protected final RecSerializerManager<R> recSerializerManager;
     protected final CookBeBase<?> cookBeBase;
     protected CookData cookData;
+
+    protected boolean initData = false;
 
     protected List<MKRecipe<R>> rec = new ArrayList<>();
     protected List<MKRecipe<R>> currentRecs = new ArrayList<>();
@@ -85,15 +87,15 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
     }
 
     public Map<ItemDefinition, LinkedList<ItemStack>> getInvIngredients() {
-        return itemInventory.getStacksMap();
+        return getItemInventory().getStacksMap();
     }
 
     public ItemInventory getItemInventory() {
-        return itemInventory;
+        return getCookInv().getItemInventory();
     }
 
     public void updateInvIngredients() {
-        itemInventory.update();
+        getItemInventory().update();
     }
 
     private boolean initInvData() {
@@ -102,7 +104,6 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
             this.bindingPoses = ItemCulinaryHub.getBindPoses(this.findCulinaryHub());
             //@todo
             this.cookInv = this.initCookInv();
-            this.itemInventory = cookInv.getItemInventory();
             this.chestInputInventory = new ChestInventory();
             this.chestOutputInventory = new ChestInventory();
 
@@ -318,7 +319,7 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
         this.createIngres(available);
         // 创建食材配方失败，提前返回
         if (maidRecs.isEmpty()) {
-            return true;
+            return false;
         }
 
         Map<ItemDefinition, Integer> useItemDef = this.itemDown.getUseItemDef();
@@ -380,9 +381,15 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
         boolean initTaskData = this.initTaskData();
         boolean initInvData = this.initInvData();
         if (initTaskData || initInvData) {
+            this.initData = true;
             this.maidRecs = new LinkedList<>();
         }
     }
+
+    public boolean isInitData() {
+        return initData;
+    }
+
 
     private void createRecipesIngredients() {
         this.clear();
@@ -391,12 +398,14 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
         this.itemUnIngre2Chest();
         // 获取原料箱子配方原料并置入CookBag
         boolean mapChestIngredient = this.mapChestIngredient();
-        if (!mapChestIngredient) {
+        if (mapChestIngredient) {
             chestInputInventory.update();
             // 更新CookBag的inventory
             this.syncInv();
             this.cookInv.refreshInv();
             this.makeResultsBubble();
+            cookInv.calcAvailableSlots();
+            MaidsoulKitchen.LOGGER.debug("availableSlots: {}", cookInv.getInputAvailableSlots());
             return;
         }
 
@@ -418,7 +427,7 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
 
     protected void createIngres() {
         this.initConditions();
-        Map<ItemDefinition, Long> available = new HashMap<>(itemInventory.getStacks());
+        Map<ItemDefinition, Long> available = new HashMap<>(getItemInventory().getStacks());
         this.createIngres(available);
     }
 
@@ -426,8 +435,8 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
         this.maidRecs = recSerializerManager.createMaidRecs(this.currentRecs, available, this::recAdd, this::recIsValid, this::doItemUse);
     }
 
-    private boolean doItemUse(Map<ItemDefinition, ItemAmount> itemUse) {
-        return this.itemDown.read(itemUse);
+    private boolean doItemUse(RecDataUse recDataUse) {
+        return this.itemDown.read(recDataUse);
     }
 
     protected void makeResultsBubble() {
@@ -539,6 +548,10 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
         } else {
             MaidsoulKitchen.LOGGER.error("CookInv is null!");
         }
+    }
+
+    public IMaidCookInventory getCookInv() {
+        return cookInv;
     }
 
     // fixme: 不应该这么做，临时解决，等待版本重构

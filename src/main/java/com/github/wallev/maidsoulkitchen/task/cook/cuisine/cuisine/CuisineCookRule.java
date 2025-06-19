@@ -7,6 +7,7 @@ import com.github.wallev.maidsoulkitchen.mixin.cuisinedelight.CookingEntryAccess
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidCookManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.maid.IMaidCookInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.TickCookRule;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidItem;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidRec;
@@ -80,6 +81,10 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
 
     @Override
     public boolean canMoveTo(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> cm) {
+        IMaidCookInventory cookInv = cm.getCookInv();
+        boolean hasInputAvailableSlot = cookInv.hasInputAvailableSlot();
+        boolean hasOutputAvailableSlot = cookInv.hasOutputAvailableSlot();
+
         CuisineSkilletBlockEntity blockEntity = cookBeBase.getBe();
         CombinedInvWrapper maidAvailableInv = cm.getMaid().getAvailableInv(true);
         if (!blockEntity.isCooking() && blockEntity.canCook()
@@ -89,7 +94,7 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
             return true;
         }
 
-        return canExtractFood(cookBeBase, cm);
+        return canExtractFood(cookBeBase, cm) && hasOutputAvailableSlot;
     }
 
     @Override

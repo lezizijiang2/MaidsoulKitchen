@@ -3,6 +3,7 @@ package com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidCookManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.maid.IMaidCookInventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
@@ -19,10 +20,14 @@ public class NormalCookRule<B extends BlockEntity, R extends Recipe<? extends Re
     }
 
     public boolean canMoveTo(CookBeBase<B> cookBeBase, MaidCookManager<R> cm) {
+        IMaidCookInventory cookInv = cm.getCookInv();
+        boolean hasInputAvailableSlot = cookInv.hasInputAvailableSlot();
+        boolean hasOutputAvailableSlot = cookInv.hasOutputAvailableSlot();
+
         boolean canTakeResult = cookBeBase.canTakeResult();
         boolean hasResult = cookBeBase.hasResult();
         // 有成品
-        if (canTakeResult && hasResult) {
+        if (canTakeResult && hasResult && hasOutputAvailableSlot) {
             return true;
         }
 
@@ -38,7 +43,7 @@ public class NormalCookRule<B extends BlockEntity, R extends Recipe<? extends Re
 
         boolean hasInputs = cookBeBase.hasInputs();
         // 配方不存在以及有残留的物品
-        return !recMatch && hasInputs;
+        return !recMatch && hasInputs && hasInputAvailableSlot;
     }
 
     public void cookMake(CookBeBase<B> cookBeBase, MaidCookManager<R> cm) {

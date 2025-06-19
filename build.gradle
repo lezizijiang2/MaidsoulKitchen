@@ -121,9 +121,11 @@ tasks.compileJava {
     outputs.upToDateWhen { false }
 }
 
+// 生成 toml 信息，用于打包成生产环境的mod
+tasks.named('processResources', ProcessResources).configure {
+    def isBuildTask = gradle.startParameter.taskNames.any { it.contains("build") }
+    def actualModVersion = isBuildTask ? mod_version : "0.0"
 
-// 用于 neoforge.mods 里替换那一堆 ${xxxx}
-tasks.withType(ProcessResources).configureEach {
     var replaceProperties = [
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
@@ -134,7 +136,7 @@ tasks.withType(ProcessResources).configureEach {
             mod_id                 : mod_id,
             mod_name               : mod_name,
             mod_license            : mod_license,
-            mod_version            : mod_version,
+            mod_version: actualModVersion,
             mod_credits            : mod_credits,
             mod_authors            : mod_authors,
             mod_description        : mod_description,
@@ -164,6 +166,20 @@ idea {
         downloadSources = true
         downloadJavadoc = true
     }
+}
+// 指定编码显式为 UTF
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+java {
+    // 编译源码文件
+    withSourcesJar()
+}
+
+// ALL 为下载 gradle 源码，方便查看调试
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.ALL
 }
 
 

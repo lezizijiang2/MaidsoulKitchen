@@ -1,13 +1,8 @@
 package com.github.wallev.maidsoulkitchen.util.modutility;
 
+import com.github.wallev.maidsoulkitchen.util.ModUtil;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.loading.FMLEnvironment;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
-
-import java.util.Optional;
 
 public enum Mods {
     PATCHOULI("patchouli"),
@@ -79,58 +74,18 @@ public enum Mods {
         this.isLoaded = this.isInstalled(versionRange);
     }
 
-    public static boolean hasLoaded(Mods... mods) {
-        ModList modList = ModList.get();
-        for (Mods mod : mods)
-            if (mod.isInstalled())
-                return true;
-        return false;
-    }
-
-    public ResourceLocation create(String path) {
-        return ResourceLocation.fromNamespaceAndPath(modId, path);
-    }
-
     public static void load() {
-    }
-
-    public static boolean allLoaded(String... modIds) {
-        ModList modList = ModList.get();
-        for (String modId : modIds)
-            if (!modList.isLoaded(modId))
-                return false;
-        return true;
-    }
-
-    public static boolean hasLoaded(String... modIds) {
-        ModList modList = ModList.get();
-        for (String modId : modIds)
-            if (modList.isLoaded(modId))
-                return true;
-        return false;
     }
 
     public boolean isInstalled() {
         return ModList.get().isLoaded(modId);
     }
 
-    // [x.x.x, )
-    protected boolean isInstalled(String spec) {
-        try {
-            VersionRange versionRange = VersionRange.createFromVersionSpec(spec);
-            Optional<? extends ModContainer> modContainer = ModList.get().getModContainerById(this.modId);
-            if (modContainer.isPresent()) {
-                if (versionRange.containsVersion(modContainer.get().getModInfo().getVersion())) {
-                    return true;
-                } else {
-                    // 开发环境下，version 是空的，所以需要额外判断
-                    return !FMLEnvironment.production;
-                }
-            }
-        } catch (InvalidVersionSpecificationException e) {
-            throw new RuntimeException(e);
-        }
+    public ResourceLocation create(String path) {
+        return ResourceLocation.fromNamespaceAndPath(modId, path);
+    }
 
-        return false;
+    protected boolean isInstalled(String versionRange) {
+        return ModUtil.isInstalled(modId, versionRange);
     }
 }

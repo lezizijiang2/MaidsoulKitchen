@@ -1,8 +1,10 @@
-package com.github.wallev.maidsoulkitchen.debug;
+package com.github.wallev.maidsoulkitchen.debug.tlm;
 
 import com.github.tartaricacid.touhoulittlemaid.config.ServerConfig;
 import com.github.tartaricacid.touhoulittlemaid.debug.target.DebugMaidManager;
+import com.github.tartaricacid.touhoulittlemaid.entity.backpack.BackpackManager;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.tartaricacid.touhoulittlemaid.init.InitItems;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -69,6 +71,7 @@ public class EnableMaidDebug {
     }
 
     // 好感度满级
+    @SuppressWarnings("all")
     @SubscribeEvent
     public void maxFavorability(EntityJoinLevelEvent event) {
         if (event.getLevel().isClientSide) {
@@ -80,6 +83,7 @@ public class EnableMaidDebug {
             LivingEntity owner = maid.getOwner();
             if (owner != null) {
                 maid.getFavorabilityManager().max();
+                maid.setMaidBackpackType(BackpackManager.findBackpack(InitItems.MAID_BACKPACK_BIG.get().getDefaultInstance()).get());
             }
         }
     }

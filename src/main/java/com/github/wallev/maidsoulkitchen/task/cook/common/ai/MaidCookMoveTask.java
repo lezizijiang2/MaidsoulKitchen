@@ -40,7 +40,7 @@ public class MaidCookMoveTask<B extends BlockEntity, R extends Recipe<? extends 
 
     public MaidCookMoveTask(ICookTask<B, R> task, MaidCookManager<R> rm, AbstractCookRule<B, R> rule, CookBeBase<B> cookBe, float movementSpeed, int verticalSearchRange) {
         super(ImmutableMap.of(MemoryModuleType.WALK_TARGET, MemoryStatus.VALUE_ABSENT,
-                InitEntities.TARGET_POS.get(), MemoryStatus.VALUE_ABSENT,
+                InitEntities.TARGET_POS.get(), MemoryStatus.REGISTERED,
                 MkEntities.WORK_POS.get(), MemoryStatus.VALUE_ABSENT));
         this.task = task;
         this.rm = rm;
@@ -69,7 +69,9 @@ public class MaidCookMoveTask<B extends BlockEntity, R extends Recipe<? extends 
         }
         if (cookBe.isCookBe(blockEntity)) {
             boolean processed = this.processRecipeManager();
-            if (!processed) return false;
+            if (!processed) {
+                return false;
+            }
             cookBe.setBe((B) blockEntity);
             return this.rule.canMoveTo(cookBe, rm);
         }
@@ -101,6 +103,7 @@ public class MaidCookMoveTask<B extends BlockEntity, R extends Recipe<? extends 
                             BlockPos standingPos = calculateStandingPosition(worldIn, targetBlockPos);
 
                             MemoryUtil.rememberWorkPos(maid, standingPos, targetBlockPos, 0.3f, 0);
+                            MemoryUtil.rememberWorkPos(maid, mutableBlockPos.immutable(), this.movementSpeed, 0);
 //                            debugInfo(maid, mutableBlockPos);
                             this.setNextCheckTickCount(5);
                             return;

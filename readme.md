@@ -15,7 +15,7 @@
 
 ## 开发提示
 
-- 由于目前使用到了AspectJ，所以如果有类使用到了`util.debug.annotation`下的注解，热重载只能使用`idea`自带的重载，使用
+- 由于目前使用到了`AspectJ`，所以如果有类使用到了`debug.annotation`下的注解，热重载只能使用`idea`自带的重载，使用
   `Single Hotswap`会失效且崩溃
 
 ## 警告

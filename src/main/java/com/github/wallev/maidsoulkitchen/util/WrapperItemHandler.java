@@ -6,13 +6,13 @@ import net.neoforged.neoforge.items.wrapper.EmptyItemHandler;
 
 import java.util.List;
 
-public class ItemHandlerWrapper implements IItemHandler {
+public class WrapperItemHandler implements IItemHandler {
     protected final List<IItemHandler> itemHandlers;
     protected final int itemHandlerLength;
     protected final int[] baseIndex;
     protected final int slotCount;
 
-    public ItemHandlerWrapper(List<IItemHandler> itemHandlers) {
+    public WrapperItemHandler(List<IItemHandler> itemHandlers) {
         this.itemHandlers = itemHandlers;
         this.itemHandlerLength = itemHandlers.size();
         this.baseIndex = new int[itemHandlerLength];

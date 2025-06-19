@@ -1,16 +1,16 @@
 package com.github.wallev.maidsoulkitchen.mixin.minecraft;
 
-import com.github.wallev.maidsoulkitchen.task.cook.common.cbaccessor.IAbstractFurnaceAccessor;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.inv.ICookBeAccessor;
+import com.github.wallev.maidsoulkitchen.task.cook.minecraft.furnace.IAbstractFurnaceAccessor;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -19,9 +19,11 @@ import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 
 @Mixin(value = AbstractFurnaceBlockEntity.class, remap = true)
 public abstract class AbstractFurnaceBlockEntityMixin extends BaseContainerBlockEntity implements IAbstractFurnaceAccessor, ICookBeAccessor {
@@ -49,6 +51,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BaseContainerBlock
     @Shadow
     public abstract List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel pLevel, Vec3 pPopVec);
 
+    @SuppressWarnings("unchecked")
     @Shadow
     protected abstract boolean isLit();
 
@@ -57,17 +60,11 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BaseContainerBlock
     }
 
     @Override
-    public void tlmk$awardExperience(Entity entity) {
-        this.getRecipesToAwardAndPopExperience((ServerLevel) entity.level, entity.position());
-        this.recipesUsed.clear();
-    }
-
-    @Override
     public boolean tlmk$isLit() {
         return this.isLit();
     }
 
-    @Override
+    @Unique
     public boolean tlmk$innerCanCook() {
         if (level == null) {
             return false;
@@ -88,5 +85,15 @@ public abstract class AbstractFurnaceBlockEntityMixin extends BaseContainerBlock
     @Override
     public boolean kl$matchCookState() {
         return this.tlmk$isLit();
+    }
+
+    @Override
+    public void kl$getUsedRecipesAndPopExperience(Level level, Vec3 pos) {
+        this.getRecipesToAwardAndPopExperience((ServerLevel) level, pos);
+    }
+
+    @Override
+    public Map<ResourceLocation, Integer> kl$usedRecipeTracker() {
+        return recipesUsed;
     }
 }
