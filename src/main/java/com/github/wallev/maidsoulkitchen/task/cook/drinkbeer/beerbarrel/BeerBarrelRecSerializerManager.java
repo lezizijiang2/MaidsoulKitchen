@@ -31,8 +31,8 @@ public class BeerBarrelRecSerializerManager extends RecSerializerManager<Brewing
         public List<RecIngredient> getIngredients(RecSerializerManager<BrewingRecipe> rsm, BrewingRecipe rec) {
             List<Ingredient> list = new ArrayList<>(rec.getIngredients());
             ItemStack beerCup = rec.getBeerCup();
-            List<RecIngredient> recIngredients = RecIngredient.to(list);
-            recIngredients.add(RecIngredient.of(beerCup));
+            List<RecIngredient> recIngredients = RecIngredient.from(list);
+            recIngredients.add(RecIngredient.ofCount(beerCup));
             return recIngredients;
         }
     }

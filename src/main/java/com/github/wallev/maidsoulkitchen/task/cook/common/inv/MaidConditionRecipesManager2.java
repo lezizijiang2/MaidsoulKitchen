@@ -46,10 +46,13 @@ public abstract class MaidConditionRecipesManager2<R extends Recipe<? extends Re
     }
 
     @Override
-    protected void recAdd(MKRecipe<R> r, int index) {
+    protected void recAdd(MKRecipe<R> r, IndexRange indexRange) {
         C c = this.getRecipeCondition(r.rec().value());
-        tempIngredients.computeIfAbsent(c, (k) -> new LinkedList<>())
-                .add(index);
+        LinkedList<Integer> list = tempIngredients.computeIfAbsent(c, (k) -> new LinkedList<>());
+
+        for (int i = indexRange.start(); i < indexRange.end(); i++) {
+            list.add(i);
+        }
     }
 
     @Override
@@ -135,5 +138,31 @@ public abstract class MaidConditionRecipesManager2<R extends Recipe<? extends Re
             return true;
         }
         return false;
+    }
+
+    public static class IndexRange {
+        private int start;
+        private int end;
+
+        public IndexRange() {
+        }
+
+        public void set(int start, int size) {
+            this.start = start;
+            this.end = start + size;
+        }
+
+        public int start() {
+            return start;
+        }
+
+        public int end() {
+            return end;
+        }
+
+        public void reset() {
+            this.start = 0;
+            this.end = 0;
+        }
     }
 }

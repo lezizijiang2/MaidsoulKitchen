@@ -3,17 +3,16 @@ package com.github.wallev.maidsoulkitchen.task.cook.common.cook.be;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.inv.ICookBeAccessor;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.inv.IInvHandler;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemDefinition;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidItem;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidRec;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -59,24 +58,15 @@ public class CookBe<B extends BlockEntity> extends CookBeBase<B> {
 //        return insertInputs(rec, invIngredients);
 //    }
 
-    public void takeInputs(IItemHandler inputs2Inv) {
-        IInvHandler ingredientInv = this.getIngredientInv();
-        int start = builder.ingredientStart.get();
-        int size = start + builder.ingredientSize.get();
-        for (int i = start; i < size; i++) {
-            takeItem(ingredientInv.kl$getStackInSlot(i), inputs2Inv);
-        }
-    }
-
-    public boolean insertInputs(MaidRec rec, Map<Item, LinkedList<ItemStack>> invIngredients) {
+    public boolean insertInputs(MaidRec rec, ItemInventory itemInventory) {
         IInvHandler ingredientInv = this.getIngredientInv();
 
         int index = 0;
         for (MaidItem maidItem : rec.maidItems()) {
             if (!maidItem.isEmpty()) {
-                Item item = maidItem.item();
+                ItemDefinition item = maidItem.item();
                 int count = maidItem.count();
-                insertAndShrink(ingredientInv, count, invIngredients.get(item), index++);
+                insertAndShrink(ingredientInv, count, itemInventory.getItemStacks(item), index++);
             }
         }
         return true;

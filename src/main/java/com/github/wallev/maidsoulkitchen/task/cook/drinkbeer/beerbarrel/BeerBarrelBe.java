@@ -39,6 +39,10 @@ public class BeerBarrelBe extends CookBeBase<BeerBarrelBlockEntity> {
 
     @Override
     public boolean recMatch() {
+        if (((BeerBarrelBlockAccessor) be).tlmk$statusCode() == 1) {
+            return true;
+        }
+
         Optional<RecipeHolder<BrewingRecipe>> recipe = serverLevel.getRecipeManager().getRecipeFor(RecipeRegistry.RECIPE_TYPE_BREWING.get(), be.getBrewingInventory(), serverLevel);
         return recipe.filter(brewingRecipe -> ((BeerBarrelBlockAccessor) be).tlmk$canBrew(brewingRecipe.value()) && brewingRecipe.value().isCupQualified(((BeerBarrelBlockAccessor) be).tlmk$brewingInventory())).isPresent();
     }

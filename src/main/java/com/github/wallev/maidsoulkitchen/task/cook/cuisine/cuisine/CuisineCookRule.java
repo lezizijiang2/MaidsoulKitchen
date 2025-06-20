@@ -5,6 +5,7 @@ import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
 import com.github.wallev.maidsoulkitchen.mixin.cuisinedelight.CookingDataAccessor;
 import com.github.wallev.maidsoulkitchen.mixin.cuisinedelight.CookingEntryAccessor;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidRecipesManager2;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.AbstractCookRule;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.TickCookRule;
@@ -26,7 +27,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -37,9 +37,7 @@ import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import vectorwing.farmersdelight.common.registry.ModSounds;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, BaseCuisineRecipe<?>> {
     private static final CuisineCookRule INSTANCE = new CuisineCookRule();
@@ -126,7 +124,7 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
         }
 
         MaidRec maidRec = rm.pollMaidRec(cookBeBase);
-        Map<Item, LinkedList<ItemStack>> invIngredients = rm.getInvIngredients();
+        ItemInventory itemInventory = rm.getItemInventory();
         if (maidRec == null) {
             this.tickStop(cookBeBase, rm);
             cuisineSkilletBlockEntity.sync();
@@ -134,7 +132,7 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
         }
 
         for (MaidItem maidItem : maidRec.maidItems()) {
-            ItemStack itemStack = contItemStack(maidItem, invIngredients);
+            ItemStack itemStack = contItemStack(maidItem, itemInventory);
             if (!itemStack.isEmpty()) {
                 IngredientConfig.IngredientEntry entry = IngredientConfig.get().getEntry(itemStack);
                 if (entry != null) {

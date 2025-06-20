@@ -1,16 +1,12 @@
 package com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.skillet;
 
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidRecipesManager2;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.AbstractCookRule;
 import com.github.wallev.maidsoulkitchen.util.MaidUtil;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CampfireCookingRecipe;
 import vectorwing.farmersdelight.common.block.entity.SkilletBlockEntity;
-
-import java.util.LinkedList;
-import java.util.Map;
 
 public class SkilletCookRule extends AbstractCookRule<SkilletBlockEntity, CampfireCookingRecipe> {
     private static final SkilletCookRule INSTANCE = new SkilletCookRule();
@@ -32,10 +28,10 @@ public class SkilletCookRule extends AbstractCookRule<SkilletBlockEntity, Campfi
 
         // 放入烹饪的原材料
         if (cookBeBase.cookStateMatch() && !cookBeBase.recMatch() && rm.hasMaidRecs(cookBeBase)) {
-            Map<Item, LinkedList<ItemStack>> invIngredients = rm.getInvIngredients();
-            cookBeBase.insertInputs(rm.pollMaidRec(cookBeBase), invIngredients);
+            ItemInventory itemInventory = rm.getItemInventory();
+            cookBeBase.insertInputs(rm.pollMaidRec(cookBeBase), itemInventory);
             cookBeBase.markChanged();
-            rm.updateInvIngredients();
+            rm.getItemInventory().markDirty();
 
             pickAction = true;
         }

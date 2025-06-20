@@ -3,6 +3,7 @@ package com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming.ferment;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.inv.IInvHandler;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidRec;
 import dev.xkmc.l2core.base.tile.BaseTank;
 import dev.xkmc.youkaishomecoming.content.pot.ferment.FermentationDummyContainer;
@@ -10,14 +11,10 @@ import dev.xkmc.youkaishomecoming.content.pot.ferment.FermentationItemContainer;
 import dev.xkmc.youkaishomecoming.content.pot.ferment.FermentationRecipe;
 import dev.xkmc.youkaishomecoming.content.pot.ferment.FermentationTankBlockEntity;
 import dev.xkmc.youkaishomecoming.init.registrate.YHBlocks;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.Optional;
 
 import static dev.xkmc.youkaishomecoming.content.pot.ferment.FermentationTankBlock.OPEN;
@@ -71,8 +68,8 @@ public class FermentationCookBe extends CookBeBase<FermentationTankBlockEntity> 
     }
 
     @Override
-    public boolean insertInputs(MaidRec rec, Map<Item, LinkedList<ItemStack>> invIngredients) {
-        boolean inserted = super.insertInputs(rec, invIngredients);
+    public boolean insertInputs(MaidRec rec, ItemInventory itemInventory) {
+        boolean inserted = super.insertInputs(rec, itemInventory);
         if (inserted) {
             serverLevel.setBlockAndUpdate(be.getBlockPos(), be.getBlockState().setValue(OPEN, false));
             return true;

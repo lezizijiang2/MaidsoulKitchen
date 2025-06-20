@@ -32,5 +32,10 @@ public class CuisineRecSerializerManager extends RecSerializerManager<BaseCuisin
                     .map(RecIngredient::of)
                     .toList();
         }
+
+        @Override
+        public boolean isSingle(RecSerializerManager<BaseCuisineRecipe<?>> rsm, BaseCuisineRecipe<?> rec) {
+            return true;
+        }
     }
 }

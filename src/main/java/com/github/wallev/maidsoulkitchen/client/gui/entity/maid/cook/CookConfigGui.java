@@ -9,6 +9,7 @@ import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CookConfigContainer;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
+import com.github.wallev.maidsoulkitchen.util.ErrorUtil;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
@@ -66,10 +67,12 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
 
     @Override
     protected void initAdditionData() {
-        super.initAdditionData();
+        ErrorUtil.errorRun(() -> {
+            super.initAdditionData();
 
-        this.initCookData();
-        this.initRecipeList();
+            this.initCookData();
+            this.initRecipeList();
+        });
     }
 
     private void initCookData() {
@@ -136,21 +139,25 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
 
     @Override
     protected void initAdditionWidgets() {
-        super.initAdditionWidgets();
-        this.addTaskInfoButton();
-        this.addSearchTextBox();
-        this.addSearchBox();
-        this.addTypeButton();
-        this.addResultInfo();
-        this.addScrollButton();
+        ErrorUtil.errorRun(() -> {
+            super.initAdditionWidgets();
+            this.addTaskInfoButton();
+            this.addSearchTextBox();
+            this.addSearchBox();
+            this.addTypeButton();
+            this.addResultInfo();
+            this.addScrollButton();
 
-        this.addInfoButton();
-        this.addJeiButton();
+            this.addInfoButton();
+            this.addJeiButton();
+        });
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+        ErrorUtil.errorRun(() -> {
+            super.render(graphics, mouseX, mouseY, partialTicks);
+        });
     }
 
     @Override

@@ -40,7 +40,7 @@ public class MaidCookMakeTask<B extends BlockEntity, R extends Recipe<? extends 
 
     @Override
     protected boolean checkExtraStartConditions(ServerLevel worldIn, EntityMaid maid) {
-        return ErrorUtil.safeRun(maid, () -> {
+        return ErrorUtil.errorRun(() -> {
             Brain<EntityMaid> brain = maid.getBrain();
             return brain.getMemory(MkEntities.WORK_POS.get()).map(targetPos -> {
                 Vec3 targetV3d = targetPos.currentPosition();
@@ -59,7 +59,7 @@ public class MaidCookMakeTask<B extends BlockEntity, R extends Recipe<? extends 
 
     @Override
     protected void start(ServerLevel worldIn, EntityMaid maid, long gameTime) {
-        ErrorUtil.safeRun(maid, () -> {
+        ErrorUtil.errorRun(() -> {
             MemoryUtil.getWorkPos(maid).ifPresent(posWrapper -> {
                 BlockPos basePos = posWrapper.currentBlockPosition();
                 BlockEntity blockEntity = worldIn.getBlockEntity(basePos);
@@ -73,7 +73,7 @@ public class MaidCookMakeTask<B extends BlockEntity, R extends Recipe<? extends 
 
     @Override
     protected void tick(ServerLevel worldIn, EntityMaid maid, long gameTime) {
-        ErrorUtil.safeRun(maid, () -> {
+        ErrorUtil.errorRun(() -> {
             rule.tickCookMake(cookBe, rm);
         });
     }
@@ -81,11 +81,12 @@ public class MaidCookMakeTask<B extends BlockEntity, R extends Recipe<? extends 
     protected void sync() {
         rm.itemOutput2Chest();
         rm.syncInv();
+        rm.updateInvIngredients();
     }
 
     @Override
     protected void stop(ServerLevel worldIn, EntityMaid maid, long gameTime) {
-        ErrorUtil.safeRun(maid, () -> {
+        ErrorUtil.errorRun(() -> {
             rule.tickStop(cookBe, rm);
             this.sync();
             cookBe.clear();
@@ -95,7 +96,7 @@ public class MaidCookMakeTask<B extends BlockEntity, R extends Recipe<? extends 
 
     @Override
     protected boolean canStillUse(ServerLevel worldIn, EntityMaid maid, long gameTime) {
-        return ErrorUtil.safeRun(maid, () -> {
+        return ErrorUtil.errorRun(() -> {
             return rule.tickCan(cookBe, rm);
         }, false);
     }

@@ -26,21 +26,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.NeoForge;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -189,7 +185,9 @@ public abstract class ICookTask<B extends BlockEntity, R extends Recipe<? extend
 
     @Override
     public boolean enableEating(EntityMaid maid) {
-        // 工作中禁止吃饭
-        return !maid.getBrain().hasMemoryValue(MkEntities.WORK_POS.get());
+        return false;
+
+//         工作中禁止吃饭
+//        return !maid.getBrain().hasMemoryValue(MkEntities.WORK_POS.get());
     }
 }

@@ -1,6 +1,7 @@
 package com.github.wallev.maidsoulkitchen.task.cook.barbequesdelight.grill;
 
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidRecipesManager2;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.AbstractCookRule;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.TickCookRule;
@@ -10,13 +11,9 @@ import com.mao.barbequesdelight.content.block.GrillBlockEntity;
 import com.mao.barbequesdelight.content.recipe.GrillingRecipe;
 import com.mao.barbequesdelight.init.registrate.BBQDItems;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-
-import java.util.LinkedList;
-import java.util.Map;
 
 public class GrillCookRule extends TickCookRule<GrillBlockEntity, GrillingRecipe<?>> {
     private static final GrillCookRule INSTANCE = new GrillCookRule();
@@ -59,10 +56,10 @@ public class GrillCookRule extends TickCookRule<GrillBlockEntity, GrillingRecipe
     public void cookMake(CookBeBase<GrillBlockEntity> cookBeBase, MaidRecipesManager2<GrillingRecipe<?>> rm) {
         this.init(cookBeBase, rm);
         if (rm.hasMaidRecs(cookBeBase)) {
-            Map<Item, LinkedList<ItemStack>> invIngredients = rm.getInvIngredients();
+            ItemInventory itemInventory = rm.getItemInventory();
             MaidRec maidRec = rm.pollMaidRec(cookBeBase);
             MaidItem maidItem = maidRec.maidItems().get(0);
-            this.grillStack = contItemStack(maidItem, invIngredients);
+            this.grillStack = contItemStack(maidItem, itemInventory);
         }
     }
 

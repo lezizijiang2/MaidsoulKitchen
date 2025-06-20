@@ -15,12 +15,12 @@ public class RecIngredient {
         this.ingredient = ingredient;
     }
 
-    public static List<RecIngredient> to(List<Ingredient> ingredients) {
+    public static List<RecIngredient> from(List<Ingredient> ingredients) {
         return ingredients.stream().map(RecIngredient::of).collect(Collectors.toList());
     }
 
-    public static WrappedIngredient of(ItemStack itemStack) {
-        return new WrappedIngredient(itemStack);
+    public static CountIngredient ofCount(ItemStack itemStack) {
+        return new CountIngredient(itemStack);
     }
 
     public static RecIngredient of(Ingredient ingredient) {

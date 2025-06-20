@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 public class MKRecipe<R extends Recipe<? extends RecipeInput>> {
     protected final RecipeHolder<R> rec;
+    protected final boolean single;
     protected final List<ItemStack> inFluids;
     protected final List<RecIngredient> inItems;
     protected final ItemStack output;
@@ -28,8 +29,9 @@ public class MKRecipe<R extends Recipe<? extends RecipeInput>> {
     protected Set<ItemDefinition> validInItemDefinitions;
     protected Set<ItemDefinition> validInFluidDefinitions;
 
-    public MKRecipe(RecipeHolder<R> rec, RecIngredient tool, List<ItemStack> inFluids, List<RecIngredient> inItems, ItemStack output, ItemStack container, Set<Item> validInItems, Set<Item> validInFluids) {
+    public MKRecipe(RecipeHolder<R> rec, boolean single, RecIngredient tool, List<ItemStack> inFluids, List<RecIngredient> inItems, ItemStack output, ItemStack container, Set<Item> validInItems, Set<Item> validInFluids) {
         this.rec = rec;
+        this.single = single;
         this.tool = tool;
         this.inFluids = inFluids;
         this.inItems = inItems;
@@ -42,8 +44,9 @@ public class MKRecipe<R extends Recipe<? extends RecipeInput>> {
         this.validInFluidDefinitions = createValidItemDefinitionsFromItems(validInFluids);
     }
 
-    public MKRecipe(RecipeHolder<R> rec, RecIngredient tool, List<ItemStack> inFluids, List<RecIngredient> inItems, ItemStack output, ItemStack container) {
+    public MKRecipe(RecipeHolder<R> rec, boolean single, RecIngredient tool, List<ItemStack> inFluids, List<RecIngredient> inItems, ItemStack output, ItemStack container) {
         this.rec = rec;
+        this.single = single;
         this.tool = tool;
         this.inFluids = inFluids;
         this.inItems = inItems;
@@ -56,32 +59,32 @@ public class MKRecipe<R extends Recipe<? extends RecipeInput>> {
         this.validInFluidDefinitions = createValidItemDefinitionsFromItemStacks(inFluids);
     }
 
-    public MKRecipe(RecipeHolder<R> rec, RecIngredient tool, List<RecIngredient> inItems, ItemStack output, ItemStack container) {
-        this(rec, tool, List.of(), inItems, output, container);
+    public MKRecipe(RecipeHolder<R> rec, boolean single, RecIngredient tool, List<RecIngredient> inItems, ItemStack output, ItemStack container) {
+        this(rec, single, tool, List.of(), inItems, output, container);
     }
 
-    public MKRecipe(RecipeHolder<R> rec, RecIngredient tool, List<RecIngredient> inItems, ItemStack output) {
-        this(rec, tool, List.of(), inItems, output, ItemStack.EMPTY);
+    public MKRecipe(RecipeHolder<R> rec, boolean single, RecIngredient tool, List<RecIngredient> inItems, ItemStack output) {
+        this(rec, single, tool, List.of(), inItems, output, ItemStack.EMPTY);
     }
 
-    public MKRecipe(RecipeHolder<R> rec, List<ItemStack> inFluids, List<RecIngredient> inItems, ItemStack output, ItemStack container) {
-        this(rec, RecIngredient.EMPTY, inFluids, inItems, output, container, createValidItemsFromIngredients(inItems), createValidItemsFromItemStacks(inFluids));
+    public MKRecipe(RecipeHolder<R> rec, boolean single, List<ItemStack> inFluids, List<RecIngredient> inItems, ItemStack output, ItemStack container) {
+        this(rec, single, RecIngredient.EMPTY, inFluids, inItems, output, container, createValidItemsFromIngredients(inItems), createValidItemsFromItemStacks(inFluids));
     }
 
-    public MKRecipe(RecipeHolder<R> rec, List<ItemStack> inFluids, List<RecIngredient> inItems, ItemStack output) {
-        this(rec, inFluids, inItems, output, ItemStack.EMPTY);
+    public MKRecipe(RecipeHolder<R> rec, boolean single, List<ItemStack> inFluids, List<RecIngredient> inItems, ItemStack output) {
+        this(rec, single, inFluids, inItems, output, ItemStack.EMPTY);
     }
 
-    public MKRecipe(RecipeHolder<R> rec, Set<Item> validInItems, List<RecIngredient> inItems, ItemStack output) {
-        this(rec, RecIngredient.EMPTY, List.of(), inItems, output, ItemStack.EMPTY, validInItems, Set.of());
+    public MKRecipe(RecipeHolder<R> rec, boolean single, Set<Item> validInItems, List<RecIngredient> inItems, ItemStack output) {
+        this(rec, single, RecIngredient.EMPTY, List.of(), inItems, output, ItemStack.EMPTY, validInItems, Set.of());
     }
 
-    public MKRecipe(RecipeHolder<R> rec, List<RecIngredient> inItems, ItemStack output) {
-        this(rec, List.of(), inItems, output, ItemStack.EMPTY);
+    public MKRecipe(RecipeHolder<R> rec, boolean single, List<RecIngredient> inItems, ItemStack output) {
+        this(rec, single, List.of(), inItems, output, ItemStack.EMPTY);
     }
 
-    public MKRecipe(RecipeHolder<R> rec, List<RecIngredient> inItems, ItemStack output, ItemStack container) {
-        this(rec, List.of(), inItems, output, container);
+    public MKRecipe(RecipeHolder<R> rec, boolean single, List<RecIngredient> inItems, ItemStack output, ItemStack container) {
+        this(rec, single, List.of(), inItems, output, container);
     }
 
     public static Set<Item> createValidItemsFromIngredients(List<RecIngredient> items) {
@@ -154,6 +157,10 @@ public class MKRecipe<R extends Recipe<? extends RecipeInput>> {
 
     public RecipeHolder<R> rec() {
         return rec;
+    }
+
+    public boolean isSingle() {
+        return single;
     }
 
     public ResourceLocation id() {

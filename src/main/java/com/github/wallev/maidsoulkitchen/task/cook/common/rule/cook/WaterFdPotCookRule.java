@@ -2,19 +2,17 @@ package com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook;
 
 import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidRecipesManager2;
 import com.github.wallev.maidsoulkitchen.util.ItemStackUtil;
 import com.github.wallev.maidsoulkitchen.util.MaidUtil;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class WaterFdPotCookRule<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends AbstractCookRule<B, R> {
     @SuppressWarnings("rawtypes")
@@ -139,10 +137,10 @@ public class WaterFdPotCookRule<B extends BlockEntity, R extends Recipe<? extend
 
         // 放入烹饪的原材料
         if (matchCookState && (hasEnoughFluid || !fuel.isEmpty()) && !recMatch && rm.hasMaidRecs(cookBeBase)) {
-            Map<Item, LinkedList<ItemStack>> invIngredients = rm.getInvIngredients();
-            cookBeBase.insertInputs(rm.pollMaidRec(cookBeBase), invIngredients);
+            ItemInventory itemInventory = rm.getItemInventory();
+            cookBeBase.insertInputs(rm.pollMaidRec(cookBeBase), itemInventory);
             cookBeBase.markChanged();
-            rm.updateInvIngredients();
+            rm.getItemInventory().markDirty();
             recMatch = true;
 
             pickAction = true;

@@ -175,7 +175,7 @@ public class FermentationRecSerializerManager extends FluidRecSerializerManager<
         @Override
         public List<RecIngredient> getIngredients(RecSerializerManager<FermentationRecipe<?>> rsm, FermentationRecipe<?> rec) {
             SimpleFermentationRecipe sFermentationRecipe = (SimpleFermentationRecipe) rec;
-            return RecIngredient.to(sFermentationRecipe.ingredients);
+            return RecIngredient.from(sFermentationRecipe.ingredients);
         }
 
         @Override

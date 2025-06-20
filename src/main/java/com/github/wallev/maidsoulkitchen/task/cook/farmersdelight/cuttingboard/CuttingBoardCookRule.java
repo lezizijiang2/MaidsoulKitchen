@@ -3,6 +3,8 @@ package com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.cuttingboard;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemDefinition;
+import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidRecipesManager2;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.AbstractCookRule;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.TickCookRule;
@@ -19,8 +21,6 @@ import vectorwing.farmersdelight.common.block.entity.CuttingBoardBlockEntity;
 import vectorwing.farmersdelight.common.crafting.CuttingBoardRecipe;
 import vectorwing.farmersdelight.common.registry.ModRecipeTypes;
 
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.Optional;
 
 public class CuttingBoardCookRule extends TickCookRule<CuttingBoardBlockEntity, CuttingBoardRecipe> {
@@ -68,22 +68,22 @@ public class CuttingBoardCookRule extends TickCookRule<CuttingBoardBlockEntity, 
         if (rm.hasMaidRecs(cookBeBase)) {
             MaidRec maidRec = rm.pollMaidRec(cookBeBase);
             ItemStack tool = maidRec.tool();
-            Map<Item, LinkedList<ItemStack>> invIngredients = rm.getInvIngredients();
-            ItemStack pollTool = invIngredients.get(tool.getItem()).poll();
+            ItemInventory itemInventory = rm.getItemInventory();
+            ItemStack pollTool = itemInventory.getItemStacks(tool.getItem()).poll();
             if (pollTool == null) {
                 return;
             }
             this.swapItem(InteractionHand.MAIN_HAND, pollTool, maid, maid.getAvailableInv(true));
 
-            Item processItem = maidRec.maidItems().get(0).item();
-            ItemStack processItemPoll = invIngredients.get(processItem).poll();
+            ItemDefinition processItem = maidRec.maidItems().get(0).item();
+            ItemStack processItemPoll = itemInventory.getItemStacks(processItem).poll();
             if (processItemPoll == null) {
                 return;
             }
             this.swapItem(InteractionHand.OFF_HAND, processItemPoll, maid, maid.getAvailableInv(true));
-            this.processItem = processItem;
+            this.processItem = processItem.item();
 
-            rm.updateInvIngredients();
+            rm.getItemInventory().markDirty();
         }
         be.setChanged();
     }
