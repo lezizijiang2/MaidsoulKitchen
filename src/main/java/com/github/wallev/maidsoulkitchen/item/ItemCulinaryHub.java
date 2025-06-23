@@ -2,6 +2,7 @@ package com.github.wallev.maidsoulkitchen.item;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
+import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.CookBagAbstractContainer;
@@ -50,7 +51,7 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
     public static final float WORK_RANGE = 2.5f;
     public static final int OUTPUT_INV_SLOT_SIZE = outputSlotSize();
     public static final int BIND_SIZE = 3;
-    public static final BagType[] INPUT_BAG_TYPES = inputBags();
+    public static final BagType[] INPUT_BAG_TYPES = BagType.INPUT_VALS;
     public static final int INPUT_INV_SLOT_SIZE = inputSlotSize();
     private static final int INV_SLOT = 4;
     private static final int COOK_BAG_SIZE = getCookBagSize();
@@ -68,10 +69,6 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
 
     public ItemCulinaryHub() {
         super(new Item.Properties().stacksTo(1));
-    }
-
-    private static BagType[] inputBags() {
-        return new BagType[]{BagType.INGREDIENT, BagType.START_ADDITION, BagType.INGREDIENT_ADDITION, BagType.OUTPUT_ADDITION};
     }
 
     private static int inputSlotSize() {
@@ -203,7 +200,7 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
                 HashMap<BagType, List<BlockPos>> typeListHashMap = new HashMap<>();
                 for (BagType value : BagType.VALS) {
                     ListTag list = tag1.getList(value.name, Tag.TAG_INT_ARRAY);
-                    List<BlockPos> poses = list.stream().map(tag2 -> readBlockPos((IntArrayTag)tag2)).toList();
+                    List<BlockPos> poses = list.stream().map(tag2 -> readBlockPos((IntArrayTag) tag2)).toList();
                     typeListHashMap.put(value, poses);
                 }
 
@@ -211,6 +208,12 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
             }
         }
         return Map.of();
+    }
+
+    public static boolean isExtraZone(EntityMaid maid, BlockPos pos) {
+        float maxDistance = maid.getRestrictRadius() * WORK_RANGE;
+        BlockPos centerPos = ICookTask.getSearchPos(maid);
+        return !centerPos.closerToCenterThan(pos.getCenter(), maxDistance);
     }
 
     public static String getBindMode(ItemStack stack) {

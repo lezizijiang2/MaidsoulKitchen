@@ -1,8 +1,11 @@
 package com.github.wallev.maidsoulkitchen.task.cook.common.cook.inv;
 
+import com.github.wallev.maidsoulkitchen.api.mixin.IMaidsoulKitchenInterface;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
@@ -15,15 +18,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public interface ICookBeAccessor {
-
-    static <R extends CookingPotRecipe> boolean canCook(IItemHandlerModifiable inv, Function<RecipeWrapper, Optional<RecipeHolder<R>>> recMatchGet, Predicate<R> recCanCook) {
-        RecipeWrapper recWrapper = new RecipeWrapper(inv);
-        return recMatchGet.apply(recWrapper)
-                .map(RecipeHolder::value)
-                .map(recCanCook::test)
-                .orElse(false);
-    }
+public interface ICookBeAccessor extends IMaidsoulKitchenInterface {
 
     /**
      * 判断厨具内部的原料是否可以烹饪
@@ -40,6 +35,22 @@ public interface ICookBeAccessor {
     }
 
     default <R extends CookingPotRecipe> boolean kl$canCook(IItemHandlerModifiable inv, Function<RecipeWrapper, Optional<RecipeHolder<R>>> recMatchGet, Predicate<R> recCanCook) {
+        return canCook(inv, recMatchGet, recCanCook);
+    }
+
+    static <R extends Recipe<? extends RecipeInput>> boolean canCook(IItemHandlerModifiable inv, Function<RecipeWrapper, Optional<RecipeHolder<R>>> recMatchGet, Predicate<R> recCanCook) {
+        RecipeWrapper recWrapper = new RecipeWrapper(inv);
+        return canCook(recWrapper, recMatchGet, recCanCook);
+    }
+
+    static <R extends Recipe<? extends RecipeInput>> boolean canCook(RecipeWrapper recWrapper, Function<RecipeWrapper, Optional<RecipeHolder<R>>> recMatchGet, Predicate<R> recCanCook) {
+        return recMatchGet.apply(recWrapper)
+                .map(RecipeHolder::value)
+                .map(recCanCook::test)
+                .orElse(false);
+    }
+
+    default <R extends Recipe<? extends RecipeInput>> boolean kl$canCook(RecipeWrapper inv, Function<RecipeWrapper, Optional<RecipeHolder<R>>> recMatchGet, Predicate<R> recCanCook) {
         return canCook(inv, recMatchGet, recCanCook);
     }
 

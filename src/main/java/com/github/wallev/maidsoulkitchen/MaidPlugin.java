@@ -37,6 +37,7 @@ import java.util.function.Function;
 public final class MaidPlugin implements ILittleMaid {
 
     public MaidPlugin() {
+        Mods.init();
         TaskInfo.init();
     }
 

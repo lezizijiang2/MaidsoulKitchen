@@ -12,6 +12,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class TImageButton extends TouhouImageButton implements ITooltipButton {
     private final ICookTask<?, ?> cookTask;
+
     public TImageButton(ICookTask<?, ?> cookTask, int pX, int pY, int pWidth, int pHeight, int pXTexStart, int pYTexStart, int pYDiffTex, ResourceLocation pResourceLocation, OnPress pOnPress) {
         super(pX, pY, pWidth, pHeight, pXTexStart, pYTexStart, pYDiffTex, pResourceLocation, pOnPress);
         this.cookTask = cookTask;

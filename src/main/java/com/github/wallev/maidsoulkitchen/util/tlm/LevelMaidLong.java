@@ -6,5 +6,6 @@ import net.minecraft.server.level.ServerLevel;
 public interface LevelMaidLong {
 
     void accept(ServerLevel serverLevel, EntityMaid maid, Long pGameTime);
+
     boolean test(ServerLevel serverLevel, EntityMaid maid, Long pGameTime);
 }

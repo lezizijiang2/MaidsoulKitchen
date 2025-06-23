@@ -10,6 +10,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class SearchBox extends EditBox {
     protected final Font font;
+
     public SearchBox(Font pFont, int pX, int pY, int pWidth, int pHeight, Component pMessage) {
         super(pFont, pX, pY, pWidth, pHeight, pMessage);
         this.font = pFont;

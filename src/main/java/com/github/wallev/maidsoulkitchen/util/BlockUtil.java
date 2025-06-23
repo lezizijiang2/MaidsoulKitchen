@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class BlockUtil {
-    private BlockUtil(){
+    private BlockUtil() {
 
     }
 

@@ -20,7 +20,8 @@ public class TypeButton extends NormalTooltipButton {
     protected String modeUid;
 
     public TypeButton(int pX, int pY, int pWidth, int pHeight, boolean isSelected) {
-        super(pX, pY, pWidth, pHeight, Component.empty(), Collections.emptyList(), (b) -> {});
+        super(pX, pY, pWidth, pHeight, Component.empty(), Collections.emptyList(), (b) -> {
+        });
         this.isSelected = isSelected;
         this.setModeUid(isSelected);
     }
@@ -39,7 +40,7 @@ public class TypeButton extends NormalTooltipButton {
         pGuiGraphics.blit(TEXTURE, getX(), getY(), 0, 232, 18, 18);
         if (isSelected) {
             pGuiGraphics.blit(TEXTURE, getX() + 1, getY() + 1, 16, 197, 16, 16);
-        }else {
+        } else {
             pGuiGraphics.blit(TEXTURE, getX() + 1, getY() + 1, 16, 181, 16, 16);
         }
     }

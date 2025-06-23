@@ -32,6 +32,7 @@ import java.util.function.Predicate;
 public class WrappedMaidInventory extends Inventory {
     private final EntityMaid maid;
     private Function<EntityMaid, IItemHandlerModifiable> invSupplier;
+
     public WrappedMaidInventory(EntityMaid maid, WrappedMaidFakePlayer fakePlayer) {
         super(fakePlayer);
         this.maid = maid;

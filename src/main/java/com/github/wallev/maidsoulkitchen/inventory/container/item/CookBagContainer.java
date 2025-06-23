@@ -35,7 +35,7 @@ public class CookBagContainer extends CookBagAbstractContainer {
             return;
         }
         super.clicked(slotId, button, clickTypeIn, player);
-        setContainer(player,slotId - 36, this.handlers);
+        setContainer(player, slotId - 36, this.handlers);
     }
 
     protected void setContainer(Player player, int slotId, Map<BagType, ItemStackHandler> handlers) {

@@ -16,7 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.github.tartaricacid.touhoulittlemaid.util.ResourceLocationUtil.getResourceLocation;
 
-public record SetFruitFarmSearchYOffsetC2SPackage(int entityId, ResourceLocation dataKey, int searchYOffset) implements CustomPacketPayload {
+public record SetFruitFarmSearchYOffsetC2SPackage(int entityId, ResourceLocation dataKey,
+                                                  int searchYOffset) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<SetFruitFarmSearchYOffsetC2SPackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("set_fruit_farm_search_y_offset_c2s"));
     public static final StreamCodec<ByteBuf, SetFruitFarmSearchYOffsetC2SPackage> STREAM_CODEC = StreamCodec.composite(

@@ -35,6 +35,7 @@ public final class DataRegister {
     public static TaskDataKey<CookData> KC_CHOPPING_BOARD;
 
     public static TaskDataKey<SwappedInvData> SWAPPED_INV;
+
     private DataRegister() {
     }
 

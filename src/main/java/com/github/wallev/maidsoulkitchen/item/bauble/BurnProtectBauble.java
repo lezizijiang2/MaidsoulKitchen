@@ -34,7 +34,7 @@ public class BurnProtectBauble implements IMaidsoulKitchenBauble {
             if (slot >= 0) {
                 event.setCanceled(true);
                 ItemStack stack = maid.getMaidBauble().getStackInSlot(slot);
-                if ( maid.level instanceof ServerLevel serverLevel) {
+                if (maid.level instanceof ServerLevel serverLevel) {
                     stack.hurtAndBreak(1, serverLevel, maid, m -> NetworkHandler.sendToNearby(maid, new ItemBreakPackage(maid.getId(), stack)));
                 }
                 maid.getMaidBauble().setStackInSlot(slot, stack);

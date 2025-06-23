@@ -28,6 +28,7 @@ public class MaidCompatFruitMoveTask<T extends ICompatFarmHandler & ICompatHandl
     protected int verticalSearchStart;
     private int searchStartY = 3;
     private boolean initSearchStartY = false;
+
     public MaidCompatFruitMoveTask(EntityMaid maid, ICompatFarmTask<T, ?> task, float movementSpeed) {
         this(maid, task, movementSpeed, 2);
     }
@@ -73,7 +74,7 @@ public class MaidCompatFruitMoveTask<T extends ICompatFarmHandler & ICompatHandl
     private void initData(EntityMaid entityMaid) {
         if (!initSearchStartY) {
             initSearchStartY = true;
-            searchStartY = entityMaid.getOrCreateData(((TaskDataKey<FruitData>)task.getCookDataKey()), new FruitData()).searchYOffset();
+            searchStartY = entityMaid.getOrCreateData(((TaskDataKey<FruitData>) task.getCookDataKey()), new FruitData()).searchYOffset();
         }
     }
 

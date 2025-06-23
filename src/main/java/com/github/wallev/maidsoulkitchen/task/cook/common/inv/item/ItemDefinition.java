@@ -103,7 +103,7 @@ public class ItemDefinition {
 
     @Override
     public String toString() {
-        return "1 " + item;
+        return item.toString();
     }
 
 }

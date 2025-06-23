@@ -14,7 +14,8 @@ import java.util.function.Supplier;
 public class TitleInfoButton extends Button {
 
     public TitleInfoButton(int pX, int pY, int pWidth, int pHeight, Component title) {
-        super(pX, pY, pWidth, pHeight, title, (b) -> {}, Supplier::get);
+        super(pX, pY, pWidth, pHeight, title, (b) -> {
+        }, Supplier::get);
     }
 
     @Override

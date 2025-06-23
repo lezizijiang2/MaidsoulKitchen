@@ -1,4 +1,3 @@
-
 package com.github.wallev.maidsoulkitchen.compat.patchouli.entry;
 
 public enum TaskBookEntryType {

@@ -16,7 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.github.tartaricacid.touhoulittlemaid.util.ResourceLocationUtil.getResourceLocation;
 
-public record ActionCookDataRecC2SPackage(int entityId, ResourceLocation dataKey, String rec, String mode) implements CustomPacketPayload {
+public record ActionCookDataRecC2SPackage(int entityId, ResourceLocation dataKey, String rec,
+                                          String mode) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<ActionCookDataRecC2SPackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("cook_data_rec_c2s"));
     public static final StreamCodec<ByteBuf, ActionCookDataRecC2SPackage> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT,

@@ -6,5 +6,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.List;
 
-public record AmountTooltip(String recipeId, List<Ingredient> ingredients, Boolean isBlacklist, boolean isOverSize, CookData cookData) implements TooltipComponent {
+public record AmountTooltip(String recipeId, List<Ingredient> ingredients, Boolean isBlacklist, boolean isOverSize,
+                            CookData cookData) implements TooltipComponent {
 }

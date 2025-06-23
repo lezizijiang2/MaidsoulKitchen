@@ -8,13 +8,10 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import net.neoforged.fml.ModLoadingContext;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +21,7 @@ public class MenuIntegration {
     private static final Component MENU_TITLE = Component.translatable("config.maidsoulkitchen.title");
     private static final Component MENU_TITLE_TIP = Component.translatable("config.maidsoulkitchen.title.tip").withStyle(ChatFormatting.YELLOW);
     private static final String MOD_TIP = "[Addon: Farm And Cook]";
+
     public static ConfigBuilder getConfigBuilder() {
         ConfigBuilder root = ConfigBuilder.create().setTitle(MENU_TITLE);
         root.setGlobalized(true);
@@ -195,6 +193,6 @@ public class MenuIntegration {
     }
 
     public static void registerModsPage(ModContainer modContainer) {
-        modContainer.registerExtensionPoint(IConfigScreenFactory.class,  (container, parent) -> getConfigBuilder().setParentScreen(parent).build());
+        modContainer.registerExtensionPoint(IConfigScreenFactory.class, (container, parent) -> getConfigBuilder().setParentScreen(parent).build());
     }
 }

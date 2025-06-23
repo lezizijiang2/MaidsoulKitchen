@@ -3,6 +3,7 @@ package com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.skillet;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.inv.IInvHandler;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import vectorwing.farmersdelight.common.block.entity.SkilletBlockEntity;
 
@@ -44,5 +45,10 @@ public class SkilletBe extends CookBeBase<SkilletBlockEntity> {
     @Override
     public void markChanged() {
         this.defaultChanged();
+    }
+
+    @Override
+    public BlockPos getWalkPos() {
+        return getPos().below();
     }
 }

@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class CompatFruitCompatHandler extends FruitHandler implements ICompatHandler {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "fruit_compat");
+
     @Override
     public boolean process(EntityMaid maid, BlockPos cropPos, BlockState cropState) {
 //        LOGGER.info("CompatFruitHandler handleCanHarvest ");

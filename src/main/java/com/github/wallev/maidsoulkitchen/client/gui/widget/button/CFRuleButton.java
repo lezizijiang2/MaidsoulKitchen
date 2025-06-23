@@ -31,7 +31,8 @@ public class CFRuleButton extends Button implements ITooltipButton {
     private final List<Component> tooltips;
 
     public CFRuleButton(ICompatHandlerInfo handlerInfo, ICompatFarmHandler handler, boolean isSelected, int pX, int pY, List<Component> tooltips) {
-        super(pX, pY, 152, 24, Component.empty(), b -> {}, Supplier::get);
+        super(pX, pY, 152, 24, Component.empty(), b -> {
+        }, Supplier::get);
         this.handlerInfo = handlerInfo;
         this.handler = handler;
         this.isSelected = isSelected;

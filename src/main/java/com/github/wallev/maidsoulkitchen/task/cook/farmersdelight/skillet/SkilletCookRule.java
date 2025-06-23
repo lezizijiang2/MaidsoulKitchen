@@ -1,12 +1,14 @@
 package com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.skillet;
 
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidCookManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory;
+import com.github.wallev.maidsoulkitchen.task.cook.common.manager.MaidCookManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.AbstractCookRule;
 import com.github.wallev.maidsoulkitchen.util.MaidUtil;
 import net.minecraft.world.item.crafting.CampfireCookingRecipe;
 import vectorwing.farmersdelight.common.block.entity.SkilletBlockEntity;
+
+import java.util.Objects;
 
 public class SkilletCookRule extends AbstractCookRule<SkilletBlockEntity, CampfireCookingRecipe> {
     private static final SkilletCookRule INSTANCE = new SkilletCookRule();
@@ -43,6 +45,6 @@ public class SkilletCookRule extends AbstractCookRule<SkilletBlockEntity, Campfi
 
     @Override
     public AbstractCookRule<SkilletBlockEntity, CampfireCookingRecipe> getOrCreate() {
-        return new SkilletCookRule();
+        return Objects.requireNonNullElseGet(INSTANCE, SkilletCookRule::new);
     }
 }

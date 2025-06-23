@@ -8,7 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.function.Function;
 
-public class FruitData extends FarmData{
+public class FruitData extends FarmData {
     public static final Codec<List<String>> LIST_CODEC = Codec.STRING.listOf().xmap(Lists::newArrayList, Function.identity());
     public static final Codec<FruitData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.INT.fieldOf("SearchYOffset").forGetter(FruitData::searchYOffset),

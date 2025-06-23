@@ -17,7 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.github.tartaricacid.touhoulittlemaid.util.ResourceLocationUtil.getResourceLocation;
 
-public record ActionBerryFarmRuleC2SPackage(int entityId, ResourceLocation dataKey, String rec) implements CustomPacketPayload {
+public record ActionBerryFarmRuleC2SPackage(int entityId, ResourceLocation dataKey,
+                                            String rec) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<ActionBerryFarmRuleC2SPackage> TYPE = new CustomPacketPayload.Type<>(getResourceLocation("berry_farm_rule_c2s"));
     public static final StreamCodec<ByteBuf, ActionBerryFarmRuleC2SPackage> STREAM_CODEC = StreamCodec.composite(
@@ -50,7 +51,6 @@ public record ActionBerryFarmRuleC2SPackage(int entityId, ResourceLocation dataK
             });
         }
     }
-
 
 
 }

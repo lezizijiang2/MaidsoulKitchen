@@ -31,7 +31,7 @@ public abstract class FruitHandler implements ICompatFarmHandler, ICompatHandler
     public final boolean canHarvest(EntityMaid maid, BlockPos cropPos, BlockState cropState) {
         if (!process(maid, cropPos, cropState)) {
             return nextHandler != null && nextHandler.canHarvest(maid, cropPos, cropState);
-        }else {
+        } else {
             return true;
         }
     }

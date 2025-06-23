@@ -9,6 +9,6 @@ public interface IDataTask<D> {
     D getDefaultData();
 
     default D getTaskData(EntityMaid maid) {
-       return maid.getOrCreateData(getCookDataKey(), getDefaultData());
+        return maid.getOrCreateData(getCookDataKey(), getDefaultData());
     }
 }

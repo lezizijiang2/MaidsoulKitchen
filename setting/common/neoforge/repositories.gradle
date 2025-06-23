@@ -6,6 +6,10 @@ repositories {
     flatDir {
         dir 'libs'
     }
+    flatDir {
+        name = "legacylibs"
+        dir "libs/${minecraft_version}/legacy"
+    }
     // Modrinth Maven
     maven {
         name = "Modrinth Maven"

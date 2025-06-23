@@ -6,12 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.github.wallev.maidsoulkitchen.util.BlockUtil.getId;
-
 public class TaskConfig {
 
     public static ModConfigSpec.ConfigValue<List<List<String>>> MELON_AND_STEM_LIST;
-//    public static ModConfigSpec.ConfigValue<Integer> COOK_SELECTED_RECIPES;
+    //    public static ModConfigSpec.ConfigValue<Integer> COOK_SELECTED_RECIPES;
     public static ModConfigSpec.ConfigValue<Integer> FEED_SINGLE_ANIMAL_MAX_NUMBER;
 
     public static void init(ModConfigSpec.Builder builder) {

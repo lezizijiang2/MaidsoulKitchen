@@ -39,7 +39,7 @@ public abstract class MaidTaskConfigGui<T extends TaskConfigContainer> extends c
         int color = Color.YELLOW.getRGB();
         MutableComponent translatable = Component.translatable("gui.maidsoulkitchen.config.no_config").withStyle(ChatFormatting.ITALIC);
         int startX = ((visualZone.width() - font.width(translatable)) / 2) + visualZone.startX();
-        int startY = ((visualZone.height() - font.lineHeight ) / 2) + visualZone.startY();
+        int startY = ((visualZone.height() - font.lineHeight) / 2) + visualZone.startY();
         graphics.drawString(font, translatable, startX, startY, color, false);
         graphics.fill(startX, startY + font.lineHeight + 1, startX + font.width(translatable), startY + font.lineHeight + 2, color);
     }

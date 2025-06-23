@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 public interface AttackMaidLivingEntity {
 
     void accept(IAttackTask task, EntityMaid maid, LivingEntity target);
+
     boolean test(IAttackTask task, EntityMaid maid, LivingEntity target);
 
 }

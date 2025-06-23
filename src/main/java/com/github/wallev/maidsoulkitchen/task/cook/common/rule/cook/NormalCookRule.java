@@ -1,9 +1,10 @@
 package com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook;
 
+import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
-import com.github.wallev.maidsoulkitchen.task.cook.common.inv.MaidCookManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.maid.IMaidCookInventory;
+import com.github.wallev.maidsoulkitchen.task.cook.common.manager.MaidCookManager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
@@ -20,6 +21,7 @@ public class NormalCookRule<B extends BlockEntity, R extends Recipe<? extends Re
     }
 
     public boolean canMoveTo(CookBeBase<B> cookBeBase, MaidCookManager<R> cm) {
+        EntityMaid maid = cm.getMaid();
         IMaidCookInventory cookInv = cm.getCookInv();
         boolean hasInputAvailableSlot = cookInv.hasInputAvailableSlot();
         boolean hasOutputAvailableSlot = cookInv.hasOutputAvailableSlot();

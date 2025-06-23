@@ -3,25 +3,34 @@ package com.github.wallev.maidsoulkitchen.util;
 import com.github.wallev.maidsoulkitchen.util.modutility.Mods;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.LoadingModList;
 import net.neoforged.fml.loading.moddiscovery.ModFileInfo;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 
-import java.util.Optional;
-
 public class ModUtil {
+    public static boolean isInstalled(String modId) {
+        ModList modList = ModList.get();
+        if (modList != null) {
+            return modList.isLoaded(modId);
+        } else {
+            return LoadingModList.get().getModFileById(modId) != null;
+        }
+    }
 
     // [x.x.x,)
     public static boolean isInstalled(String modId, String spec) {
         try {
             ArtifactVersion version = null;
 
-            Optional<? extends ModContainer> modContainer = ModList.get().getModContainerById(modId);
-            if (modContainer.isPresent()) {
-                version = modContainer.get().getModInfo().getVersion();
+            ModList modList = ModList.get();
+            if (modList != null) {
+                ModContainer modContainer = modList.getModContainerById(modId).orElse(null);
+                if (modContainer == null) {
+                    return false;
+                }
+                version = modContainer.getModInfo().getVersion();
             } else {
                 ModFileInfo modFileById = LoadingModList.get().getModFileById(modId);
                 if (modFileById != null) {
@@ -34,12 +43,9 @@ public class ModUtil {
             }
 
             VersionRange versionRange = VersionRange.createFromVersionSpec(spec);
-            if (versionRange.containsVersion(version)) {
-                return true;
-            } else {
-                // 开发环境下，version 是空的，所以需要额外判断
-                return !FMLEnvironment.production;
-            }
+            // 开发环境下，version 是空的，所以需要额外判断
+            //                return !FMLEnvironment.production;
+            return versionRange.containsVersion(version);
 
         } catch (InvalidVersionSpecificationException e) {
             throw new RuntimeException(e);
@@ -48,25 +54,31 @@ public class ModUtil {
 
     public static boolean allLoaded(String... modIds) {
         ModList modList = ModList.get();
-        for (String modId : modIds)
-            if (!modList.isLoaded(modId))
+        for (String modId : modIds) {
+            if (!modList.isLoaded(modId)) {
                 return false;
+            }
+        }
         return true;
     }
 
     public static boolean hasLoaded(String... modIds) {
         ModList modList = ModList.get();
-        for (String modId : modIds)
-            if (modList.isLoaded(modId))
+        for (String modId : modIds) {
+            if (modList.isLoaded(modId)) {
                 return true;
+            }
+        }
         return false;
     }
 
     public static boolean hasLoaded(Mods... mods) {
         ModList modList = ModList.get();
-        for (Mods mod : mods)
-            if (mod.isInstalled())
+        for (Mods mod : mods) {
+            if (mod.isInstalled()) {
                 return true;
+            }
+        }
         return false;
     }
 
