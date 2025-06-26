@@ -1,13 +1,16 @@
 package com.github.wallev.maidsoulkitchen.task.cook.brewinandchewin.keg;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.inv.IInvHandler;
+import com.github.wallev.maidsoulkitchen.util.classana.clazz.TaskClassAnalyzer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
 import umpaz.brewinandchewin.neoforge.container.KegFluidTankNeoForge;
 
+@TaskClassAnalyzer(TaskInfo.BNC_KEY)
 public class KegCookBe extends CookBeBase<KegBlockEntity> {
     public KegCookBe(EntityMaid maid) {
         super(maid);

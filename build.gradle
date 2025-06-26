@@ -57,6 +57,8 @@ neoForge {
     runs {
         configureEach {
             jvmArgument "-XX:+AllowEnhancedClassRedefinition"
+            jvmArgument "-XX:+IgnoreUnrecognizedVMOptions"
+            jvmArgument "-Dmixin.debug.export=true"
             systemProperty 'neoforge.logging.markers', 'REGISTRIES'
             systemProperty 'neoforge.logging.console.level', 'debug'
             // 彩色日志
@@ -220,3 +222,326 @@ def loadCustomProperties(String path) {
         }
     }
 }
+
+
+// 构建工具任务组
+String buildGroup = "build"
+String utilGroup = "util"
+
+// 辅助函数 - 清理旧JAR文件
+def cleanOldJars(File dir, String pattern, String excludePattern = null) {
+    if (!dir.exists()) {
+        logger.warn("目标目录不存在，跳过删除操作: ${dir}")
+        return
+    }
+
+    int deletedFiles = 0
+    dir.listFiles().each { file ->
+        if (file.name.matches(pattern) && (excludePattern == null || !file.name.matches(excludePattern))) {
+            logger.lifecycle("删除: ${file.name}")
+            file.delete()
+            deletedFiles++
+        }
+    }
+
+    if (deletedFiles > 0) {
+        logger.lifecycle("✅ 成功删除 ${deletedFiles} 个旧版本JAR文件")
+    } else {
+        logger.warn("⚠️ 未找到需要删除的旧版本JAR文件")
+    }
+}
+
+// 复制JAR文件
+def copyJarFile(File sourceFile, File targetDir) {
+    if (!sourceFile.exists()) {
+        throw new GradleException("源文件不存在: ${sourceFile}")
+    }
+
+    if (!targetDir.exists()) {
+        targetDir.mkdirs()
+    }
+
+    logger.lifecycle("复制文件: ${sourceFile.name} 到 ${targetDir}")
+    copy {
+        from sourceFile
+        into targetDir
+    }
+    logger.lifecycle("✅ 文件复制成功: ${sourceFile.name}")
+}
+
+// 移除原来的简单任务定义
+tasks.named('build') {
+    group = null
+    description = '请使用 buildMod 任务'
+}
+
+tasks.named('init') {
+    enabled = false
+}
+
+// 确保gradlew脚本有执行权限的辅助任务
+tasks.register("ensureGradlewExecutable") {
+    group = null  // 隐藏此任务
+    description = '确保Legacy项目中的gradlew脚本具有执行权限'
+
+    doLast {
+        if (!org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+            logger.lifecycle("确保Legacy项目中的gradlew脚本具有执行权限")
+            exec {
+                workingDir "${projectDir}/Legacy"
+                commandLine 'chmod', '+x', 'gradlew'
+            }
+            logger.lifecycle("✅ 已设置执行权限")
+        }
+    }
+}
+
+// 合并build2Legacy.bat脚本到Gradle任务
+tasks.register("build2Legacy") {
+    group = buildGroup
+    description = '构建MaidsoulKitchen给Legacy做兼容使用'
+    dependsOn "ensureGradlewExecutable", "build"
+
+    doLast {
+        logger.lifecycle("========================================")
+        logger.lifecycle("      MaidsoulKitchen Legacy构建脚本      ")
+        logger.lifecycle("========================================")
+
+        // 获取项目属性
+        logger.lifecycle("🚩 阶段1: 获取项目属性")
+        logger.lifecycle("⚠️ 项目属性: MOD_ID=${mod_id}, VERSION=${version}, MINECRAFT_VERSION=${minecraft_version}")
+
+        // 清理Build旧版本JAR文件
+        logger.lifecycle("🚩 阶段2: 清理Build旧版本JAR文件")
+        File buildDir = new File("${projectDir}/build/libs")
+        cleanOldJars(buildDir, "${mod_id}.*\\.jar", "${mod_id}-${version}.*\\.jar")
+
+        // 复制JAR文件到Legacy项目
+        logger.lifecycle("🚩 阶段4: 复制JAR文件到Legacy项目")
+        File sourceJar = new File("${projectDir}/build/libs/${mod_id}-${version}-all.jar")
+        File targetDir = new File("${projectDir}/Legacy/libs/${minecraft_version}/legacy")
+        copyJarFile(sourceJar, targetDir)
+
+        // 清理旧版本JAR文件
+        logger.lifecycle("🚩 阶段5: 清理旧版本JAR文件")
+        cleanOldJars(targetDir, "${mod_id}.*\\.jar", "${mod_id}-${version}-all\\.jar")
+
+        // 重载Legacy依赖
+        logger.lifecycle("🚩 阶段6: 重载Legacy依赖")
+        exec {
+            workingDir "${projectDir}/Legacy"
+            if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+                commandLine 'cmd', '/c', 'gradlew.bat'
+            } else {
+                commandLine './gradlew'
+            }
+        }
+
+        logger.lifecycle("========================================")
+        logger.lifecycle("          ✅ 所有任务已成功完成!            ")
+        logger.lifecycle("========================================")
+    }
+}
+
+// 合并package.bat脚本到Gradle任务
+tasks.register("buildMod") {
+    group = buildGroup
+    description = '打包完整的模组'
+    dependsOn "ensureGradlewExecutable", "build", "runData"
+
+    doLast {
+        logger.lifecycle("========================================")
+        logger.lifecycle("      MaidsoulKitchen 双项目构建脚本      ")
+        logger.lifecycle("========================================")
+
+
+        // 获取项目属性
+        logger.lifecycle("🚩 阶段1: 获取项目属性")
+        logger.lifecycle("⚠️ 项目属性: MOD_ID=${mod_id}, VERSION=${version}, MINECRAFT_VERSION=${minecraft_version}")
+
+
+        // 清理主项目的Build旧版本JAR文件
+        logger.lifecycle("🚩 阶段3: 清理主项目的Build旧版本JAR文件")
+        File buildDir = new File("${projectDir}/build/libs")
+        cleanOldJars(buildDir, "${mod_id}.*\\.jar", "${mod_id}-${version}.*\\.jar")
+
+
+        // 清理Legacy的Build旧版本JAR文件
+        logger.lifecycle("🚩 阶段5: 清理Legacy的Build旧版本JAR文件")
+        File legacyBuildDir = new File("${projectDir}/Legacy/build/libs")
+        cleanOldJars(legacyBuildDir, "${mod_id}_legacy.*\\.jar", "${mod_id}_legacy-${version}.*\\.jar")
+
+        // 构建Legacy项目
+        // 暂时忽略
+//        logger.lifecycle("🚩 阶段6: 构建Legacy项目")
+//        exec {
+//            workingDir "${projectDir}/Legacy"
+//            if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+//                commandLine 'cmd', '/c', 'gradlew.bat', 'build'
+//            } else {
+//                commandLine './gradlew', 'build'
+//            }
+//        }
+
+//        // 复制Legacy构建产物到主项目
+//        logger.lifecycle("🚩 阶段7: 复制Legacy构建���物到主项目")
+//        File sourceJar = new File("${projectDir}/Legacy/build/libs/${mod_id}_legacy-${version}-all.jar")
+//        File targetDir = new File("${projectDir}/libs/${minecraft_version}/legacy")
+//        copyJarFile(sourceJar, targetDir)
+//
+//        // 清理旧版本JAR文件
+//        logger.lifecycle("🚩 阶段8: 清理旧版本JAR文件")
+//        cleanOldJars(targetDir, "${mod_id}_legacy.*\\.jar", "${mod_id}_legacy-${version}-all\\.jar")
+//        File legacyLibsDir = new File("${projectDir}/Legacy/libs/${minecraft_version}/legacy")
+//        cleanOldJars(legacyLibsDir, "${mod_id}.*\\.jar", "${mod_id}-${version}-all\\.jar")
+
+        logger.lifecycle("🚩 阶段9: buildMod主构建完成")
+    }
+}
+
+// 最终整合任务，作为完整构建流程的终点
+tasks.register("buildAllTask") {
+    group = buildGroup
+    description = '完整构建所有模组版本（主模组+Legacy版本）'
+    // dependsOn "buildMod", "build2Legacy"
+    // 暂时忽略legacy，说实话不是很实用
+    dependsOn "buildMod"
+    mustRunAfter "buildMod"
+
+    doLast {
+        logger.lifecycle("========================================")
+        logger.lifecycle("🚩 最终阶段: 构建并合并项目��成")
+        logger.lifecycle("========================================")
+
+        // 验证所有构建产物
+        File mainJar = new File("${projectDir}/build/libs/${mod_id}-${version}-all.jar")
+        File legacyJar = new File("${projectDir}/libs/${minecraft_version}/legacy/${mod_id}_legacy-${version}-all.jar")
+
+        if (mainJar.exists()) {
+            logger.lifecycle("✅ 主项目构建产物: ${mainJar.name}")
+        } else {
+            logger.warn("⚠️ 主项目构建产物缺失")
+        }
+
+        if (legacyJar.exists()) {
+            logger.lifecycle("✅ Legacy项目构建产物: ${legacyJar.name}")
+        } else {
+            logger.warn("⚠️ Legacy项目构建产物缺失")
+        }
+
+        logger.lifecycle("========================================")
+        logger.lifecycle("          ✅ 全部构建任务已完成!            ")
+        logger.lifecycle("========================================")
+    }
+}
+
+// 初始化项目任务，替代init.bat
+tasks.register("initProject") {
+    group = buildGroup
+    description = '项目初始化，如果使用过了 init.bat，就可以不用初始化了'
+    dependsOn "ensureGradlewExecutable", "build"
+
+    doLast {
+        logger.lifecycle("========================================")
+        logger.lifecycle("       MaidsoulKitchen 构建脚本 v2.0      ")
+        logger.lifecycle("========================================")
+
+        // 阶段1: 初始化设置
+        logger.lifecycle("🚩 阶段1: 初始化设置")
+        File sourceSettings = new File("${projectDir}/setting/common/settings.gradle")
+        File targetSettings = new File("${projectDir}/settings.gradle")
+
+        if (!sourceSettings.exists()) {
+            throw new GradleException("源设置文件不存在: ${sourceSettings}")
+        }
+
+        copy {
+            from sourceSettings
+            into projectDir
+            rename { filename -> "settings.gradle" }
+        }
+        logger.lifecycle("✅ 设置文件初始化完成")
+
+        // 阶段2: 清理残存文件
+        logger.lifecycle("🚩 阶段2: 清理残存文件")
+        cleanOldJars(new File("${projectDir}/Legacy/libs/${minecraft_version}/legacy"), ".*\\.jar")
+        cleanOldJars(new File("${projectDir}/Legacy/build/libs"), ".*\\.jar")
+        cleanOldJars(new File("${projectDir}/libs/${minecraft_version}/legacy"), ".*\\.jar")
+        cleanOldJars(new File("${projectDir}/build/libs"), ".*\\.jar")
+
+        // 阶段3: 第一次构建 - 已通过dependsOn处理，不需要直接调用execute()
+        // project.getTasksByName("build", false).first().execute()
+
+        // 阶段4: 复制构建产物���Legacy
+        logger.lifecycle("🚩 阶段4: 复制构建产物到Legacy")
+        File buildDir = new File("${projectDir}/build/libs")
+        File legacyLibsDir = new File("${projectDir}/Legacy/libs/${minecraft_version}/legacy")
+        buildDir.listFiles().each { file ->
+            if (file.name.endsWith("-all.jar")) {
+                copyJarFile(file, legacyLibsDir)
+            }
+        }
+
+        // 阶段5: 构建Legacy项目
+        logger.lifecycle("🚩 阶段5: 构建Legacy项目")
+        exec {
+            workingDir "${projectDir}/Legacy"
+            if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+                commandLine 'cmd', '/c', 'gradlew.bat', 'build'
+            } else {
+                commandLine './gradlew', 'build'
+            }
+        }
+
+        // 阶段6: 复制Legacy构建产物
+        logger.lifecycle("🚩 阶段6: 复制Legacy构建产物")
+        File legacyBuildDir = new File("${projectDir}/Legacy/build/libs")
+        File modsLibsDir = new File("${projectDir}/libs/${minecraft_version}/legacy")
+        legacyBuildDir.listFiles().each { file ->
+            if (file.name.endsWith("-all.jar")) {
+                copyJarFile(file, modsLibsDir)
+            }
+        }
+
+        // 阶段7: 最终设置和构建
+        logger.lifecycle("🚩 阶段7: 最终设置和构建")
+        File sourceAllSettings = new File("${projectDir}/setting/common/settings-all.gradle")
+
+        if (!sourceAllSettings.exists()) {
+            throw new GradleException("源设置文件不存在: ${sourceAllSettings}")
+        }
+
+        copy {
+            from sourceAllSettings
+            into projectDir
+            rename { filename -> "settings.gradle" }
+        }
+
+        logger.lifecycle("========================================")
+        logger.lifecycle("          ✅ 所有任务已成功完成!            ")
+        logger.lifecycle("========================================")
+    }
+}
+
+// 移除原来的简单任务定义
+tasks.named('build') {
+    group = null
+    description = '请使用 buildMod 任务'
+}
+
+tasks.named('init') {
+    enabled = false
+}
+
+// 删除所有冲突的named配置，避免重复依赖
+// tasks.named("build2Legacy") {
+//     dependsOn "ensureGradlewExecutable"
+// }
+//
+// tasks.named("buildMod") {
+//     dependsOn "ensureGradlewExecutable"
+// }
+//
+// tasks.named("initProject") {
+//     dependsOn "ensureGradlewExecutable"
+// }

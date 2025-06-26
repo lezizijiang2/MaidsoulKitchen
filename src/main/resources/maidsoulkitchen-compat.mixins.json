@@ -2,6 +2,7 @@
   "required": false,
   "minVersion": "0.8.5",
   "package": "com.github.wallev.maidsoulkitchen.mixin.compat",
+  "plugin": "com.github.wallev.maidsoulkitchen.mixinmanager.MixinPlugin",
   "refmap": "maidsoulkitchen.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "client": [

@@ -1,9 +1,11 @@
 package com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming.ferment;
 
+import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ingredient.RecIngredient;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.FluidRecSerializerManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.RecSerializerManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
+import com.github.wallev.maidsoulkitchen.util.classana.clazz.TaskClassAnalyzer;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import dev.xkmc.youkaishomecoming.content.item.fluid.IYHFluidHolder;
@@ -27,7 +29,7 @@ import net.neoforged.neoforge.fluids.capability.wrappers.FluidBucketWrapper;
 
 import java.util.*;
 
-
+@TaskClassAnalyzer(TaskInfo.YHC_FERMENTATION_TANK)
 public class FermentationRecSerializerManager extends FluidRecSerializerManager<FermentationRecipe<?>> {
     private static final FermentationRecSerializerManager INSTANCE = new FermentationRecSerializerManager();
 

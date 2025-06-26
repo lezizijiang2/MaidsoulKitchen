@@ -1,9 +1,9 @@
 package com.github.wallev.maidsoulkitchen.task.cook.cuisine.cuisine;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
 import com.github.wallev.maidsoulkitchen.mixin.compat.cuisinedelight.CookingDataAccessor;
 import com.github.wallev.maidsoulkitchen.mixin.compat.cuisinedelight.CookingEntryAccessor;
+import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.maid.IMaidCookInventory;
@@ -11,6 +11,8 @@ import com.github.wallev.maidsoulkitchen.task.cook.common.manager.MaidCookManage
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.TickCookRule;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidItem;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidRec;
+import com.github.wallev.maidsoulkitchen.util.InvUtil;
+import com.github.wallev.maidsoulkitchen.util.classana.clazz.TaskClassAnalyzer;
 import com.github.wallev.maidsoulkitchen.util.fakeplayer.WrappedMaidFakePlayer;
 import com.mojang.datafixers.util.Pair;
 import dev.xkmc.cuisinedelight.content.block.CuisineSkilletBlockEntity;
@@ -32,13 +34,14 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import vectorwing.farmersdelight.common.registry.ModSounds;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@TaskClassAnalyzer(TaskInfo.CD_CUISINE_SKILLET)
 public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, BaseCuisineRecipe<?>> {
     private static final CuisineCookRule INSTANCE = new CuisineCookRule();
     private int tickAll = 0;
@@ -82,49 +85,50 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
     @Override
     public boolean canMoveTo(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> cm) {
         IMaidCookInventory cookInv = cm.getCookInv();
-        boolean hasInputAvailableSlot = cookInv.hasInputAvailableSlot();
         boolean hasOutputAvailableSlot = cookInv.hasOutputAvailableSlot();
 
         CuisineSkilletBlockEntity blockEntity = cookBeBase.getBe();
-        CombinedInvWrapper maidAvailableInv = cm.getMaid().getAvailableInv(true);
-        if (!blockEntity.isCooking() && blockEntity.canCook()
-                && ItemsUtil.findStackSlot(maidAvailableInv, stack -> stack.is(CDItems.SPATULA.get())) > -1
-                && ItemsUtil.findStackSlot(maidAvailableInv, stack -> stack.is(CDItems.PLATE.get())) > -1
-                && cm.hasMaidRecs(cookBeBase)) {
-            return true;
-        }
+        return !blockEntity.isCooking() && blockEntity.canCook() && cm.hasMaidRecs(cookBeBase);
 
-        return canExtractFood(cookBeBase, cm) && hasOutputAvailableSlot;
+//        if (canExtractFood(cookBeBase, cm) && hasOutputAvailableSlot) {
+//            return true;
+//        }
     }
 
     @Override
     public void cookMake(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> cm) {
         this.init(cookBeBase, cm);
         CuisineSkilletBlockEntity cuisineSkilletBlockEntity = cookBeBase.getBe();
-        CombinedInvWrapper maidAvailableInv = maid.getAvailableInv(true);
-        int plateSlot = ItemsUtil.findStackSlot(maidAvailableInv, itemStack -> itemStack.is(CDItems.PLATE.get()));
-        if (plateSlot > -1) {
-            plateItem = maidAvailableInv.getStackInSlot(plateSlot);
-            if (!foodExistAndTake(cookBeBase, cm)) {
-                this.tickStop(cookBeBase, cm);
-                cuisineSkilletBlockEntity.sync();
-                return;
-            }
-        }
-
-        if (plateItem == null || plateItem.getCount() < 1 || !cm.hasMaidRecs(cookBeBase)) {
-            this.tickStop(cookBeBase, cm);
-            cuisineSkilletBlockEntity.sync();
-            return;
-        }
+//
+//        if (canExtractFood(cookBeBase, cm)) {
+//            plateItem = cm.getItem();
+//            if (!foodExistAndTake(cookBeBase, cm)) {
+//                this.tickStop(cookBeBase, cm);
+//                cuisineSkilletBlockEntity.sync();
+//                return;
+//            }
+//        }
+//
+//        if (plateItem == null || plateItem.getCount() < 1 || !cm.hasMaidRecs(cookBeBase)) {
+//            this.tickStop(cookBeBase, cm);
+//            cuisineSkilletBlockEntity.sync();
+//            return;
+//        }
 
         ItemStack mainHandItem = maid.getMainHandItem();
         if (!mainHandItem.is(CDItems.SPATULA.get())) {
-            int stackSlot = ItemsUtil.findStackSlot(maidAvailableInv, itemStack -> itemStack.is(CDItems.SPATULA.get()));
-            if (stackSlot == -1) return;
-            ItemStack leftStack = ItemHandlerHelper.insertItemStacked(maidAvailableInv, mainHandItem, false);
-            if (!leftStack.isEmpty()) return;
-            maid.setItemInHand(InteractionHand.MAIN_HAND, maidAvailableInv.getStackInSlot(stackSlot));
+            IItemHandlerModifiable inputInv = cm.getInputInv();
+            ItemStack shovel = InvUtil.getStack(inputInv, CDItems.SPATULA.get());
+            if (shovel.isEmpty()) {
+                this.stop();
+                return;
+            }
+            this.swapTool(shovel, cm.getItemInventory(), maid, InteractionHand.MAIN_HAND, inputInv);
+//            int stackSlot = ItemsUtil.findStackSlot(maidAvailableInv, itemStack -> itemStack.is(CDItems.SPATULA.get()));
+//            if (stackSlot == -1) return;
+//            ItemStack leftStack = ItemHandlerHelper.insertItemStacked(maidAvailableInv, mainHandItem, false);
+//            if (!leftStack.isEmpty()) return;
+//            maid.setItemInHand(InteractionHand.MAIN_HAND, maidAvailableInv.getStackInSlot(stackSlot));
         }
 
         MaidRec maidRec = cm.pollMaidRec(cookBeBase);
@@ -155,8 +159,8 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
             processTickStacks.removeAll(list);
             BlockPos blockPos = cuisineSkilletBlockEntity.getBlockPos();
             for (Pair<Integer, ItemStack> integerItemStackPair : list) {
-                fakePlayer.useOnByItem(blockPos, integerItemStackPair.getSecond().split(1));
-                fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, integerItemStackPair.getSecond().split(1));
+                fakePlayer.useOnByItem(blockPos, integerItemStackPair.getSecond(), cm.getInputInv());
+//                fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, integerItemStackPair.getSecond().split(1));
             }
         }
     }
@@ -179,14 +183,15 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
         if (!processTickStacks.isEmpty()) {
             Pair<Integer, ItemStack> pair = processTickStacks.get(0);
             if (tickAll + 10 == tickMax - pair.getFirst()) {
+                IItemHandlerModifiable inputInv = cm.getInputInv();
                 WrappedMaidFakePlayer fakePlayer = WrappedMaidFakePlayer.get(maid);
                 Integer time = processTickStacks.get(0).getFirst();
                 List<Pair<Integer, ItemStack>> list = processTickStacks.stream().filter(pair0 -> pair0.getFirst() == time || pair0.getFirst() == tickMax).toList();
                 processTickStacks.removeAll(list);
                 BlockPos blockPos = cuisineSkilletBlockEntity.getBlockPos();
                 for (Pair<Integer, ItemStack> integerItemStackPair : list) {
-                    fakePlayer.useOnByItem(blockPos, integerItemStackPair.getSecond().split(1));
-                    fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, integerItemStackPair.getSecond().split(1));
+                    fakePlayer.useOnByItem(blockPos, integerItemStackPair.getSecond(), inputInv);
+//                    fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, integerItemStackPair.getSecond().split(1));
                 }
             }
         }
@@ -213,13 +218,24 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
 
     @Override
     public void tickStop(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> cm) {
+        this.backpackTool(cookBeBase, cm);
         super.tickStop(cookBeBase, cm);
+        cm.getItemInventory().markDirty();
+        cm.setNextCheckTickCount(0);
         this.tickAll = 0;
         this.tickMax = 0;
         this.tickSpace = Integer.MAX_VALUE;
         this.processTickStacks.clear();
         this.plateItem = ItemStack.EMPTY;
         this.end = false;
+    }
+
+    private void backpackTool(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> cm) {
+        if (!maid.getMainHandItem().is(CDItems.SPATULA.get())) {
+            return;
+        }
+
+        this.swapTool(maid.getMainHandItem(), cm.getItemInventory(), cm.getMaid(), cm.getInputInv());
     }
 
     private boolean foodExistAndTake(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> rm) {
@@ -254,13 +270,12 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
         return true;
     }
 
-    public boolean canExtractFood(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> rm) {
+    public boolean canExtractFood(CookBeBase<CuisineSkilletBlockEntity> cookBeBase, MaidCookManager<BaseCuisineRecipe<?>> cm) {
         CuisineSkilletBlockEntity blockEntity = cookBeBase.getBe();
-        EntityMaid maid = rm.getMaid();
-        CombinedInvWrapper maidAvailableInv = maid.getAvailableInv(true);
+        EntityMaid maid = cm.getMaid();
         CookingData cookingData = blockEntity.cookingData;
         List<CookingData.CookingEntry> contents = cookingData.contents;
-        if (!contents.isEmpty() && ItemsUtil.findStackSlot(maidAvailableInv, stack -> stack.is(CDItems.PLATE.get())) > -1) {
+        if (!contents.isEmpty() && cm.hasItem(CDItems.PLATE.asItem())) {
 
             for (CookingData.CookingEntry content : contents) {
                 Stage stage = content.getStage(cookingData);

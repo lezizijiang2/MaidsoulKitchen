@@ -3,7 +3,9 @@ package com.github.wallev.maidsoulkitchen.task.farm;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskNormalFarm;
 import com.github.wallev.maidsoulkitchen.api.task.IMaidsoulKitchenTask;
+import com.github.wallev.maidsoulkitchen.task.MaidsoulKitchenTask;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.util.classana.clazz.TaskClassAnalyzer;
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
@@ -19,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
+@TaskClassAnalyzer(TaskInfo.ECLIPTICSSEASONS_FARM)
 public class TaskEsFarm extends TaskNormalFarm implements IMaidsoulKitchenTask {
     @Override
     public boolean canPlant(EntityMaid maid, BlockPos basePos, BlockState baseState, ItemStack seed) {
@@ -33,14 +36,15 @@ public class TaskEsFarm extends TaskNormalFarm implements IMaidsoulKitchenTask {
     }
 
     @Override
+    public ResourceLocation getUid() {
+        return MaidsoulKitchenTask.ECLIPTICSSEASONS_FARM.uid;
+    }
+
+    @Override
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
         return super.createBrainTasks(maid);
     }
 
-    @Override
-    public ResourceLocation getUid() {
-        return TaskInfo.ECLIPTICSSEASONS_FARM.uid;
-    }
 
 
     @Override

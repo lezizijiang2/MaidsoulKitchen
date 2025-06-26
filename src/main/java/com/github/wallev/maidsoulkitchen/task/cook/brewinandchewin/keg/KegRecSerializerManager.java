@@ -1,8 +1,10 @@
 package com.github.wallev.maidsoulkitchen.task.cook.brewinandchewin.keg;
 
+import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.FluidRecSerializerManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.RecSerializerManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
+import com.github.wallev.maidsoulkitchen.util.classana.clazz.TaskClassAnalyzer;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -27,7 +29,7 @@ import umpaz.brewinandchewin.common.utility.AbstractedFluidStack;
 
 import java.util.*;
 
-
+@TaskClassAnalyzer(TaskInfo.BNC_KEY)
 public class KegRecSerializerManager extends FluidRecSerializerManager<KegFermentingRecipe> {
     private static final KegRecSerializerManager INSTANCE = new KegRecSerializerManager();
 

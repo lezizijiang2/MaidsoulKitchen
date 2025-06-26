@@ -17,7 +17,6 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 import static com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask.checkOwnerPos;
 import static com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask.getSearchPos;
@@ -31,6 +30,7 @@ public class CookMoveTask<B extends BlockEntity, R extends Recipe<? extends Reci
     private final AbstractCookRule<B, R> rule;
     private final CookBeBase<B> cookBe;
     protected int verticalSearchStart;
+    private BlockPos currentWorkPos = null;
 
     public CookMoveTask(ICookTask<B, R> task, MaidCookManager<R> cm, AbstractCookRule<B, R> rule, CookBeBase<B> cookBe) {
         this(task, cm, rule, cookBe, ICookTask.MOVE_SPEED, ICookTask.VERTICAL_SEARCH_RANGE);
@@ -77,7 +77,7 @@ public class CookMoveTask<B extends BlockEntity, R extends Recipe<? extends Reci
     }
 
     protected final void searchForDestination(ServerLevel worldIn, EntityMaid maid) {
-        BlockPos centrePos = getSearchPos(maid);
+        BlockPos centrePos = getSearchPos(maid, currentWorkPos);
         int searchRange = (int) maid.getRestrictRadius();
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         for (int y = this.verticalSearchStart; y <= this.verticalSearchRange; y = y > 0 ? -y : 1 - y) {
@@ -89,17 +89,9 @@ public class CookMoveTask<B extends BlockEntity, R extends Recipe<? extends Reci
                         if (maid.isWithinRestriction(mutableBlockPos) && shouldMoveTo(worldIn, maid, mutableBlockPos)
 //                                && checkPathReach(maid, mutableBlockPos)
                                 && checkOwnerPos(maid, mutableBlockPos)) {
-                            MemoryUtil.rememberWorkPos(maid, cookBe.getWalkPos(), mutableBlockPos.immutable(), this.movementSpeed, 0);
-                            MemoryUtil.rememberWorkPos(maid, mutableBlockPos.immutable(), 0.3f, 0);
-                            // 获取目标方块位置（烹饪设备位置）
-                            BlockPos targetBlockPos = mutableBlockPos.immutable();
-
-                            // 计算女仆应该站立的位置
-                            BlockPos standingPos = calculateStandingPosition(worldIn, targetBlockPos);
-
-                            MemoryUtil.rememberWorkPos(maid, standingPos, targetBlockPos, 0.3f, 0);
-                            MemoryUtil.rememberWorkPos(maid, mutableBlockPos.immutable(), this.movementSpeed, 0);
-//                            debugInfo(maid, mutableBlockPos);
+                            BlockPos workPos = mutableBlockPos.immutable();
+                            MemoryUtil.rememberWorkPos(maid, cookBe.getWalkPos(), workPos, this.movementSpeed, 0);
+                            currentWorkPos = workPos;
                             this.setNextCheckTickCount(5);
                             return;
                         }
@@ -119,52 +111,6 @@ public class CookMoveTask<B extends BlockEntity, R extends Recipe<? extends Reci
 
     private void setNextCheckTickCount(int nextCheckTickCount) {
         cm.setNextCheckTickCount(nextCheckTickCount);
-    }
-
-    /**
-     * 计算女仆应该站立的位置
-     * 对于不完整方块（如砧板、煎锅），女仆应该站在方块旁边，而不是上方
-     */
-    private BlockPos calculateStandingPosition(ServerLevel worldIn, BlockPos targetPos) {
-        BlockState targetBlockState = worldIn.getBlockState(targetPos);
-
-        // 检查目标方块是否是不完整方块（高度小于1）
-        if (!targetBlockState.isCollisionShapeFullBlock(worldIn, targetPos)) {
-            // 对于不完整方块，寻找一个相邻的可站立位置
-            BlockPos[] adjacentPositions = {
-                    targetPos.north(),
-                    targetPos.south(),
-                    targetPos.east(),
-                    targetPos.west()
-            };
-
-            for (BlockPos adjacentPos : adjacentPositions) {
-                // 检查相邻位置是否可以站立
-                if (isValidStandingPosition(worldIn, adjacentPos) || isValidStandingPosition(worldIn, adjacentPos.below())) {
-                    return adjacentPos;
-                }
-            }
-        }
-
-        // 对于完整方块或找不到合适相邻位置时，站在方块上方
-        return targetPos;
-    }
-
-    /**
-     * 检查指定位置是否是有效的站立位置
-     */
-    private boolean isValidStandingPosition(ServerLevel worldIn, BlockPos pos) {
-        // 检查脚下的方块是否是固体
-        BlockState groundState = worldIn.getBlockState(pos.below());
-        if (!groundState.isSolid()) {
-            return false;
-        }
-
-        // 检查站立位置和头部位置是否为空
-        BlockState standingState = worldIn.getBlockState(pos);
-        BlockState headState = worldIn.getBlockState(pos.above());
-
-        return standingState.isAir() && headState.isAir();
     }
 
 }
