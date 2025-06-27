@@ -9,9 +9,18 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 @EventBusSubscriber
 public class ReportErrorEvent {
 
+//    @SubscribeEvent
+//    public static void reportError(ServerStartedEvent event) {
+//        TaskLoadError.reportError((component -> {
+//            event.getServer().sendSystemMessage(component);
+//        }));
+//    }
+
     @SubscribeEvent
     public static void reportError(PlayerEvent.PlayerLoggedInEvent event) {
-        TaskLoadError.reportError(event.getEntity());
+        TaskLoadError.reportError((component -> {
+            event.getEntity().sendSystemMessage(component);
+        }));
     }
 
 }

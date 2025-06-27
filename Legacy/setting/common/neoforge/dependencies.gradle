@@ -82,9 +82,9 @@ dependencies {
 // 联动(其他)
 dependencies {
     if (!serene_seasons_version.isEmpty())
-        compileOnly "maven.modrinth:serene-seasons:${serene_seasons_version}-${mod_loader},${minecraft_version}"
+        implementation "maven.modrinth:serene-seasons:${serene_seasons_version}-${mod_loader},${minecraft_version}"
     if (!ecliptic_seasons_file_id.isEmpty())
-        compileOnly "curse.maven:ecliptic-seasons-1118306:${ecliptic_seasons_file_id}"
+        implementation "curse.maven:ecliptic-seasons-1118306:${ecliptic_seasons_file_id}"
     if (!simple_farming_file_id.isEmpty())
         implementation "curse.maven:simple-farming-327554:${simple_farming_file_id}"
     if (!curios_version.isEmpty())

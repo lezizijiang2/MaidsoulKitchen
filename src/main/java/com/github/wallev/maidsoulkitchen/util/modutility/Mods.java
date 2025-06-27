@@ -4,6 +4,7 @@ import com.github.wallev.maidsoulkitchen.util.ModUtil;
 import com.mojang.serialization.Codec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
 
 public enum Mods implements StringRepresentable {
     PATCHOULI("patchouli"),
@@ -101,6 +102,7 @@ public enum Mods implements StringRepresentable {
         return ModUtil.isInstalled(modId, versionRange);
     }
 
+    @NotNull
     @Override
     public String getSerializedName() {
         return this.name();

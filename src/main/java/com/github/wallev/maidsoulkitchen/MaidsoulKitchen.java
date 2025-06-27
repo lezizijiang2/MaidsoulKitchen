@@ -20,6 +20,8 @@ public final class MaidsoulKitchen {
     public static boolean DEBUG = !FMLEnvironment.production;
     public static final String MOD_ID = "maidsoulkitchen";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+    public static String ISSUE_URL = "https://github.com/Wall-ev/MaidsoulKitchen/issues";
+
 
     public MaidsoulKitchen(IEventBus modEventBus, ModContainer modContainer) {
         initRegister(modEventBus, modContainer);

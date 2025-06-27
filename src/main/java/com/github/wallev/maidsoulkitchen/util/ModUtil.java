@@ -39,6 +39,30 @@ public class ModUtil {
         }
     }
 
+    /**
+     * public static String getModIssueUrl(String modId) {
+     * String issueUrl = "";
+     * <p>
+     * ModList modList = ModList.get();
+     * if (modList != null) {
+     * ModContainer modContainer = modList.getModContainerById(modId).orElse(null);
+     * if (modContainer == null) {
+     * return issueUrl;
+     * }
+     * IModFileInfo owningFile = modContainer.getModInfo().getOwningFile();
+     * IConfigurable config = owningFile.getConfig();
+     * Optional<String> issueTrackerURL = config.<String>getConfigElement("issueTrackerURL");
+     * issueUrl = issueTrackerURL.orElse("");
+     * } else {
+     * ModFileInfo modFileById = LoadingModList.get().getModFileById(modId);
+     * if (modFileById != null) {
+     * issueUrl = modFileById.getMods().get(0).getConfig().<String>getConfigElement("issueTrackerURL").orElse("");
+     * }
+     * }
+     * return issueUrl;
+     * }
+     */
+
     // [x.x.x,)
     public static String getModVersion(String modId) {
         ArtifactVersion version = null;

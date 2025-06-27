@@ -44,7 +44,7 @@ public class ClassAnalyzerManager {
         ClassAnalyzerTool.analyzerAndGenerateFile(rootOutputFolder, clazzMap);
     }
 
-    private static TaskClazzInfo readModTaskClazzFromFile() {
+    public static TaskClazzInfo readModTaskClazzFromFile() {
         try {
             Path resource = LoadingModList.get().getModFileById(MaidsoulKitchen.MOD_ID)
                     .getFile()
@@ -52,7 +52,9 @@ public class ClassAnalyzerManager {
             String json = Files.readString(resource);
             JsonObject jsonData = JsonParser.parseString(json).getAsJsonObject();
             return TaskClazzInfo.CODEC.parse(JsonOps.INSTANCE, jsonData)
-                    .result()
+                    .resultOrPartial(error -> {
+                        MaidsoulKitchen.LOGGER.error("读取失败：{}", error);
+                    })
                     .orElseThrow();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -61,6 +63,10 @@ public class ClassAnalyzerManager {
 
     public static Map<ResourceLocation, Boolean> readModTaskClazz() throws IOException {
         TaskClazzInfo taskClazzInfo = readModTaskClazzFromFile();
+        return VerifyExistence.verify(taskClazzInfo);
+    }
+
+    public static Map<ResourceLocation, Boolean> readModTaskClazz(TaskClazzInfo taskClazzInfo) throws IOException {
         return VerifyExistence.verify(taskClazzInfo);
     }
 

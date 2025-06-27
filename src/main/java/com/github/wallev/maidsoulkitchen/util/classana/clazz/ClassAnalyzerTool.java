@@ -2,6 +2,7 @@ package com.github.wallev.maidsoulkitchen.util.classana.clazz;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.util.classana.TaskMixinAnalyzer;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,6 +26,8 @@ import java.util.jar.JarFile;
 import static com.github.wallev.maidsoulkitchen.util.classana.clazz.ClassAnalyzerManager.FILE_NAME;
 
 public class ClassAnalyzerTool {
+    private static final String origin = "mcp";
+    private static final String target = "srg";
 
     public static void analyzerAndGenerateFile(Path rootOutputFolder, ClassAnalyzerManager.ClassMap classMap) throws Exception {
         Map<ResourceLocation, TaskClazzInfo.ClazzTaskInfo> map = new HashMap<>();
@@ -32,11 +35,17 @@ public class ClassAnalyzerTool {
             Set<Class<?>> classes = entry.getValue();
             TaskClazzInfo.ClazzInfo clazzInfo = analyze(classes);
 
+            for (String aClass : clazzInfo.classes()) {
+
+            }
+
             TaskInfo taskInfo = entry.getKey();
             TaskClazzInfo.ClazzTaskInfo clazzTaskInfo = TaskClazzInfo.ClazzTaskInfo.create(taskInfo, clazzInfo);
             map.put(taskInfo.uid, clazzTaskInfo);
         }
-        TaskClazzInfo taskClazzInfo = new TaskClazzInfo(map);
+        TaskMixinAnalyzer.ModTaskMixinMap modTaskMixinMap = TaskMixinAnalyzer.collectModTaskClazz();
+
+        TaskClazzInfo taskClazzInfo = new TaskClazzInfo(map, modTaskMixinMap);
 
         TaskClazzInfo.CODEC.encodeStart(JsonOps.INSTANCE, taskClazzInfo)
                 .resultOrPartial(error -> {
@@ -62,7 +71,7 @@ public class ClassAnalyzerTool {
     }
 
     // 分析多个类
-    public static TaskClazzInfo.ClazzInfo analyze(Set<Class<?>> targetClasses) throws Exception {
+    private static TaskClazzInfo.ClazzInfo analyze(Set<Class<?>> targetClasses) throws Exception {
         ClazzInfoRuntime clazzInfoRuntime = new ClazzInfoRuntime();
 
         for (Class<?> clazz : targetClasses) {
@@ -70,6 +79,19 @@ public class ClassAnalyzerTool {
         }
 
         return clazzInfoRuntime.toClazzInfo();
+    }
+
+
+    public static String getClassSrgName(String name) {
+        return name;
+    }
+
+    public static String getMethodSrgName(String name) {
+        return name;
+    }
+
+    public static String getFieldSrgName(String name) {
+        return name;
     }
 
     // 分析单个类
@@ -95,6 +117,16 @@ public class ClassAnalyzerTool {
                         String className = owner.replace('/', '.');
                         if (ClassAnalyzerManager.ClassMap.isAllowed(className)) {
                             String methodName = className + "#" + name + descriptor;
+                            boolean isMcMethod = false;
+                            try {
+                                isMcMethod = McMethodOrFieldVerify.isMcMethod(className, name + descriptor);
+                            } catch (ClassNotFoundException e) {
+                                throw new RuntimeException(e);
+                            }
+                            if (isMcMethod) {
+                                return;
+                            }
+
                             clazzInfoRuntime.addClazz(className);
                             clazzInfoRuntime.addMethod(methodName);
                         }
@@ -105,6 +137,15 @@ public class ClassAnalyzerTool {
                         String className = owner.replace('/', '.');
                         if (ClassAnalyzerManager.ClassMap.isAllowed(className)) {
                             String fieldName = className + "#" + name;
+                            boolean isMcFiled = false;
+                            try {
+                                isMcFiled = McMethodOrFieldVerify.isMcField(className, fieldName);
+                            } catch (ClassNotFoundException e) {
+                                throw new RuntimeException(e);
+                            }
+                            if (isMcFiled) {
+                                return;
+                            }
                             clazzInfoRuntime.addClazz(className);
                             clazzInfoRuntime.addField(fieldName);
                         }
@@ -113,6 +154,7 @@ public class ClassAnalyzerTool {
                     @Override
                     public void visitTypeInsn(int opcode, String type) {
                         String className = type.replace('/', '.');
+
                         if (ClassAnalyzerManager.ClassMap.isAllowed(className)) {
                         }
                     }
@@ -158,7 +200,7 @@ public class ClassAnalyzerTool {
         return innerClasses;
     }
 
-    public record ClazzInfoRuntime(Set<String> classes, Set<String> methods, Set<String> fields) {
+    private record ClazzInfoRuntime(Set<String> classes, Set<String> methods, Set<String> fields) {
         public ClazzInfoRuntime() {
             this(new HashSet<>(), new HashSet<>(), new HashSet<>());
         }

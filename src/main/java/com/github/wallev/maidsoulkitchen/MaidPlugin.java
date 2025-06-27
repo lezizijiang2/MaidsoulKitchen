@@ -30,6 +30,7 @@ import net.minecraft.world.entity.Mob;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -37,7 +38,7 @@ import java.util.function.Function;
 @LittleMaidExtension
 public final class MaidPlugin implements ILittleMaid {
 
-    public MaidPlugin() throws Exception {
+    public MaidPlugin() {
         Mods.init();
         TaskInfo.init();
         MaidsoulKitchenTask.init();
@@ -45,7 +46,11 @@ public final class MaidPlugin implements ILittleMaid {
 
     @Override
     public void addMaidTask(TaskManager manager) {
-        TaskRegister.init(manager);
+        try {
+            TaskRegister.init(manager);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
