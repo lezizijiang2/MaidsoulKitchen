@@ -1,7 +1,7 @@
 package com.github.wallev.maidsoulkitchen.mixin.compat.youkaishomecoming;
 
-import com.github.wallev.maidsoulkitchen.api.mixin.IMaidsoulKitchenInterface;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.util.classana.IMaidsoulKitchenInterface;
 import com.github.wallev.maidsoulkitchen.util.classana.TaskMixin;
 import dev.xkmc.youkaishomecoming.content.pot.kettle.KettleBlock;
 import net.minecraft.world.item.crafting.Ingredient;

@@ -30,6 +30,10 @@ public class BasinCookRule extends TickCookRule<BasinBlockEntity, SkeweringRecip
     private ItemStack tool = ItemStack.EMPTY;
     private ItemStack side = ItemStack.EMPTY;
 
+    public BasinCookRule() {
+        super();
+    }
+
     public static BasinCookRule getInstance() {
         return INSTANCE;
     }

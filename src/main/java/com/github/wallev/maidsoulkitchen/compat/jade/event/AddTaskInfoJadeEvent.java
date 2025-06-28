@@ -41,7 +41,7 @@ public class AddTaskInfoJadeEvent {
         FarmData farmData = farmTask.getTaskData(maid);
         List<String> farmTaskRulesList = farmData.rules();
 
-        for (IFarmHandlerManager<?> handler : farmTask.getManagerHandlerValues()) {
+        for (IFarmHandlerManager<?> handler : farmTask.getHandlerManagers()) {
             ICompatHandlerInfo farmHandler = handler.getFarmHandler();
             ResourceLocation uid = farmHandler.getUid();
             if (!farmTaskRulesList.contains(uid.toString())) continue;

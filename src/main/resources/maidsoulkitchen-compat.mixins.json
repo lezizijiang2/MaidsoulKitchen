@@ -15,6 +15,7 @@
     "cuisinedelight.CookingEntryAccessor",
     "drinkbeer.BeerBarrelBlockAccessor",
     "farmersdelight.CookingPotBlockEntityMixin",
+    "kaleidoscope.ChoppingBoardBlockEntityAccessor",
     "kitchkarrot.AirCompressorBlockEntityAccessor",
     "kitchkarrot.BrewingBarrelBlockEntityMixin",
     "minecraft.AbstractFurnaceBlockEntityMixin",

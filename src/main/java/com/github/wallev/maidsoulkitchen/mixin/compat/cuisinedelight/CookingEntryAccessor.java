@@ -1,7 +1,7 @@
 package com.github.wallev.maidsoulkitchen.mixin.compat.cuisinedelight;
 
-import com.github.wallev.maidsoulkitchen.api.mixin.IMaidsoulKitchenInterface;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.util.classana.IMaidsoulKitchenInterface;
 import com.github.wallev.maidsoulkitchen.util.classana.TaskMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;

@@ -2,7 +2,6 @@ package com.github.wallev.maidsoulkitchen.task;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.IMaidsoulKitchenTask;
-import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.TaskRegister;
 import com.github.wallev.maidsoulkitchen.task.cook.barbequesdelight.basin.TaskBbqBasin;
 import com.github.wallev.maidsoulkitchen.task.cook.barbequesdelight.grill.TaskBbqGrill;
 import com.github.wallev.maidsoulkitchen.task.cook.brewinandchewin.keg.TaskBncKeg;
@@ -11,6 +10,8 @@ import com.github.wallev.maidsoulkitchen.task.cook.drinkbeer.beerbarrel.TaskDbBe
 import com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.cookingpot.TaskFdCookingPot;
 import com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.cuttingboard.TaskFdCuttingBoard;
 import com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.skillet.TaskFdSkillet;
+import com.github.wallev.maidsoulkitchen.task.cook.kaleidoscopecookery.choppingboard.TaskKcChoppingBoard;
+import com.github.wallev.maidsoulkitchen.task.cook.kaleidoscopecookery.cookery.TaskKcPot;
 import com.github.wallev.maidsoulkitchen.task.cook.kitchencarrot.aircompressor.TaskKkAirCompressor;
 import com.github.wallev.maidsoulkitchen.task.cook.kitchencarrot.brewing.TaskKkBrewingBarrel;
 import com.github.wallev.maidsoulkitchen.task.cook.minecraft.furnace.TaskFurnace;
@@ -19,17 +20,58 @@ import com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming.ferment.Tas
 import com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming.kettle.TaskYhcKettle;
 import com.github.wallev.maidsoulkitchen.task.cook.youkaishomecoming.moka.TaskYhcMoka;
 import com.github.wallev.maidsoulkitchen.task.farm.*;
+import com.github.wallev.maidsoulkitchen.task.farm.handler.IFarmHandlerManager;
+import com.github.wallev.maidsoulkitchen.task.farm.handler.berry.BerryHandlerManager;
+import com.github.wallev.maidsoulkitchen.task.farm.handler.fruit.FruitHandlerManager;
 import com.github.wallev.maidsoulkitchen.task.other.TaskFeedAnimalT;
+import com.github.wallev.maidsoulkitchen.util.classana.TaskModClazzManager;
 import com.github.wallev.maidsoulkitchen.util.modutility.Mods;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 public enum MaidsoulKitchenTask {
     COMPAT_MELON_FARM(TaskInfo.COMPAT_MELON_FARM, TaskCompatMelonFarm::new),
-    BERRY_FARM(TaskInfo.BERRY_FARM, TaskBerryFarm::new),
-    FRUIT_FARM(TaskInfo.FRUIT_FARM, TaskFruitFarm::new),
+    BERRY_FARM(TaskInfo.BERRY_FARM, TaskBerryFarm::new) {
+        @Override
+        protected void putTask(TaskInfo taskInfo, Supplier<IMaidsoulKitchenTask> bindTask) {
+            IMaidsoulKitchenTask.putTask(this.uid, () -> {
+                boolean taskCanLoad = taskInfo.bindMod.versionLoaded && taskInfo.bindConfig.get().get() && TaskModClazzManager.clazzLoad(this.uid);
+                if (taskCanLoad) {
+                    List<IFarmHandlerManager<?>> handlers = new ArrayList<>();
+                    for (BerryHandlerManager value : BerryHandlerManager.VALUES) {
+                        if (value.getBindMod().versionLoaded && TaskModClazzManager.clazzLoad(value.getUid())) {
+                            handlers.add(value);
+                        }
+                    }
+                    IFarmHandlerManager.registerHandler(this.uid, ImmutableList.copyOf(handlers));
+                }
+                return taskCanLoad;
+            }, bindTask);
+        }
+    },
+    FRUIT_FARM(TaskInfo.FRUIT_FARM, TaskFruitFarm::new) {
+        @Override
+        protected void putTask(TaskInfo taskInfo, Supplier<IMaidsoulKitchenTask> bindTask) {
+            IMaidsoulKitchenTask.putTask(this.uid, () -> {
+                boolean taskCanLoad = taskInfo.bindMod.versionLoaded && taskInfo.bindConfig.get().get() && TaskModClazzManager.clazzLoad(this.uid);
+                if (taskCanLoad) {
+                    List<IFarmHandlerManager<?>> handlers = new ArrayList<>();
+                    for (FruitHandlerManager value : FruitHandlerManager.VALUES) {
+                        if (value.getBindMod().versionLoaded && TaskModClazzManager.clazzLoad(value.getUid())) {
+                            handlers.add(value);
+                        }
+                    }
+                    IFarmHandlerManager.registerHandler(this.uid, ImmutableList.copyOf(handlers));
+                }
+                return taskCanLoad;
+            }, bindTask);
+        }
+    },
 
     FEED_ANIMAL_T(TaskInfo.FEED_ANIMAL_T, TaskFeedAnimalT::new),
 
@@ -39,8 +81,8 @@ public enum MaidsoulKitchenTask {
 
     FURNACE(TaskInfo.FURNACE, TaskFurnace::new),
 
-//    KC_POT(TaskInfo.KC_POT, TaskKcPot::new),
-//    KC_CHOPPING_BOARD(TaskInfo.KC_CHOPPING_BOARD, TaskKcChoppingBoard::new),
+    KC_POT(TaskInfo.KC_POT, TaskKcPot::new),
+    KC_CHOPPING_BOARD(TaskInfo.KC_CHOPPING_BOARD, TaskKcChoppingBoard::new),
 
     FD_COOK_POT(TaskInfo.FD_COOK_POT, TaskFdCookingPot::new),
     FD_CUTTING_BOARD(TaskInfo.FD_CUTTING_BOARD, TaskFdCuttingBoard::new),
@@ -80,16 +122,24 @@ public enum MaidsoulKitchenTask {
     MaidsoulKitchenTask(String uid, Mods bindMod, ModConfigSpec.BooleanValue bindConfig, Supplier<IMaidsoulKitchenTask> bindTask) {
         this.uid = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, uid);
         this.modId = bindMod.modId;
-        IMaidsoulKitchenTask.putTask(this.uid, () -> {
-            return bindMod.versionLoaded && bindConfig.get() && TaskRegister.clazzLoad(this.uid);
-        }, bindTask);
+        this.putTask(uid, bindMod, bindConfig, bindTask);
     }
 
     MaidsoulKitchenTask(TaskInfo taskInfo, Supplier<IMaidsoulKitchenTask> bindTask) {
         this.uid = taskInfo.uid;
         this.modId = taskInfo.bindMod.modId;
+        this.putTask(taskInfo, bindTask);
+    }
+
+    protected void putTask(String uid, Mods bindMod, ModConfigSpec.BooleanValue bindConfig, Supplier<IMaidsoulKitchenTask> bindTask) {
         IMaidsoulKitchenTask.putTask(this.uid, () -> {
-            return taskInfo.bindMod.versionLoaded && taskInfo.bindConfig.get().get() && TaskRegister.clazzLoad(this.uid);
+            return bindMod.versionLoaded && bindConfig.get() && TaskModClazzManager.clazzLoad(this.uid);
+        }, bindTask);
+    }
+
+    protected void putTask(TaskInfo taskInfo, Supplier<IMaidsoulKitchenTask> bindTask) {
+        IMaidsoulKitchenTask.putTask(this.uid, () -> {
+            return taskInfo.bindMod.versionLoaded && taskInfo.bindConfig.get().get() && TaskModClazzManager.clazzLoad(this.uid);
         }, bindTask);
     }
 

@@ -2,6 +2,7 @@ package com.github.wallev.maidsoulkitchen.task;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.config.subconfig.RegisterConfig;
+import com.github.wallev.maidsoulkitchen.util.classana.clazz.TaskClassAnalyzer;
 import com.github.wallev.maidsoulkitchen.util.modutility.Mods;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -10,6 +11,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Supplier;
 
 public enum TaskInfo {
+    /**
+     * 没人有何实质作用，只是给{@link TaskClassAnalyzer}做默认值使用（骗过编译器x）
+     */
     NONE("", Mods.MC, () -> null),
 
     COMPAT_MELON_FARM("compat_melon",
@@ -40,14 +44,14 @@ public enum TaskInfo {
             Mods.MC,
             () -> RegisterConfig.FURNACE_TASK_ENABLED),
 
-//    KC_POT("kc_pot",
-//            Mods.KC,
-//            () -> RegisterConfig.COMPAT_MELON_FARM_TASK_ENABLED,
-//            ModGroup.YSBBBBBB),
-//    KC_CHOPPING_BOARD("kc_chopping_board",
-//            Mods.KC,
-//            () -> RegisterConfig.COMPAT_MELON_FARM_TASK_ENABLED,
-//            ModGroup.YSBBBBBB),
+    KC_POT("kc_pot",
+            Mods.KC,
+            () -> RegisterConfig.COMPAT_MELON_FARM_TASK_ENABLED,
+            ModGroup.YSBBBBBB),
+    KC_CHOPPING_BOARD("kc_chopping_board",
+            Mods.KC,
+            () -> RegisterConfig.COMPAT_MELON_FARM_TASK_ENABLED,
+            ModGroup.YSBBBBBB),
 
     FD_COOK_POT("fd_cooking_pot",
             Mods.FD,
@@ -127,6 +131,43 @@ public enum TaskInfo {
 //            ModGroup.SIHENZHANG),
 
 
+    CP_CROCK_POT("cp_crock_pot",
+            Mods.CP,
+            () -> RegisterConfig.CP_CROk_POT_TASK_ENABLED,
+            ModGroup.SIHENZHANG),
+
+
+    /**
+     * 不是实质的任务，都是集成在浆果任务里，只是给{@link TaskClassAnalyzer}分析使用
+     */
+    BERRY_MINECRAFT("berry_minecraft",
+            Mods.MC,
+            () -> RegisterConfig.BERRY_FARM_TASK_ENABLED),
+    BERRY_FARMERS_RESPITE_GREEN_TEA("berry_farmersrespite_greentea",
+            Mods.FRD,
+            () -> RegisterConfig.BERRY_FARM_TASK_ENABLED),
+    BERRY_FARMERS_RESPITE_YELLOW_TEA("berry_farmersrespite_yellowtea",
+            Mods.FRD,
+            () -> RegisterConfig.BERRY_FARM_TASK_ENABLED),
+    BERRY_FARMERS_RESPITE_BLACK_TEA("berry_farmersrespite_blacktea",
+            Mods.FRD,
+            () -> RegisterConfig.BERRY_FARM_TASK_ENABLED),
+    BERRY_SIMPLE_FARMING("berry_simple_farming",
+            Mods.SF,
+            () -> RegisterConfig.BERRY_FARM_TASK_ENABLED),
+    BERRY_COMPAT("berry_compat",
+            Mods.MC,
+            () -> RegisterConfig.BERRY_FARM_TASK_ENABLED),
+
+    /**
+     * 不是实质的任务，都是集成在果树任务里，只是给{@link TaskClassAnalyzer}分析使用
+     */
+    FRUIT_SIMPLE_FARMING("fruit_simple_farming",
+            Mods.SF,
+            () -> RegisterConfig.FRUIT_FARM_TASK_ENABLED),
+    FRUIT_COMPAT("fruit_compat",
+            Mods.MC,
+            () -> RegisterConfig.FRUIT_FARM_TASK_ENABLED),
     ;
     public final ResourceLocation uid;
     public final Mods bindMod;
@@ -163,5 +204,13 @@ public enum TaskInfo {
             }
         }
         return null;
+    }
+
+    public ResourceLocation getUid() {
+        return uid;
+    }
+
+    public Mods getBindMod() {
+        return bindMod;
     }
 }

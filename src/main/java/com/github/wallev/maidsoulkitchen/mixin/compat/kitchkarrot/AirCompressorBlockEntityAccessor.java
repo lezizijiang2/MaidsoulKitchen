@@ -1,7 +1,7 @@
 package com.github.wallev.maidsoulkitchen.mixin.compat.kitchkarrot;
 
-import com.github.wallev.maidsoulkitchen.api.mixin.IMaidsoulKitchenInterface;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.util.classana.IMaidsoulKitchenInterface;
 import com.github.wallev.maidsoulkitchen.util.classana.TaskMixin;
 import io.github.tt432.kitchenkarrot.blockentity.AirCompressorBlockEntity;
 import io.github.tt432.kitchenkarrot.recipes.recipe.AirCompressorRecipe;

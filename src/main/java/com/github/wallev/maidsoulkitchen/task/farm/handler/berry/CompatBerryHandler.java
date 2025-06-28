@@ -3,6 +3,8 @@ package com.github.wallev.maidsoulkitchen.task.farm.handler.berry;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatHandler;
+import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.util.classana.clazz.TaskClassAnalyzer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -10,6 +12,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
+@TaskClassAnalyzer(TaskInfo.BERRY_COMPAT)
 public class CompatBerryHandler extends BerryHandler implements ICompatHandler {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "berry_compat");
 
@@ -25,11 +28,6 @@ public class CompatBerryHandler extends BerryHandler implements ICompatHandler {
     }
 
     @Override
-    public boolean canLoad() {
-        return true;
-    }
-
-    @Override
     public boolean isFarmBlock(Block block) {
         return false;
     }
@@ -41,6 +39,6 @@ public class CompatBerryHandler extends BerryHandler implements ICompatHandler {
 
     @Override
     public ResourceLocation getUid() {
-        return UID;
+        return BerryHandlerManager.MINECRAFT.getUid();
     }
 }
