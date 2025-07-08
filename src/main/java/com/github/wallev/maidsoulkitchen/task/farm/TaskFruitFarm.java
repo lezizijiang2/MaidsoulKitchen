@@ -4,9 +4,8 @@ import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
 import com.github.wallev.maidsoulkitchen.compat.patchouli.entry.TaskBookEntryType;
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.berryfruit.v1.BerryFruitData;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
-import com.github.wallev.maidsoulkitchen.inventory.container.maid.FruitFarmConfigContainer;
 import com.github.wallev.maidsoulkitchen.task.MaidsoulKitchenTask;
 import com.github.wallev.maidsoulkitchen.task.farm.ai.MaidCompatFarmPlantTask;
 import com.github.wallev.maidsoulkitchen.task.farm.ai.MaidCompatFruitMoveTask;
@@ -15,14 +14,8 @@ import com.github.wallev.maidsoulkitchen.util.fakeplayer.WrappedMaidFakePlayer;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.ai.behavior.BehaviorControl;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,7 +25,7 @@ import java.util.List;
 import static com.github.wallev.maidsoulkitchen.MaidsoulKitchen.LOGGER;
 
 
-public class TaskFruitFarm extends ICompatFarmTask<FruitHandler, FruitData> {
+public class TaskFruitFarm extends ICompatFarmTask<FruitHandler> {
     @Override
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
         if (maid.level.isClientSide) return Lists.newArrayList();
@@ -61,8 +54,8 @@ public class TaskFruitFarm extends ICompatFarmTask<FruitHandler, FruitData> {
     }
 
     @Override
-    public FruitData getDefaultData() {
-        return new FruitData();
+    public BerryFruitData getDefaultData() {
+        return BerryFruitData.createDefaultFruit();
     }
 
     @Override
@@ -81,28 +74,7 @@ public class TaskFruitFarm extends ICompatFarmTask<FruitHandler, FruitData> {
     }
 
     @Override
-    public MenuProvider getTaskConfigGuiProvider(EntityMaid maid) {
-        final int entityId = maid.getId();
-        return new MenuProvider() {
-            @Override
-            public Component getDisplayName() {
-                return Component.literal("Maid Fruit Farm Config Container");
-            }
-
-            @Override
-            public AbstractContainerMenu createMenu(int index, Inventory playerInventory, Player player) {
-                return new FruitFarmConfigContainer(index, playerInventory, entityId);
-            }
-
-            @Override
-            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
-                return false;
-            }
-        };
-    }
-
-    @Override
-    public TaskDataKey<FruitData> getCookDataKey() {
+    public TaskDataKey<BerryFruitData> getCookDataKey() {
         return DataRegister.FRUIT_FARM;
     }
 }

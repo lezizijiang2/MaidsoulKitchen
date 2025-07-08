@@ -47,6 +47,11 @@ public class FermentationRecSerializerManager extends FluidRecSerializerManager<
     }
 
     @Override
+    public String getRecipeTypeId() {
+        return YHBlocks.FERMENT_RT.getId().toString();
+    }
+
+    @Override
     protected void initFluidRecs(Level level) {
         List<RecipeHolder<FermentationRecipe<?>>> recipes = this.getRecsFromRm(level);
 

@@ -1,11 +1,8 @@
 package com.github.wallev.maidsoulkitchen.task.cook.brewinandchewin.keg;
 
-import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
-import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
-import com.github.wallev.maidsoulkitchen.task.MaidsoulKitchenTask;
+import com.github.wallev.maidsoulkitchen.task.CookTask;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
 import com.github.wallev.maidsoulkitchen.task.cook.common.manager.MaidCookManager;
@@ -43,13 +40,8 @@ public class TaskBncKeg extends ICookTask<KegBlockEntity, KegFermentingRecipe> {
     }
 
     @Override
-    public TaskDataKey<CookData> getCookDataKey() {
-        return DataRegister.BNC_KEY;
-    }
-
-    @Override
     public ResourceLocation getUid() {
-        return MaidsoulKitchenTask.BNC_KEY.uid;
+        return CookTask.BNC_KEY.uid;
     }
 
     @Override

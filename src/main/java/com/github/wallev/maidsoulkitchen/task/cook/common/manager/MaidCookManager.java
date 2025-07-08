@@ -2,7 +2,7 @@ package com.github.wallev.maidsoulkitchen.task.cook.common.manager;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.cook.v1.CookDataV1;
 import com.github.wallev.maidsoulkitchen.inventory.container.item.BagType;
 import com.github.wallev.maidsoulkitchen.item.ItemCulinaryHub;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
@@ -45,7 +45,7 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
     protected final ICookTask<?, R> task;
     protected final RecSerializerManager<R> recSerializerManager;
     protected final CookBeBase<?> cookBeBase;
-    protected CookData cookData;
+    protected CookDataV1 cookData;
 
     protected boolean init = false;
     /**
@@ -87,7 +87,10 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
     }
 
     public MaidRec pollMaidRec(CookBeBase<?> cookBeBase) {
-        return this.maidRecs.poll();
+        MaidRec maidRec = this.maidRecs.poll();
+        assert maidRec != null;
+        BubbleUtil.makeResultsBubble(maid, maidRec);
+        return maidRec;
     }
 
     public Map<ItemDefinition, LinkedList<ItemStack>> getInvIngredients() {
@@ -213,6 +216,7 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
         //预防隙间转移走烹饪中枢
         if (this.hasCulinaryHub && this.findCulinaryHub().isEmpty()) {
             this.maidRecs = new LinkedList<>();
+            MemoryUtil.rememberMaidRecs(maid, this.maidRecs);
             this.maid.refreshBrain(level);
             return false;
         }
@@ -306,9 +310,11 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
     }
 
     public void startCollectChestIngredient() {
-        validChests = this.initChestData();
-        if (validChests.isEmpty()) {
-            return;
+        if (this.chestInputInventory.needReUpdate()) {
+            validChests = this.initChestData();
+            if (validChests.isEmpty()) {
+                return;
+            }
         }
         runState = 1;
         MemoryUtil.makeCollectChestItemHandler(maid);
@@ -356,7 +362,9 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
 
             this.chestIngredientDone();
         }
+        MemoryUtil.rememberMaidRecs(maid, this.maidRecs);
         this.resetState();
+        this.cookInv.calcAvailableSlots();
         this.makeResultsBubble();
         this.setNextCheckTickCount(0);
         return true;
@@ -408,6 +416,7 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
         if (initTaskData || initInvData) {
             this.init = true;
             this.maidRecs = new LinkedList<>();
+            MemoryUtil.rememberMaidRecs(maid, this.maidRecs);
             return false;
         }
         return true;
@@ -471,6 +480,7 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
 
         LinkedList<MaidRec> maidRecs1 = recSerializerManager.createMaidRecs(mkRecipes, available, this::recAdd, this::recIsValid, this::doItemUse, this::doneConsumer);
         this.maidRecs.addAll(maidRecs1);
+//        MemoryUtil.rememberMaidRecs(maid, this.maidRecs);
     }
 
     private void doneConsumer(boolean done) {
@@ -499,6 +509,7 @@ public class MaidCookManager<R extends Recipe<? extends RecipeInput>> {
         this.resetState();
         this.recsGenerate.clear();
         this.maidRecs.clear();
+        MemoryUtil.rememberMaidRecs(maid, this.maidRecs);
         this.itemDown.clear();
         this.chestInputInventory.clear();
     }

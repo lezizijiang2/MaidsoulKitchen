@@ -17,9 +17,9 @@ public class CompatBerryHandler extends BerryHandler implements ICompatHandler {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "berry_compat");
 
     @Override
-    public ActionState processCanHarvest(EntityMaid maid, BlockPos cropPos, BlockState cropState) {
+    public Result processCanHarvest(EntityMaid maid, BlockPos cropPos, BlockState cropState) {
 //        LOGGER.info("CompatBerryHandler handleCanHarvest ");
-        return ICompatHandler.super.process(maid, cropPos, cropState) ? ActionState.ALLOW : ActionState.DEFAULT;
+        return ICompatHandler.super.process(maid, cropPos, cropState) ? Result.ALLOW : Result.DEFAULT;
     }
 
     @Override
@@ -39,6 +39,6 @@ public class CompatBerryHandler extends BerryHandler implements ICompatHandler {
 
     @Override
     public ResourceLocation getUid() {
-        return BerryHandlerManager.MINECRAFT.getUid();
+        return BerryHandlerManager.COMPAT.getUid();
     }
 }

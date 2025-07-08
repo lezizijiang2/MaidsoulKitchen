@@ -1,9 +1,7 @@
 package com.github.wallev.maidsoulkitchen.util.classana;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
-import com.github.wallev.maidsoulkitchen.task.ModGroup;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
-import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -99,11 +97,11 @@ public final class ImportAnalyzer {
 
     private static Set<String> getTaskClazz(ModFileScanData.AnnotationData data) {
         TaskInfo task = TaskInfo.by(getEnumHolderValue(data, "value"));
-        ModGroup group = task.group;
-        ModGroup extraGroup = data.annotationData().get("extraGroup") != null ? ModGroup.by(getEnumHolderValue(data, "extraGroup")) : ModGroup.NONE;
-        Set<String> clazzList = Sets.newHashSet(group.groups);
-        clazzList.addAll(extraGroup.groups);
-        return clazzList;
+//        ModGroup group = task.group;
+//        ModGroup extraGroup = data.annotationData().get("extraGroup") != null ? ModGroup.by(getEnumHolderValue(data, "extraGroup")) : ModGroup.NONE;
+//        Set<String> clazzList = Sets.newHashSet(group.groups);
+//        clazzList.addAll(extraGroup.groups);
+        return new HashSet<>();
     }
 
     private static Set<String> collectImportClazz(String filePath, Set<String> conditionGroup) {

@@ -38,6 +38,7 @@ public class MaidInventory extends IMaidCookInventory {
             add(stack);
             itemInventory.add(stack);
         }
+//        MemoryUtil.rememberHubInputInventory(maid, this.itemInventory);
     }
 
     @Override

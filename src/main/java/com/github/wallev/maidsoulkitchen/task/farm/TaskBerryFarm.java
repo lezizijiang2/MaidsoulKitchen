@@ -5,9 +5,8 @@ import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.MaidPathFindingBFS;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatFarmTask;
 import com.github.wallev.maidsoulkitchen.compat.patchouli.entry.TaskBookEntryType;
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.BerryData;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.berryfruit.v1.BerryFruitData;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
-import com.github.wallev.maidsoulkitchen.inventory.container.maid.BerryFarmConfigContainer;
 import com.github.wallev.maidsoulkitchen.task.MaidsoulKitchenTask;
 import com.github.wallev.maidsoulkitchen.task.farm.ai.MaidCompatFarmMoveTask;
 import com.github.wallev.maidsoulkitchen.task.farm.ai.MaidCompatFarmPlantTask;
@@ -15,21 +14,16 @@ import com.github.wallev.maidsoulkitchen.task.farm.handler.berry.BerryHandler;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.ai.behavior.BehaviorControl;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 import java.util.List;
 
 
-public class TaskBerryFarm extends ICompatFarmTask<BerryHandler, BerryData> {
+public class TaskBerryFarm extends ICompatFarmTask<BerryHandler> {
     @Override
     public boolean canHarvest(EntityMaid maid, BlockPos cropPos, BlockState cropState, BerryHandler handler) {
         return handler != null && !BLACK_LIST.contains(cropState.getBlock()) && handler.canHarvest(maid, cropPos, cropState);
@@ -45,13 +39,16 @@ public class TaskBerryFarm extends ICompatFarmTask<BerryHandler, BerryData> {
     @Override
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
         if (maid.level.isClientSide) return Lists.newArrayList();
+        final BoundingBox checkRange = new BoundingBox(-1, 0, -1, 1, 1, 1);
         MaidCompatFarmMoveTask<BerryHandler> maidFarmMoveTask = new MaidCompatFarmMoveTask<>(maid, this, 0.6F) {
             @Override
             public boolean checkPathReach(EntityMaid maid, MaidPathFindingBFS pathFinding, BlockPos pos) {
-                for (int x = -1; x <= 1; ++x) {
-                    for (int z = -1; z <= 1; ++z) {
-                        if (pathFinding.canPathReach(pos.offset(x, 0, z))) {
-                            return true;
+                for (int x = checkRange.minX(); x <= checkRange.maxX(); x++) {
+                    for (int y = checkRange.minY(); y <= checkRange.maxY(); y++) {
+                        for (int z = checkRange.minZ(); z <= checkRange.maxZ(); z++) {
+                            if (pathFinding.canPathReach(pos.offset(x, y, z))) {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -69,8 +66,8 @@ public class TaskBerryFarm extends ICompatFarmTask<BerryHandler, BerryData> {
     }
 
     @Override
-    public BerryData getDefaultData() {
-        return new BerryData();
+    public BerryFruitData getDefaultData() {
+        return BerryFruitData.createDefaultBerry();
     }
 
     @Override
@@ -89,28 +86,7 @@ public class TaskBerryFarm extends ICompatFarmTask<BerryHandler, BerryData> {
     }
 
     @Override
-    public MenuProvider getTaskConfigGuiProvider(EntityMaid maid) {
-        final int entityId = maid.getId();
-        return new MenuProvider() {
-            @Override
-            public Component getDisplayName() {
-                return Component.literal("Maid Berry Farm Config Container");
-            }
-
-            @Override
-            public AbstractContainerMenu createMenu(int index, Inventory playerInventory, Player player) {
-                return new BerryFarmConfigContainer(index, playerInventory, entityId);
-            }
-
-            @Override
-            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
-                return false;
-            }
-        };
-    }
-
-    @Override
-    public TaskDataKey<BerryData> getCookDataKey() {
+    public TaskDataKey<BerryFruitData> getCookDataKey() {
         return DataRegister.BERRY_FARM;
     }
 }

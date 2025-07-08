@@ -92,7 +92,7 @@ public class CuisineCookRule extends TickCookRule<CuisineSkilletBlockEntity, Bas
         boolean hasOutputAvailableSlot = cookInv.hasOutputAvailableSlot();
 
         CuisineSkilletBlockEntity blockEntity = cookBeBase.getBe();
-        return !blockEntity.isCooking() && blockEntity.canCook() && cm.hasMaidRecs(cookBeBase);
+        return !blockEntity.isCooking() && blockEntity.canCook() && hasOutputAvailableSlot && cm.hasMaidRecs(cookBeBase);
 
 //        if (canExtractFood(cookBeBase, cm) && hasOutputAvailableSlot) {
 //            return true;

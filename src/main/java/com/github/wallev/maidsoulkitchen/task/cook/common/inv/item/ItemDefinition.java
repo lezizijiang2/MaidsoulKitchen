@@ -1,15 +1,27 @@
 package com.github.wallev.maidsoulkitchen.task.cook.common.inv.item;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class ItemDefinition {
     public static final ItemDefinition EMPTY = new ItemDefinition(ItemStack.EMPTY);
+    public static final Codec<ItemDefinition> CODEC = RecordCodecBuilder.create(ins -> ins.group(
+            BuiltInRegistries.ITEM.byNameCodec().fieldOf("item").forGetter(ItemDefinition::item),
+            DataComponentPatch.CODEC.optionalFieldOf("tag").forGetter(o -> {
+                return Optional.ofNullable(o.tag);
+            })
+    ).apply(ins, (item, tag) -> {
+        return new ItemDefinition(item, tag.orElse(null));
+    }));
 
     private final Item item;
     @NotNull
@@ -91,9 +103,14 @@ public class ItemDefinition {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        ItemDefinition that = (ItemDefinition) o;
-        return Objects.equals(item, that.item) && Objects.equals(tag, that.tag);
+        if (o != null) {
+            if (o instanceof ItemDefinition that) {
+                return Objects.equals(item, that.item) && Objects.equals(tag, that.tag);
+            } else if (o instanceof ItemStack that) {
+                return Objects.equals(item, that.getItem()) && Objects.equals(tag, that.getTag());
+            }
+        }
+        return false;
     }
 
     @Override

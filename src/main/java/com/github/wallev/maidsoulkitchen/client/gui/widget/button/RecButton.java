@@ -5,7 +5,7 @@ import com.github.tartaricacid.touhoulittlemaid.client.gui.widget.button.TouhouS
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.cook.v0.CookData;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -154,7 +154,8 @@ public class RecButton extends TouhouStateSwitchButton implements ITooltipButton
             cookData.addRecs(strRecs);
         }
 
-        NetworkHandler.C2S.actionCookDataRecs(maid.getId(), cookTask.getCookDataKey().getKey(), strRecs, !isStateTriggered);
+//        NetworkHandler.C2S.syncKitchenData2();
+//        NetworkHandler.C2S.actionCookDataRecs(maid.getId(), cookTask.getCookDataKey().getKey(), strRecs, !isStateTriggered);
     }
 
     @SuppressWarnings("all")

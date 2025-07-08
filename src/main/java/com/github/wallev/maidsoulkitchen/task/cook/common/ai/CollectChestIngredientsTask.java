@@ -30,7 +30,7 @@ public class CollectChestIngredientsTask<R extends Recipe<? extends RecipeInput>
 
     @Override
     protected void start(ServerLevel pLevel, EntityMaid pEntity, long pGameTime) {
-        MutableComponent append = Component.literal("让我来看看仓库都有什么材料~");
+        MutableComponent append = Component.translatable("chat_bubble.maidsoulkitchen.cook.collect_ingredients");
         TextChatBubbleData textChatBubbleData = TextChatBubbleData.type2(append);
         pEntity.getChatBubbleManager().addChatBubble(textChatBubbleData);
     }
@@ -49,6 +49,7 @@ public class CollectChestIngredientsTask<R extends Recipe<? extends RecipeInput>
     protected void stop(ServerLevel pLevel, EntityMaid pEntity, long pGameTime) {
         MemoryUtil.eraseCollectChestItemHandler(pEntity);
         rm.startGenerateRecs();
+        MemoryUtil.rememberChestInputInventory(pEntity, rm.getChestInputInventory().getItemInventory());
     }
 
     @Override

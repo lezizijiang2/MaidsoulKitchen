@@ -11,6 +11,8 @@
   ],
   "mixins": [
     "forge.IItemHandlerMixin",
-    "minecraft.ContainerMixin"
+    "minecraft.ContainerMixin",
+    "minecraft.ver.BehaviorControlAccessor",
+    "touhoulittlemaid.EntityMaidMixin"
   ]
 }

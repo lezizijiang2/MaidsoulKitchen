@@ -30,7 +30,7 @@ public class GenerateRecsTask<R extends Recipe<? extends RecipeInput>> extends B
 
     @Override
     protected void start(ServerLevel pLevel, EntityMaid pEntity, long pGameTime) {
-        MutableComponent append = Component.literal("让我来看看都可以制作那些食物~");
+        MutableComponent append = Component.translatable("chat_bubble.maidsoulkitchen.cook.collect_ingredients");
         TextChatBubbleData textChatBubbleData = TextChatBubbleData.type2(append);
         pEntity.getChatBubbleManager().addChatBubble(textChatBubbleData);
     }

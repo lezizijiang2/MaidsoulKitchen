@@ -33,7 +33,7 @@ public interface ICompatFarmHandler {
         }
     }
 
-    enum ActionState {
+    enum Result {
         DENY,
         ALLOW,
         DEFAULT

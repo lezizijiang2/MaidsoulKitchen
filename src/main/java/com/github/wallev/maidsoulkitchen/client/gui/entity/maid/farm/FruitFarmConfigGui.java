@@ -9,11 +9,9 @@ import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.MaidTaskConfigGu
 import com.github.wallev.maidsoulkitchen.client.gui.widget.button.CFRuleButton;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.info.ResultInfo;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.info.Zone;
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.berryfruit.v1.BerryFruitData;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.FruitFarmConfigContainer;
 import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
-import com.github.wallev.maidsoulkitchen.network.packet.c2s.SetFruitFarmSearchYOffsetC2SPackage;
-import com.github.wallev.maidsoulkitchen.task.farm.TaskFruitFarm;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.IFarmHandlerManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -45,10 +43,9 @@ public class FruitFarmConfigGui extends MaidTaskConfigGui<FruitFarmConfigContain
     protected final Zone ruleDisplay = new Zone(6, 47, 152, 110);
     protected final ResultInfo ref = new ResultInfo(3, 1, 152, 24, 0, 5);
     private final int limitSize = ref.row() * ref.col();
-    private TaskFruitFarm fruitFarm;
-    private ICompatFarmTask<?, ?> compatFarmTask;
+    private ICompatFarmTask<?> compatFarmTask;
     private List<? extends IFarmHandlerManager<?>> handlers;
-    private FruitData farmTaskInfo;
+    private BerryFruitData berryFruitData;
 
     public FruitFarmConfigGui(FruitFarmConfigContainer screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, screenContainer.getMaid().getTask().getName().append(Component.translatable("gui.maidsoulkitchen.farm_config_screen.title")));
@@ -57,9 +54,9 @@ public class FruitFarmConfigGui extends MaidTaskConfigGui<FruitFarmConfigContain
     @Override
     protected void initAdditionData() {
         super.initAdditionData();
-        this.compatFarmTask = (ICompatFarmTask<?, ?>) task;
+        this.compatFarmTask = (ICompatFarmTask<?>) task;
         this.handlers = compatFarmTask.getHandlerManagers();
-        this.farmTaskInfo = ((TaskFruitFarm) task).getTaskData(maid);
+        this.berryFruitData = compatFarmTask.getTaskData(maid);
     }
 
     @Override
@@ -75,24 +72,32 @@ public class FruitFarmConfigGui extends MaidTaskConfigGui<FruitFarmConfigContain
         super.initBaseData();
     }
 
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        if (berryFruitData == null) {
+            return;
+        }
+        super.render(graphics, mouseX, mouseY, partialTicks);
+    }
+
     private void addRetrievalButton() {
         MutableComponent literal = Component.translatable("gui.maidsoulkitchen.fruit_farm_configer_screen.farm.fruit.search_y_offset", "--");
         int x = font.width(literal);
         int startX = visualZone.startX() + 6 + 26 + x;
         int startY = visualZone.startY() + 22 + 2;
         Button addButton = new TouhouImageButton(startX, startY, 17, 18, 80, 238, 0, TEXTURE, b -> {
-            if (this.farmTaskInfo.searchYOffset() >= 5) {
+            if (this.berryFruitData.searchYOffset() >= 5) {
                 return;
             }
-            this.farmTaskInfo.increaseYOffset();
-            NetworkHandler.sendToServer(new SetFruitFarmSearchYOffsetC2SPackage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.farmTaskInfo.searchYOffset()));
+            this.berryFruitData.increaseYOffset();
+            NetworkHandler.C2S.syncBerryFruitData(maid.getId(), compatFarmTask.getCookDataKey().getKey(), berryFruitData);
         });
         Button downButton = new TouhouImageButton(startX + 17, startY, 17, 18, 80 + 17, 238, 0, TEXTURE, b -> {
-            if (this.farmTaskInfo.searchYOffset() <= -5) {
+            if (this.berryFruitData.searchYOffset() <= -5) {
                 return;
             }
-            this.farmTaskInfo.decreaseYOffset();
-            NetworkHandler.sendToServer(new SetFruitFarmSearchYOffsetC2SPackage(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.farmTaskInfo.searchYOffset()));
+            this.berryFruitData.decreaseYOffset();
+            NetworkHandler.C2S.syncBerryFruitData(maid.getId(), compatFarmTask.getCookDataKey().getKey(), berryFruitData);
         });
         this.addRenderableWidget(addButton);
         this.addRenderableWidget(downButton);
@@ -106,14 +111,14 @@ public class FruitFarmConfigGui extends MaidTaskConfigGui<FruitFarmConfigContain
     }
 
     private void renderRetrieval(GuiGraphics graphics) {
-        MutableComponent literal = Component.translatable("gui.maidsoulkitchen.fruit_farm_configer_screen.farm.fruit.search_y_offset", this.farmTaskInfo.searchYOffset());
+        MutableComponent literal = Component.translatable("gui.maidsoulkitchen.fruit_farm_configer_screen.farm.fruit.search_y_offset", this.berryFruitData.searchYOffset());
         // 暂时先这样... todo
         int width = font.width(literal);
         int x = visualZone.startX() + 6;
         int y = visualZone.startY() + 22;
         graphics.blit(TEXTURE, x, y, 0, 236, 22, 20);
         // 暂时先这样... todo
-        if (this.farmTaskInfo.searchYOffset() >= 0) {
+        if (this.berryFruitData.searchYOffset() >= 0) {
             width += font.width(Component.literal("-"));
             for (int i = 0; i < width; i++) {
                 graphics.blit(TEXTURE, x + 22 + i, y, 22, 236, 1, 20);
@@ -158,13 +163,13 @@ public class FruitFarmConfigGui extends MaidTaskConfigGui<FruitFarmConfigContain
         for (int i = index; i < Math.min(handlers.size(), index + limitSize); i++) {
             ICompatFarmHandler handler = handlers.get(i).getFarmHandler();
             String handlerUid = ((ICompatHandlerInfo) handler).getUid().toString();
-            boolean contains = farmTaskInfo.rules().contains(handlerUid);
+            boolean contains = berryFruitData.containRule(handlerUid);
             CFRuleButton cfRuleButton = new CFRuleButton((ICompatHandlerInfo) handler, handler, contains, startX, startY, this.getTaskTooltips((ICompatHandlerInfo) handler)) {
                 @Override
                 public void onClick(double pMouseX, double pMouseY) {
                     this.isSelected = !this.isSelected;
-                    farmTaskInfo.addOrRemoveRule(this.handlerInfo.getUid().toString());
-                    NetworkHandler.C2S.actionFruitFarmRule(maid.getId(), fruitFarm.getCookDataKey().getKey(), this.handlerInfo.getUid().toString());
+                    berryFruitData.setRule(this.handlerInfo.getUid().toString(), this.isSelected);
+                    NetworkHandler.C2S.syncBerryFruitData(maid.getId(), compatFarmTask.getCookDataKey().getKey(), berryFruitData);
                 }
             };
             this.addRenderableWidget(cfRuleButton);

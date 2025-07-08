@@ -97,6 +97,14 @@ public final class NetworkHandler {
         public static void giveRecipeIngredient(List<ItemStack> itemStacks) {
             sendToServer(new GiveRecipeIngredientC2SPackage(itemStacks));
         }
+
+        public static void syncBerryFruitData(int maidId, ResourceLocation taskId, BerryFruitData data) {
+            sendToServer(new SyncBerryFruitDataC2SPackage(maidId, taskId, data));
+        }
+
+        public static void syncKitchenData2(int maidId, KitchenData data) {
+            sendToServer(new SyncKitchenDataC2SPackage(maidId, data));
+        }
     }
 
     public static class S2C {

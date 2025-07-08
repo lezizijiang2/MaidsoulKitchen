@@ -533,15 +533,13 @@ tasks.named('init') {
     enabled = false
 }
 
-// 删除所有冲突的named配置，避免重复依赖
-// tasks.named("build2Legacy") {
-//     dependsOn "ensureGradlewExecutable"
-// }
-//
-// tasks.named("buildMod") {
-//     dependsOn "ensureGradlewExecutable"
-// }
-//
-// tasks.named("initProject") {
-//     dependsOn "ensureGradlewExecutable"
-// }
+configurations.all {
+    resolutionStrategy {
+        eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'legacylibs') {
+                details.useVersion('latest.integration')
+                details.because('Disable caching for legacylibs dependencies')
+            }
+        }
+    }
+}

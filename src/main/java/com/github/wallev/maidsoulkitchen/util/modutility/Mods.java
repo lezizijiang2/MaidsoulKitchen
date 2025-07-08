@@ -28,6 +28,9 @@ public enum Mods implements StringRepresentable {
     BNCD_LEGACY("brewinandchewin_legacy", "[,3.0.0)"),
     BNCD("brewinandchewin", "[3.0.0,)"),
     FRD("farmersrespite"),
+    L2_HARVESTER("l2harvester"),
+    COPPER_POT("copperpot"),
+    DUNGEONS_DELIGHT("dungeonsdelight"),
 
     /*
         Let's DO
@@ -38,7 +41,8 @@ public enum Mods implements StringRepresentable {
     DBP("beachparty"),
     DCL("candlelight", "[2.0.0,]"),
     DBK("bakery", "[2.0.0,]"),
-    DFC("farm_and_charm"),
+    DFC("farm_and_charm", "[2.0.0,]"),
+    DM("meadow"),
 
     SF("simplefarming"),
     FS("fruitstack"),

@@ -1,8 +1,8 @@
 package com.github.wallev.maidsoulkitchen.util.classana.clazz;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
-import com.github.wallev.maidsoulkitchen.task.ModGroup;
 import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.util.classana.ModGroup;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -104,6 +104,15 @@ public class ClassAnalyzerManager {
 
         public Map<TaskInfo, Set<Class<?>>> getMap() {
             return map;
+        }
+
+        public static boolean isAllowed(String className) {
+            for (String group : ModGroup.BLACK.groups) {
+                if (className.startsWith(group)) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 

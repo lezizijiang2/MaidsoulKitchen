@@ -62,9 +62,9 @@ public class MaidFeedAnimalTaskT extends MaidCheckRateTask implements BehaviorCo
                     long gameTime = maid.level.getGameTime();
                     EntityType<?> feedEntityType = feedEntity.getType();
                     if (lastFeedType != null && lastFeedType != feedEntityType) {
-                        maid.getChatBubbleManager().addChatBubble(TextChatBubbleData.type2(Component.literal("小" + feedEntity.getDisplayName().getString() + "君, 快快长大哦~")));
+                        maid.getChatBubbleManager().addChatBubble(TextChatBubbleData.type2(Component.translatable("chat_bubble.maidsoulkitchen.inner.feed_animal.feed_end")));
                     } else if (lastFeedType == feedEntityType && (gameTime - lastFeedTime) / 1000 >= IChatBubbleData.DEFAULT_EXIST_TICK) {
-                        maid.getChatBubbleManager().addChatBubble(TextChatBubbleData.type2(Component.literal("小" + feedEntity.getDisplayName().getString() + "君, 快快长大哦~")));
+                        maid.getChatBubbleManager().addChatBubble(TextChatBubbleData.type2(Component.translatable("chat_bubble.maidsoulkitchen.inner.feed_animal.feed_end")));
                     }
 
                     lastFeedTime = gameTime;
@@ -113,7 +113,7 @@ public class MaidFeedAnimalTaskT extends MaidCheckRateTask implements BehaviorCo
                 .toList();
 
         if (typeAnimals.isEmpty()) {
-            maid.getChatBubbleManager().addChatBubble(TextChatBubbleData.type2(Component.literal("这似乎没有可以养殖的动物诶~")));
+            maid.getChatBubbleManager().addChatBubble(TextChatBubbleData.type2(Component.translatable("chat_bubble.maidsoulkitchen.inner.feed_animal.no_animals")));
         }
 
         List<EntityType<?>> noneFoodAnimalTypes = new ArrayList<>();

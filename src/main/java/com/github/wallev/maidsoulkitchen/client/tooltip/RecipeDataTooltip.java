@@ -1,7 +1,7 @@
 package com.github.wallev.maidsoulkitchen.client.tooltip;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.cook.v0.CookData;
 import com.github.wallev.maidsoulkitchen.util.TextContactUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;

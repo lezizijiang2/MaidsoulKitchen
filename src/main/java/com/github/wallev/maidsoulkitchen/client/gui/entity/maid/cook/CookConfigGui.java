@@ -4,12 +4,14 @@ import com.github.tartaricacid.touhoulittlemaid.client.gui.widget.button.TouhouI
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.MaidTaskConfigGui;
-import com.github.wallev.maidsoulkitchen.client.gui.widget.button.*;
+import com.github.wallev.maidsoulkitchen.client.gui.widget.button.RecButton;
+import com.github.wallev.maidsoulkitchen.client.gui.widget.button.RecsDetailButton;
+import com.github.wallev.maidsoulkitchen.client.gui.widget.button.TImageButton;
+import com.github.wallev.maidsoulkitchen.client.gui.widget.button.TypeButton;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.info.ResultInfo;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.info.Zone;
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.cook.v0.CookData;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CookConfigContainer;
-import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemDefinition;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
 import com.google.common.collect.Lists;
@@ -109,7 +111,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     }
 
     private Map<ItemDefinition, List<MKRecipe<?>>> createDifferentResult() {
-        return cookTask.getRecipes(maid.level).stream()
+        return cookTask.getRecipes(maid).stream()
                 .collect(Collectors.groupingBy((r) -> {
                     return ItemDefinition.of(r.output());
                 }));
@@ -155,9 +157,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
 
     @SuppressWarnings("all")
     private List<MKRecipe<?>> getDefaultRecs() {
-        Level level = maid.level;
-        RegistryAccess registryAccess = level.registryAccess();
-        List<? extends MKRecipe<?>> allRecipe = cookTask.getRecipes(level);
+        List<? extends MKRecipe<?>> allRecipe = cookTask.getRecipes(maid);
         if (searchBox != null && StringUtils.isNotBlank(searchBox.getValue())) {
             String search = this.searchBox.getValue().toLowerCase(Locale.US);
             List<? extends MKRecipe<?>> list = allRecipe.stream()
@@ -396,8 +396,8 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     private void addTaskInfoButton() {
         int startX = visualZone.startX() + taskDisplay.startX();
         int startY = visualZone.startY() + taskDisplay.startY();
-        TaskInfoButton taskInfoButton = new TaskInfoButton(startX, startY, taskDisplay.width(), taskDisplay.height(), this.cookTask);
-        this.addRenderableWidget(taskInfoButton);
+//        TaskInfoButton taskInfoButton = new TaskInfoButton(startX, startY, taskDisplay.width(), taskDisplay.height(), this.cookTask, b -> {});
+//        this.addRenderableWidget(taskInfoButton);
     }
 
     private void addSearchTextBox() {
@@ -518,7 +518,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
 
     private void setAndSyncMode(String mode) {
         cookData.setMode(mode);
-        NetworkHandler.C2S.setCookDataMode(maid.getId(), cookTask.getCookDataKey().getKey(), mode);
+//        NetworkHandler.C2S.setCookDataMode(maid.getId(), cookTask.getCookDataKey().getKey(), mode);
     }
 
     private void setAndSyncMode(boolean isSelected) {
@@ -537,7 +537,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
             int x = startX;
             int y = startY;
 
-            detailButton = new RecsDetailButton(x, y, w, h, maid, cookTask, cookData) {
+            detailButton = new RecsDetailButton(x, y, w, h, maid, cookTask, null) {
                 @Override
                 public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
                     if (!(this.active && this.visible)) {
