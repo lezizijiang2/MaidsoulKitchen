@@ -22,9 +22,6 @@ public class RecsDetailButton extends AbstractButton implements ITooltipButton {
     protected final int startY;
     protected final int wWidth;
     protected final int wHeight;
-    protected final EntityMaid maid;
-    protected final ICookTask<?, ?> cookTask;
-    protected final CookData cookData;
     protected boolean needActive = false;
     protected List<MKRecipe<?>> recs = new ArrayList<>();
     protected List<RecButton> recsButtons = new ArrayList<>();

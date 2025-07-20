@@ -2,6 +2,8 @@ package com.github.wallev.maidsoulkitchen.task.cook.kaleidoscopecookery.cookery;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskClassAnalyzer;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.CookTask;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.AbstractCookRule;
@@ -11,7 +13,7 @@ import com.github.ysbbbbbb.kaleidoscopecookery.init.ModItems;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-//@ImportsParse(task = TaskInfo.KC_POT)
+@TaskClassAnalyzer(TaskInfo.KC_POT)
 public class TaskKcPot extends ICookTask<PotBlockEntity, PotRecipe> {
     @Override
     protected AbstractCookRule<PotBlockEntity, PotRecipe> createCookRule() {

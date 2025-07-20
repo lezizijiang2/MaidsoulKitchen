@@ -2,13 +2,13 @@ package com.github.wallev.maidsoulkitchen.task.cook.common.task;
 
 import com.github.wallev.maidsoulkitchen.api.task.IMaidsoulKitchenTask;
 import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.Mods;
 import com.github.wallev.maidsoulkitchen.task.CookTask;
-import com.github.wallev.maidsoulkitchen.util.modutility.Mods;
+import com.github.wallev.maidsoulkitchen.util.ModUtil;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -25,12 +25,16 @@ public class CookTaskManager {
         IDLE_TASK = new TaskCookIdle();
         for (CookTask cookTask : CookTask.values()) {
             if (cookTask.canLoad.get()) {
-                add(cookTask.bindTask.get());
+                ICookTask<?, ?> task = cookTask.bindTask.get();
+                task.setBindModName(ModUtil.getModName(cookTask.modId));
+                add(task);
             }
         }
         for (LegacyCookTaskInfo legacy : LEGACY_TASK) {
             if (legacy.canLoad()) {
-                add(legacy.bindTask.get());
+                ICookTask<?, ?> task = legacy.bindTask.get();
+                task.setBindModName(ModUtil.getModName(legacy.bindMod.get().modId()));
+                add(task);
             }
         }
         this.makeImmutable();
@@ -63,11 +67,16 @@ public class CookTaskManager {
         return INSTANCE.TASK_INDEX;
     }
 
-    public static void addLegacyTask(Supplier<ResourceLocation> uid, Supplier<Mods> bindMod, Supplier<ForgeConfigSpec.BooleanValue> bindConfig, Supplier<ICookTask<?, ?>> task, String... mixinClz) {
+    public static void addLegacyTask(Supplier<ResourceLocation> uid, Supplier<Mods> bindMod, Supplier<Boolean> bindConfig, Supplier<ICookTask<?, ?>> task, String... mixinClz) {
         addLegacyTask(uid, bindMod, bindConfig, task, Lists.newArrayList(mixinClz));
     }
 
-    public static void addLegacyTask(Supplier<ResourceLocation> uid, Supplier<Mods> bindMod, Supplier<ForgeConfigSpec.BooleanValue> bindConfig, Supplier<ICookTask<?, ?>> task, List<String> mixinClz) {
+    private void makeImmutable() {
+        TASK_MAP = ImmutableMap.copyOf(TASK_MAP);
+        TASK_INDEX = ImmutableList.copyOf(TASK_INDEX);
+    }
+
+    public static void addLegacyTask(Supplier<ResourceLocation> uid, Supplier<Mods> bindMod, Supplier<Boolean> bindConfig, Supplier<ICookTask<?, ?>> task, List<String> mixinClz) {
         LEGACY_TASK.add(new LegacyCookTaskInfo(uid, bindMod, bindConfig, task, mixinClz));
     }
 
@@ -76,18 +85,15 @@ public class CookTaskManager {
      */
     public void add(ICookTask<?, ?> task) {
         TASK_MAP.put(task.getUid(), task);
+
+        TASK_INDEX.removeIf(ins -> ins.getUid().equals(task.getUid()));
         TASK_INDEX.add(task);
     }
 
-    private void makeImmutable() {
-        TASK_MAP = ImmutableMap.copyOf(TASK_MAP);
-        TASK_INDEX = ImmutableList.copyOf(TASK_INDEX);
-    }
-
     private record LegacyCookTaskInfo(Supplier<ResourceLocation> uid, Supplier<Mods> bindMod,
-                                      Supplier<ForgeConfigSpec.BooleanValue> bindConfig,
+                                      Supplier<Boolean> bindConfig,
                                       Supplier<ICookTask<?, ?>> bindTask, List<String> mixinClz) {
-        public LegacyCookTaskInfo(Supplier<ResourceLocation> uid, Supplier<Mods> bindMod, Supplier<ForgeConfigSpec.BooleanValue> bindConfig, Supplier<ICookTask<?, ?>> bindTask, String... mixinClz) {
+        public LegacyCookTaskInfo(Supplier<ResourceLocation> uid, Supplier<Mods> bindMod, Supplier<Boolean> bindConfig, Supplier<ICookTask<?, ?>> bindTask, String... mixinClz) {
             this(uid, bindMod, bindConfig, bindTask, Lists.newArrayList(mixinClz));
         }
 
@@ -100,11 +106,11 @@ public class CookTaskManager {
         }
 
         private boolean bindConfigLoad() {
-            return bindConfig.get().get();
+            return bindConfig.get();
         }
 
         private boolean bindModLoad() {
-            return bindMod.get().versionLoaded;
+            return bindMod.get().versionLoad();
         }
     }
 }

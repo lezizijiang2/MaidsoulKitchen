@@ -5,7 +5,6 @@ import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.cook.v1.KitchenData;
 import com.github.wallev.maidsoulkitchen.task.cook.common.task.CookTaskManager;
-import com.github.wallev.verhelper.client.chat.VComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -36,11 +35,11 @@ public class TaskInfoButton extends NormalTooltipButton {
 
     public static List<Component> getDesc(ICookTask<?, ?> task) {
         List<Component> components = new ArrayList<>();
-        components.add(VComponent.translatable("gui.maidsoulkitchen.widget.cook_guide.task.desc", task.getName()));
+        components.add(Component.translatable("gui.maidsoulkitchen.widget.cook_guide.task.desc", task.getName()));
         String typeString = task.getRecipeTypeId();
 
         components.add(CommonComponents.SPACE);
-        components.add(VComponent.translatable("gui.maidsoulkitchen.widget.cook_guide.task.recipe_type", typeString).withStyle(ChatFormatting.DARK_GRAY));
+        components.add(Component.translatable("gui.maidsoulkitchen.widget.cook_guide.task.recipe_type", typeString).withStyle(ChatFormatting.DARK_GRAY));
 
         return components;
     }
@@ -57,7 +56,7 @@ public class TaskInfoButton extends NormalTooltipButton {
         }
 
         if (isIdle) {
-            TipsHelper.renderTips(pGuiGraphics, this, Component.literal("点击选择一个烹饪模式把！"));
+            TipsHelper.renderTips(pGuiGraphics, this, Component.translatable("gui.maidsoulkitchen.widget.cook_guide.task.choose_cook_type"));
         }
     }
 

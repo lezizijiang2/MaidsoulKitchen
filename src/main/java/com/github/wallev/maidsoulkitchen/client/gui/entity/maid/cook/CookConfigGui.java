@@ -11,6 +11,7 @@ import com.github.wallev.maidsoulkitchen.client.gui.widget.button.TypeButton;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.info.ResultInfo;
 import com.github.wallev.maidsoulkitchen.client.gui.widget.info.Zone;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.cook.v0.CookData;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.cook.v1.CookDataV1;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CookConfigContainer;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemDefinition;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
@@ -69,7 +70,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     private final List<List<MKRecipe<?>>> flatRecs = new ArrayList<>();
     private RecsDetailButton detailButton;
     private EditBox searchBox;
-    private CookData cookData;
+    private CookDataV1 cookData;
     private ICookTask<?, ?> cookTask;
     private boolean initCookData = true;
     private DisplayMode displayMode = DisplayMode.DEFAULT;
@@ -240,7 +241,8 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     }
 
     private List<Component> getDisplayModeTooltips() {
-        List<Component> components = Lists.newArrayList(Component.literal("点击可搜索，再次点击收回!"), Component.literal("滚动切换显示模式！"));
+        List<Component> components = Lists.newArrayList(Component.translatable("gui.maidsoulkitchen.btn.display.tooltip.1"),
+                Component.translatable("gui.maidsoulkitchen.btn.display.tooltip.2"));
         for (DisplayMode value : DisplayMode.values()) {
 
             MutableComponent component = value.getComponent(displayMode);
@@ -502,7 +504,7 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
         int startX = width - leftPos - (-typeDisplay.startX()) - typeDisplay.width() - 1;
         int startY = visualZone.startY() + typeDisplay.startY();
 
-        TypeButton typeButton = new TypeButton(startX, startY, typeDisplay.width(), typeDisplay.height(), cookData.mode().equals(CookData.Mode.WHITELIST.name)) {
+        TypeButton typeButton = new TypeButton(startX, startY, typeDisplay.width(), typeDisplay.height(), cookData.mode().equals(CookDataV1.Mode.WHITELIST.name)) {
             @Override
             public void onClick(double mouseX, double mouseY) {
                 initCookData = false;
@@ -710,19 +712,16 @@ public class CookConfigGui extends MaidTaskConfigGui<CookConfigContainer> {
     }
 
     public enum DisplayMode {
-        DEFAULT("默认"),
-        CAN_COOK("可烹饪"),
-        NOT_COOK("不可烹饪"),
+        DEFAULT,
+        CAN_COOK,
+        NOT_COOK,
         ;
 
-        private final String component;
-
-        DisplayMode(String component) {
-            this.component = component;
+        DisplayMode() {
         }
 
         public MutableComponent getComponent() {
-            return Component.literal(component);
+            return Component.translatable("gui.maidsoulkitchen.btn.display.mode." + this.name().toLowerCase(Locale.ROOT));
         }
 
         public MutableComponent getComponent(DisplayMode mode) {

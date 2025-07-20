@@ -3,14 +3,14 @@ package com.github.wallev.maidsoulkitchen.task.cook.kaleidoscopecookery.chopping
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil;
 import com.github.wallev.maidsoulkitchen.mixin.compat.kaleidoscope.ChoppingBoardBlockEntityAccessor;
-import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskClassAnalyzer;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemDefinition;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.manager.MaidCookManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.TickCookRule;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidRec;
-import com.github.wallev.maidsoulkitchen.util.classana.clazz.TaskClassAnalyzer;
 import com.github.ysbbbbbb.kaleidoscopecookery.blockentity.kitchen.ChoppingBoardBlockEntity;
 import com.github.ysbbbbbb.kaleidoscopecookery.crafting.recipe.ChoppingBoardRecipe;
 import net.minecraft.world.InteractionHand;
@@ -19,7 +19,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
-
 
 @TaskClassAnalyzer(TaskInfo.KC_CHOPPING_BOARD)
 public class ChoppingBoardRule extends TickCookRule<ChoppingBoardBlockEntity, ChoppingBoardRecipe> {
@@ -44,10 +43,7 @@ public class ChoppingBoardRule extends TickCookRule<ChoppingBoardBlockEntity, Ch
             return true;
         }
 
-        if (((ChoppingBoardBlockEntityAccessor) be).tlmk$getCurrentCutStack().isEmpty() && cm.hasMaidRecs(cookBeBase)) {
-            return true;
-        }
-        return false;
+        return ((ChoppingBoardBlockEntityAccessor) be).tlmk$getCurrentCutStack().isEmpty() && cm.hasMaidRecs(cookBeBase);
     }
 
     @Override
@@ -90,7 +86,6 @@ public class ChoppingBoardRule extends TickCookRule<ChoppingBoardBlockEntity, Ch
             this.processItem = processItem.item();
 
             cm.getItemInventory().markDirty();
-            ;
         }
         be.setChanged();
     }

@@ -8,7 +8,6 @@ import com.github.wallev.maidsoulkitchen.api.task.IMaidsoulKitchenTask;
 import com.github.wallev.maidsoulkitchen.event.MelonConfigEvent;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CompatMelonConfigContainer;
 import com.github.wallev.maidsoulkitchen.task.MaidsoulKitchenTask;
-import com.github.wallev.maidsoulkitchen.util.BlockUtil;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,11 +50,11 @@ public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTa
     @Override
     public boolean canHarvest(EntityMaid maid, BlockPos cropPos, BlockState cropState) {
         Block block = cropState.getBlock();
-        if (MelonConfigEvent.MELON_STEM_MAP.containsKey(BlockUtil.getId(block))) {
-            String stemBlockId = MelonConfigEvent.MELON_STEM_MAP.get(BlockUtil.getId(block));
+        Block stemBlock = MelonConfigEvent.MELON_STEM_MAP.get(block);
+        if (stemBlock != null) {
             for (Direction direction : Direction.Plane.HORIZONTAL) {
                 BlockState offsetState = maid.level.getBlockState(cropPos.relative(direction));
-                if (BlockUtil.getId(offsetState).equals(stemBlockId)) {
+                if (offsetState.is(stemBlock)) {
                     return true;
                 }
             }
@@ -66,7 +65,8 @@ public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTa
     @Override
     public void harvest(EntityMaid maid, BlockPos cropPos, BlockState cropState) {
         Block block = cropState.getBlock();
-        if (MelonConfigEvent.MELON_STEM_MAP.containsKey(BlockUtil.getId(block))) {
+        Block stemBlock = MelonConfigEvent.MELON_STEM_MAP.get(block);
+        if (stemBlock != null) {
             ItemStack mainHandItem = maid.getMainHandItem();
             RegistryAccess access = maid.level.registryAccess();
             if (EnchantmentKeys.getEnchantmentLevel(access, Enchantments.SILK_TOUCH, mainHandItem) > 0) {
@@ -120,11 +120,6 @@ public class TaskCompatMelonFarm extends TaskMelon implements IMaidsoulKitchenTa
 
             public AbstractMaidContainer createMenu(int index, Inventory playerInventory, Player player) {
                 return new CompatMelonConfigContainer(index, playerInventory, entityId);
-            }
-
-            @Override
-            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
-                return false;
             }
         };
     }

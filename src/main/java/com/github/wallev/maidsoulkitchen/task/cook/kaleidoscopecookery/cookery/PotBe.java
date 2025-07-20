@@ -1,6 +1,8 @@
 package com.github.wallev.maidsoulkitchen.task.cook.kaleidoscopecookery.cookery;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskClassAnalyzer;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.inv.IInvHandler;
 import com.github.ysbbbbbb.kaleidoscopecookery.block.kitchen.StoveBlock;
@@ -12,7 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-//@TaskClassAnalyzer(TaskInfo.KC_POT)
+@TaskClassAnalyzer(TaskInfo.KC_POT)
 public class PotBe extends CookBeBase<PotBlockEntity> {
     public PotBe(EntityMaid maid) {
         super(maid);
@@ -65,10 +67,7 @@ public class PotBe extends CookBeBase<PotBlockEntity> {
         assert level != null;
         BlockPos blockPos = be.getBlockPos();
         Block block = level.getBlockState(blockPos.below()).getBlock();
-        if (block instanceof StoveBlock) {
-            return true;
-        }
-        return false;
+        return block instanceof StoveBlock;
     }
 
     @Override

@@ -1,14 +1,14 @@
 package com.github.wallev.maidsoulkitchen.task.farm.handler.fruit;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
-import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.Mods;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.IFarmHandlerManager;
-import com.github.wallev.maidsoulkitchen.util.modutility.Mods;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Supplier;
 
-import static com.github.wallev.maidsoulkitchen.task.TaskInfo.FRUIT_COMPAT;
+import static com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskInfo.FRUIT_COMPAT;
 
 public enum FruitHandlerManager implements IFarmHandlerManager<FruitHandler> {
 

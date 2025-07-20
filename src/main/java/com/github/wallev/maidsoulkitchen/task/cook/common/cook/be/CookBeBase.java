@@ -209,6 +209,9 @@ public abstract class CookBeBase<B extends BlockEntity> {
     }
 
     public void insertAndShrink(IInvHandler beInv, Integer amount, Collection<ItemStack> ingredient, int slotIndex) {
+        if (ingredient == null) {
+            return;
+        }
         for (ItemStack itemStack : ingredient) {
             if (itemStack.isEmpty()) continue;
             int count = itemStack.getCount();

@@ -7,11 +7,8 @@ import com.github.wallev.maidsoulkitchen.network.NetworkHandler;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 
-import static com.github.wallev.maidsoulkitchen.MaidsoulKitchen.MOD_ID;
-
-@EventBusSubscriber(modid = MOD_ID)
+//@EventBusSubscriber(modid = MOD_ID)
 public class MaidHubClickEvent {
     @SubscribeEvent
     public static void onInteract(InteractMaidEvent event) {

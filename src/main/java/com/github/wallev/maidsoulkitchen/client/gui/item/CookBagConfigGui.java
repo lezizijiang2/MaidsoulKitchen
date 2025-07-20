@@ -154,13 +154,11 @@ public class CookBagConfigGui extends CookBagAbstractContainerGui<CookBagConfigC
         int x = leftPos + 6;
         int y = topPos + 6;
         int width = 100;
-        guiGraphics.renderItem(Items.RED_MUSHROOM.getDefaultInstance(), x + width + 2, y + 22);
-        guiGraphics.renderItem(Items.BROWN_MUSHROOM.getDefaultInstance(), x + width + 16 + 2, y + 22);
-        guiGraphics.renderItem(Items.COAL.getDefaultInstance(), x + width + 2, y + 44 + 2);
-        guiGraphics.renderItem(Items.WATER_BUCKET.getDefaultInstance(), x + width + 16 + 2, y + 44 + 2);
-        guiGraphics.renderItem(Items.BOWL.getDefaultInstance(), x + width + 2, y + 88 + 2);
-        guiGraphics.renderItem(Items.GLASS_BOTTLE.getDefaultInstance(), x + width + 16 + 2, y + 88 + 2);
-        guiGraphics.renderItem(Items.MUSHROOM_STEW.getDefaultInstance(), x + width + 2, y + 110 + 2);
+        guiGraphics.renderItem(Items.RED_MUSHROOM.getDefaultInstance(), x + width + 1, y + 22);
+        guiGraphics.renderItem(Items.BROWN_MUSHROOM.getDefaultInstance(), x + width + 16 + 1, y + 22);
+        guiGraphics.renderItem(Items.COAL.getDefaultInstance(), x + width + 16 + 1 + 16 + 1, y + 22);
+        guiGraphics.renderItem(Items.BOWL.getDefaultInstance(), x + width + 16 + 1 + 16 + 1 + 16 + 1, y + 22);
+        guiGraphics.renderItem(Items.MUSHROOM_STEW.getDefaultInstance(), x + width + 1, y + 22 + 22);
     }
 
     protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {

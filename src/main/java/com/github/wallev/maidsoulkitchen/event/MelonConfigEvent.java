@@ -18,7 +18,7 @@ import static com.github.wallev.maidsoulkitchen.util.BlockUtil.getId;
 
 @EventBusSubscriber(modid = MaidsoulKitchen.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public final class MelonConfigEvent {
-    public static final Map<String, String> MELON_STEM_MAP = new HashMap<>();
+    public static final Map<Block, Block> MELON_STEM_MAP = new HashMap<>();
     private static final String CONFIG_NAME = MaidsoulKitchen.MOD_ID + "-common.toml";
 
     @SubscribeEvent
@@ -35,27 +35,32 @@ public final class MelonConfigEvent {
         handleMelonAndStemList(TaskConfig.MELON_AND_STEM_LIST.get(), MELON_STEM_MAP);
     }
 
-    private static void handleMelonStemList(Map<String, String> output) {
+    private static void handleMelonStemList(Map<Block, Block> output) {
         for (Block block : BuiltInRegistries.BLOCK) {
             if (block instanceof AttachedStemBlock attachedStemBlock) {
-                output.put(attachedStemBlock.fruit.location().toString(), getId(attachedStemBlock));
+                output.put(BuiltInRegistries.BLOCK.get(attachedStemBlock.fruit), attachedStemBlock);
                 MaidsoulKitchen.LOGGER.debug("add fruit {}, stem {}", attachedStemBlock.fruit.location().toString(), getId(attachedStemBlock));
             }
         }
     }
 
-    private static void handleMelonAndStemList(List<List<String>> config, Map<String, String> output) {
+    private static void handleMelonAndStemList(List<List<String>> config, Map<Block, Block> output) {
         for (List<String> strings : config) {
             if (strings.size() < 2) continue;
 
             String melonId = strings.get(0);
             String stemId = strings.get(1);
 
+
+            ResourceLocation melonLoc = ResourceLocation.tryParse(melonId);
+            ResourceLocation stemLoc = ResourceLocation.tryParse(stemId);
+            if (melonLoc == null || stemLoc == null) continue;
+
             Block melonBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(melonId));
             Block stemBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(stemId));
             if (melonBlock == null || stemBlock == null) continue;
 
-            output.put(melonId, stemId);
+            output.put(melonBlock, stemBlock);
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.github.wallev.maidsoulkitchen.mixin.compat.kitchkarrot;
 
-import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskInfo;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskMixin;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.inv.ICookBeAccessor;
-import com.github.wallev.maidsoulkitchen.util.classana.TaskMixin;
 import io.github.tt432.kitchenkarrot.blockentity.BrewingBarrelBlockEntity;
 import io.github.tt432.kitchenkarrot.recipes.recipe.BrewingBarrelRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;

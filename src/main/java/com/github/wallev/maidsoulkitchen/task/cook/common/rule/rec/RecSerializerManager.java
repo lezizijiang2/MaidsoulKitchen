@@ -3,7 +3,6 @@ package com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.wallev.maidsoulkitchen.client.tooltip.RecipeDataTooltip;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.cook.v0.CookData;
-import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.item.ItemCulinaryHub;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.ingredient.RecIngredient;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemDefinition;
@@ -333,9 +332,9 @@ public class RecSerializerManager<R extends Recipe<? extends RecipeInput>> {
             tooltips.add(this.getTooltipRecOutputContainerIngredient(List.of(Ingredient.of(container)), maid));
         }
         List<ItemStack> fuels = this.getFuels();
-        if (!fuels.isEmpty()) {
-            tooltips.add(this.getTooltipRecFuelIngredient(List.of(Ingredient.of(fuels.stream())), maid));
-        }
+//        if (!fuels.isEmpty()) {
+//            tooltips.add(this.getTooltipRecFuelIngredient(List.of(Ingredient.of(fuels.stream())), maid));
+//        }
 
         RecipeDataTooltip.TooltipRecipeData tooltipRecipeData = new RecipeDataTooltip.TooltipRecipeData(cookData, recipe.id().toString(), tooltips, this.getTooltipRecResultIngredient(recipe, maid), modeIsBlacklist, overSize);
         return Optional.of(tooltipRecipeData);
@@ -367,7 +366,7 @@ public class RecSerializerManager<R extends Recipe<? extends RecipeInput>> {
         List<List<RecipeDataTooltip.IngredientSourceType>> list = new ArrayList<>();
         list.add(Lists.newArrayList(RecipeDataTooltip.IngredientSourceType.MAIN_HAND, RecipeDataTooltip.IngredientSourceType.OFF_HAND, RecipeDataTooltip.IngredientSourceType.MAID_BACKPACK));
         list.add(Lists.newArrayList(RecipeDataTooltip.IngredientSourceType.HUB_OUTPUT_ADDITION));
-        int containerRuleMatchIndex = maid.getMaidInv().getStackInSlot(4).is(MkItems.CULINARY_HUB.get()) ? 1 : 0;
+        int containerRuleMatchIndex = ItemCulinaryHub.hasItem(maid) ? 1 : 0;
         RecipeDataTooltip.TooltipRecIngredient tooltipRecContainerSources = new RecipeDataTooltip.TooltipRecIngredient(outputContainers, list, RecipeDataTooltip.IngredientType.MAYBE, containerRuleMatchIndex);
         return tooltipRecContainerSources;
     }

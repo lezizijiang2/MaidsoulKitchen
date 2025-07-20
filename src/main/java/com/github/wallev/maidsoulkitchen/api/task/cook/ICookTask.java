@@ -21,6 +21,7 @@ import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.TickCookRule
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.RecSerializerManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
 import com.github.wallev.maidsoulkitchen.util.MemoryUtil;
+import com.github.wallev.maidsoulkitchen.vhelper.server.ai.VBehaviorControl;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -52,6 +53,7 @@ public abstract class ICookTask<B extends BlockEntity, R extends Recipe<? extend
     public final CookBe.Builder<B> cookBeBuilder;
     public final AbstractCookRule<B, R> cookRule;
     public final RecSerializerManager<R> recSerializerManager;
+    private String bindModName = "";
 
     public ICookTask() {
         this.cookBeBuilder = this.createCookBeBuilder();
@@ -281,4 +283,16 @@ public abstract class ICookTask<B extends BlockEntity, R extends Recipe<? extend
 
     public abstract ItemStack getIcon();
 
+    @OnlyIn(Dist.CLIENT)
+    public Component getTaskName() {
+        return this.getIcon().getHoverName();
+    }
+
+    public String getBindModName() {
+        return bindModName;
+    }
+
+    public final void setBindModName(String modName) {
+        this.bindModName = modName;
+    }
 }

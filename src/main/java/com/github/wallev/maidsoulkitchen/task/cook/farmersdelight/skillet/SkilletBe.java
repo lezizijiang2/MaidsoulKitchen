@@ -1,12 +1,15 @@
 package com.github.wallev.maidsoulkitchen.task.cook.farmersdelight.skillet;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskClassAnalyzer;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.inv.IInvHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import vectorwing.farmersdelight.common.block.entity.SkilletBlockEntity;
 
+@TaskClassAnalyzer(TaskInfo.FD_SKILLET)
 public class SkilletBe extends CookBeBase<SkilletBlockEntity> {
     public SkilletBe(EntityMaid maid) {
         super(maid);
@@ -34,7 +37,7 @@ public class SkilletBe extends CookBeBase<SkilletBlockEntity> {
 
     @Override
     public boolean recMatch() {
-        return false;
+        return this.recMatchAccessor();
     }
 
     @Override

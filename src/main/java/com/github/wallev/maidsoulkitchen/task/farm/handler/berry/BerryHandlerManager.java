@@ -2,15 +2,14 @@ package com.github.wallev.maidsoulkitchen.task.farm.handler.berry;
 
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
-import com.github.wallev.maidsoulkitchen.task.TaskInfo;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.Mods;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.farm.handler.IFarmHandlerManager;
-import com.github.wallev.maidsoulkitchen.util.modutility.Mods;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Supplier;
 
-import static com.github.wallev.maidsoulkitchen.task.TaskInfo.BERRY_COMPAT;
-import static com.github.wallev.maidsoulkitchen.task.TaskInfo.BERRY_MINECRAFT;
+import static com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskInfo.*;
 
 public enum BerryHandlerManager implements IFarmHandlerManager<BerryHandler> {
 

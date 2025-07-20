@@ -1,5 +1,6 @@
 package com.github.wallev.maidsoulkitchen.config.subconfig;
 
+import com.google.common.collect.Lists;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.List;
 public class TaskConfig {
 
     public static ModConfigSpec.ConfigValue<List<List<String>>> MELON_AND_STEM_LIST;
-    //    public static ModConfigSpec.ConfigValue<Integer> COOK_SELECTED_RECIPES;
+    public static ModConfigSpec.ConfigValue<List<String>> BLACK_HUB_CHEST_LIST;
     public static ModConfigSpec.ConfigValue<Integer> FEED_SINGLE_ANIMAL_MAX_NUMBER;
 
     public static void init(ModConfigSpec.Builder builder) {
@@ -18,8 +19,8 @@ public class TaskConfig {
         builder.comment("These entries configure the melon stem and melon_block item list.", "rule: [melon_block_id, attached_melon_stem_block_id]", "Eg: [\"minecraft:melon\", \"minecraft:attached_melon_stem\"]");
         MELON_AND_STEM_LIST = builder.define("MelonAndStemList", getmelonAndStemList());
 
-//        builder.comment("These can configure the cook selected recipes max size.");
-//        COOK_SELECTED_RECIPES = builder.define("CookSelectedRecipes", 30);
+        builder.comment("A list of blocks that the Culinary Hub cannot interact with.");
+        BLACK_HUB_CHEST_LIST = builder.define("BlackHubChestList", Lists.newArrayList());
 
         builder.comment("The max number of the different type animal around when the maid breeds animals");
         FEED_SINGLE_ANIMAL_MAX_NUMBER = builder.defineInRange("FeedSingleAnimalMaxNumber", 20, 6, 65536);

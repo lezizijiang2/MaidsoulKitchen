@@ -1,10 +1,9 @@
 package com.github.wallev.maidsoulkitchen.task.farm.handler.berry;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.farm.ICompatHandler;
-import com.github.wallev.maidsoulkitchen.task.TaskInfo;
-import com.github.wallev.maidsoulkitchen.util.classana.clazz.TaskClassAnalyzer;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskClassAnalyzer;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 @TaskClassAnalyzer(TaskInfo.BERRY_COMPAT)
 public class CompatBerryHandler extends BerryHandler implements ICompatHandler {
-    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "berry_compat");
 
     @Override
     public Result processCanHarvest(EntityMaid maid, BlockPos cropPos, BlockState cropState) {

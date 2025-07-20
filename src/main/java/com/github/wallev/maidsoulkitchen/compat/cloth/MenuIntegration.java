@@ -10,8 +10,8 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.client.ConfigScreenHandler;
+import net.neoforged.fml.ModLoadingContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +36,6 @@ public class MenuIntegration {
 
     public static void addConfig(ConfigBuilder root, ConfigEntryBuilder entryBuilder, boolean tlmEntry) {
         taskConfig(root, entryBuilder, tlmEntry);
-        renderConfig(root, entryBuilder, tlmEntry);
         registerConfig(root, entryBuilder, tlmEntry);
     }
 
@@ -179,20 +178,9 @@ public class MenuIntegration {
                 .setSaveConsumer(TaskConfig.FEED_SINGLE_ANIMAL_MAX_NUMBER::set).build());
     }
 
-    private static void renderConfig(ConfigBuilder root, ConfigEntryBuilder entryBuilder, boolean tlmEntry) {
-        MutableComponent entryTitle = Component.translatable("config.maidsoulkitchen.render");
-        MutableComponent addition = Component.literal("");
-        if (tlmEntry) {
-            entryTitle.append(MENU_TITLE_TIP);
-            addition.append(Component.literal("\n" + MOD_TIP).withStyle(ChatFormatting.BLUE))
-                    .append(Component.literal("\nModId: " + MaidsoulKitchen.MOD_ID).withStyle(ChatFormatting.DARK_GRAY));
-        }
-        ConfigCategory render = root.getOrCreateCategory(entryTitle);
 
-
-    }
-
-    public static void registerModsPage(ModContainer modContainer) {
-        modContainer.registerExtensionPoint(IConfigScreenFactory.class, (container, parent) -> getConfigBuilder().setParentScreen(parent).build());
+    public static void registerModsPage() {
+        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () ->
+                new ConfigScreenHandler.ConfigScreenFactory((client, parent) -> getConfigBuilder().setParentScreen(parent).build()));
     }
 }

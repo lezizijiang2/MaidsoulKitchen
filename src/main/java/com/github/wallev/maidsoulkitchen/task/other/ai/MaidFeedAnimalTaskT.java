@@ -63,7 +63,7 @@ public class MaidFeedAnimalTaskT extends MaidCheckRateTask implements BehaviorCo
                     EntityType<?> feedEntityType = feedEntity.getType();
                     if (lastFeedType != null && lastFeedType != feedEntityType) {
                         maid.getChatBubbleManager().addChatBubble(TextChatBubbleData.type2(Component.translatable("chat_bubble.maidsoulkitchen.inner.feed_animal.feed_end")));
-                    } else if (lastFeedType == feedEntityType && (gameTime - lastFeedTime) / 1000 >= IChatBubbleData.DEFAULT_EXIST_TICK) {
+                    } else if (lastFeedType == feedEntityType && (gameTime - lastFeedTime) / 1000 >= IChatBubbleData.DEFAULT_EXIST_TICK + 5) {
                         maid.getChatBubbleManager().addChatBubble(TextChatBubbleData.type2(Component.translatable("chat_bubble.maidsoulkitchen.inner.feed_animal.feed_end")));
                     }
 

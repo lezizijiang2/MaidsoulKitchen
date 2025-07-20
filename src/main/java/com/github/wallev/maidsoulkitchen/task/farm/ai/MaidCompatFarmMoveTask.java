@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class MaidCompatFarmMoveTask<T extends ICompatFarmHandler & ICompatHandlerInfo> extends MaidMoveToBlockTask implements BehaviorControl {
+public class MaidCompatFarmMoveTask<T extends ICompatFarmHandler & ICompatHandlerInfo> extends MaidMoveToBlockTask implements BehaviorControl<EntityMaid> {
     private final ICompatFarmTask<T> task;
     private final T compatFarmHandler;
 

@@ -211,7 +211,7 @@ public class RecButton extends TouhouStateSwitchButton implements ITooltipButton
                     .withStyle(canCook ? ChatFormatting.DARK_GREEN : ChatFormatting.DARK_RED);
             stackTooltip.add(canCookMge);
 
-            Component recipeSelectedMage = Component.literal(String.format("当前已选择%d/%d中配方", has, recipes.size()))
+            Component recipeSelectedMage = Component.translatable("gui.maidsoulkitchen.btn.cook_guide.selected_recs", has, recipes.size())
                     .withStyle(ChatFormatting.GRAY);
             stackTooltip.add(recipeSelectedMage);
 

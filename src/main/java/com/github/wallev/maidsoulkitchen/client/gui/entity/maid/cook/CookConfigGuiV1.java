@@ -1,5 +1,6 @@
 package com.github.wallev.maidsoulkitchen.client.gui.entity.maid.cook;
 
+import com.github.tartaricacid.touhoulittlemaid.client.gui.widget.button.TouhouImageButton;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.api.task.cook.ICookTask;
 import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.MaidTaskConfigGui;
@@ -14,8 +15,6 @@ import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemDefinitio
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
 import com.github.wallev.maidsoulkitchen.task.cook.common.task.CookTaskManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.task.TaskCook;
-import com.github.wallev.verhelper.client.chat.VComponent;
-import com.github.wallev.verhelper.client.resources.VResourceLocation;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
@@ -23,16 +22,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.StateSwitchingButton;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.anti_ad.mc.ipn.api.IPNButton;
 import org.anti_ad.mc.ipn.api.IPNGuiHint;
 import org.anti_ad.mc.ipn.api.IPNPlayerSideOnly;
@@ -53,7 +51,7 @@ import java.util.stream.Collectors;
 @IPNGuiHint(button = IPNButton.SETTINGS, horizontalOffset = -5)
 @OnlyIn(Dist.CLIENT)
 public class CookConfigGuiV1 extends MaidTaskConfigGui<CookConfigContainer> {
-    private static final ResourceLocation TEXTURE = VResourceLocation.create(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "textures/gui/cook_guide.png");
     protected final Zone taskDisplay = new Zone(6, 20, 70, 20);
     // 需要特殊处理
     protected final Zone typeDisplay = new Zone(-4, 22, 18, 18);
@@ -82,7 +80,7 @@ public class CookConfigGuiV1 extends MaidTaskConfigGui<CookConfigContainer> {
     private ResultType resultType = ResultType.COOK_DATA;
 
     public CookConfigGuiV1(CookConfigContainer screenContainer, Inventory inv, Component titleIn) {
-        super(screenContainer, inv, VComponent.translatable("gui.maidsoulkitchen.cook_setting_screen.title"));
+        super(screenContainer, inv, Component.translatable("gui.maidsoulkitchen.cook_setting_screen.title"));
     }
 
     @Override
@@ -181,7 +179,7 @@ public class CookConfigGuiV1 extends MaidTaskConfigGui<CookConfigContainer> {
     }
 
     @SuppressWarnings("all")
-    private List<MKRecipe<?>> getRecsByMode(Predicate<Recipe<?>> recipeTest) {
+    private List<MKRecipe<?>> getRecsByMode(Predicate<RecipeHolder<?>> recipeTest) {
         List<? extends MKRecipe<?>> list = cookTask.getRecipes(maid).stream()
                 .filter(recipe -> {
                     return recipeTest.test(recipe.rec());
@@ -230,6 +228,20 @@ public class CookConfigGuiV1 extends MaidTaskConfigGui<CookConfigContainer> {
     }
 
     private void initResultButton() {
+        // @fixme： 烹饪任务的uid还没想好命名方式，先这样修正把
+        boolean isValidTask = false;
+        for (ResourceLocation recl : CookTaskManager.getTaskMap().keySet()) {
+            if (recl.equals(this.kitchenName)) {
+                isValidTask = true;
+                break;
+            }
+        }
+
+        if (!isValidTask || CookTaskManager.getIdleTask().getUid().equals(this.kitchenName)) {
+            this.resultType = ResultType.TASK;
+        }
+
+
         switch (resultType) {
             case TASK -> addTypeInfoButton();
             case COOK_DATA -> addResultInfo();
@@ -285,7 +297,8 @@ public class CookConfigGuiV1 extends MaidTaskConfigGui<CookConfigContainer> {
     }
 
     private List<Component> getDisplayModeTooltips() {
-        List<Component> components = Lists.newArrayList(VComponent.literal("点击可搜索，再次点击收回!"), VComponent.literal("滚动切换显示模式！"));
+        List<Component> components = Lists.newArrayList(Component.translatable("gui.maidsoulkitchen.btn.display.tooltip.1"),
+                Component.translatable("gui.maidsoulkitchen.btn.display.tooltip.2"));
         for (DisplayMode value : DisplayMode.values()) {
 
             MutableComponent component = value.getComponent(displayMode);
@@ -307,7 +320,7 @@ public class CookConfigGuiV1 extends MaidTaskConfigGui<CookConfigContainer> {
         return components;
     }
 
-    private List<List<MKRecipe<?>>> getRecsByMode2DisplayTooltip(Predicate<Recipe<?>> recipeTest) {
+    private List<List<MKRecipe<?>>> getRecsByMode2DisplayTooltip(Predicate<RecipeHolder<?>> recipeTest) {
         return this.differentResult.values().stream()
                 .filter(recs -> {
                     for (MKRecipe<?> rec : recs) {
@@ -326,26 +339,26 @@ public class CookConfigGuiV1 extends MaidTaskConfigGui<CookConfigContainer> {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY) {
         if (detailButton != null && detailButton.needActive()) {
             return false;
         }
 
-        if (super.mouseScrolled(mouseX, mouseY, delta)) {
+        if (super.mouseScrolled(mouseX, mouseY, deltaX, deltaY)) {
             return true;
         }
 
         // 176, 137
         boolean isCookSettingMainZone = mouseX >= visualZone.startX() && mouseY >= visualZone.startY() && mouseX < visualZone.startX() + visualZone.width() && mouseY < visualZone.startY() + visualZone.height();
-        if (delta != 0 && isCookSettingMainZone) {
+        if (deltaY != 0 && isCookSettingMainZone) {
             // 向上滚
-            if (delta > 0 && solIndex > 0) {
+            if (deltaY > 0 && solIndex > 0) {
                 solIndex--;
                 this.init();
                 return true;
             }
             // 向下滚
-            if (delta < 0 && solIndex < this.getScrolledSize()) {
+            if (deltaY < 0 && solIndex < this.getScrolledSize()) {
                 solIndex++;
                 this.init();
                 return true;
@@ -365,7 +378,7 @@ public class CookConfigGuiV1 extends MaidTaskConfigGui<CookConfigContainer> {
     @Override
     protected void containerTick() {
         super.containerTick();
-        this.searchBox.tick();
+//        this.searchBox.tick();
     }
 
     @Override
@@ -541,7 +554,7 @@ public class CookConfigGuiV1 extends MaidTaskConfigGui<CookConfigContainer> {
                     this.setX(finalStartX - searchTextDisplay.width());
                     searchBox.setVisible(true);
                     searchBox.setFocused(true);
-                    searchBox.moveCursorToEnd();
+                    searchBox.moveCursorToEnd(true);
                     init();
                 } else {
                     this.setX(finalStartX);
@@ -553,18 +566,18 @@ public class CookConfigGuiV1 extends MaidTaskConfigGui<CookConfigContainer> {
             }
 
             @Override
-            public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+            public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY) {
                 boolean isCookSettingMainZone = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.getWidth() && mouseY < this.getY() + this.getHeight();
-                if (delta != 0 && isCookSettingMainZone) {
+                if (deltaY != 0 && isCookSettingMainZone) {
                     // 向上滚
-                    if (delta > 0) {
+                    if (deltaY > 0) {
                         setDisplayMode(displayMode.pre());
                         solIndex = 0;
                         init();
                         return true;
                     }
                     // 向下滚
-                    if (delta < 0) {
+                    if (deltaY < 0) {
                         setDisplayMode(displayMode.next());
                         solIndex = 0;
                         init();
@@ -726,13 +739,13 @@ public class CookConfigGuiV1 extends MaidTaskConfigGui<CookConfigContainer> {
     private void addScrollButton() {
         int startX = visualZone.startX() + scrollDisplay.startX();
         int startY = visualZone.startY() + scrollDisplay.startY();
-        Button upButton = new ImageButton(startX, startY, 9, 7, 199, 74, 14, TEXTURE, b -> {
+        Button upButton = new TouhouImageButton(startX, startY, 9, 7, 199, 74, 14, TEXTURE, b -> {
             if (this.solIndex > 0) {
                 this.solIndex--;
                 this.init();
             }
         });
-        Button downButton = new ImageButton(startX, startY + 8 + 1 + 70, 9, 7, 208, 74, 14, TEXTURE, b -> {
+        Button downButton = new TouhouImageButton(startX, startY + 8 + 1 + 70, 9, 7, 208, 74, 14, TEXTURE, b -> {
             if (this.solIndex < (this.flatRecs.size() - 1) / (recTypeInfo.col() * recTypeInfo.row())) {
                 this.solIndex++;
                 this.init();
@@ -749,7 +762,7 @@ public class CookConfigGuiV1 extends MaidTaskConfigGui<CookConfigContainer> {
         int startY = visualZone.startY() + searchTextDisplay.startY();
         searchBox.render(graphics, pMouseX, pMouseY, pPartialTick);
         if (searchBox.isVisible() && searchBox.getValue().isEmpty() && !searchBox.isFocused()) {
-            graphics.drawString(font, VComponent.translatable("gui.maidsoulkitchen.search").withStyle(ChatFormatting.ITALIC), startX + 3, startY + 5, 0XF5F5F5);
+            graphics.drawString(font, Component.translatable("gui.maidsoulkitchen.search").withStyle(ChatFormatting.ITALIC), startX + 3, startY + 5, 0XF5F5F5);
         }
     }
 
@@ -819,19 +832,16 @@ public class CookConfigGuiV1 extends MaidTaskConfigGui<CookConfigContainer> {
     }
 
     public enum DisplayMode {
-        DEFAULT("默认"),
-        CAN_COOK("可烹饪"),
-        NOT_COOK("不可烹饪"),
+        DEFAULT,
+        CAN_COOK,
+        NOT_COOK,
         ;
 
-        private final String component;
-
-        DisplayMode(String component) {
-            this.component = component;
+        DisplayMode() {
         }
 
         public MutableComponent getComponent() {
-            return VComponent.literal(component);
+            return Component.translatable("gui.maidsoulkitchen.btn.display.mode." + this.name().toLowerCase(Locale.ROOT));
         }
 
         public MutableComponent getComponent(DisplayMode mode) {

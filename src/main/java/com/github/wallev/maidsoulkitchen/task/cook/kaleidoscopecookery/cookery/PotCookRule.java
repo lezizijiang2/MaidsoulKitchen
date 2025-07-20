@@ -1,6 +1,8 @@
 package com.github.wallev.maidsoulkitchen.task.cook.kaleidoscopecookery.cookery;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskClassAnalyzer;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskInfo;
 import com.github.wallev.maidsoulkitchen.task.cook.common.cook.be.CookBeBase;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.maid.IMaidCookInventory;
@@ -19,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
-//@ImportsParse(task = TaskInfo.KC_POT)
+@TaskClassAnalyzer(TaskInfo.KC_POT)
 public class PotCookRule extends TickCookRule<PotBlockEntity, PotRecipe> {
     public static final Item CONTAINER = Items.BOWL;
     public static final Item FLINT = Items.FLINT_AND_STEEL;
@@ -49,7 +51,7 @@ public class PotCookRule extends TickCookRule<PotBlockEntity, PotRecipe> {
         boolean hasOutputAvailableSlot = cookInv.hasOutputAvailableSlot();
 
         if (potBlockEntity.getStatus() == 2 && hasOutputAvailableSlot) {
-            if (!potBlockEntity.hasCarrier()) {
+            if (potBlockEntity.hasCarrier()) {
                 ItemStack container = cm.getItem(CONTAINER);
                 return !container.isEmpty();
             } else {
@@ -82,7 +84,7 @@ public class PotCookRule extends TickCookRule<PotBlockEntity, PotRecipe> {
         PotBe potBe = (PotBe) cookBeBase;
         PotBlockEntity potBlockEntity = potBe.getBe();
         if (potBlockEntity.getStatus() == 2) {
-            if (!potBlockEntity.hasCarrier()) {
+            if (potBlockEntity.hasCarrier()) {
                 ItemStack container = cm.getItem(CONTAINER);
                 cookBeBase.useItem(container, inputInv);
             } else {
@@ -146,7 +148,7 @@ public class PotCookRule extends TickCookRule<PotBlockEntity, PotRecipe> {
             this.kitchenToolInHand = swappedTool;
 
             PotRecipe potRecipe = maidRec.recCast();
-            if (potRecipe.carrier().hasNoItems()) {
+            if (!potRecipe.carrier().hasNoItems()) {
                 this.needBowl = true;
                 ItemStack container = maidRec.container();
                 this.bowl = this.getItem(container.getItem(), itemInventory);
