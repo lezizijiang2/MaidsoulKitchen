@@ -3,16 +3,16 @@ package com.github.wallev.maidsoulkitchen.modclazzchecker.manager;
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.config.subconfig.RegisterConfig;
 import com.github.wallev.maidsoulkitchen.modclazzchecker.core.classana.ITaskInfo;
-import com.github.wallev.maidsoulkitchen.vhelper.client.resources.VResourceLocation;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.core.util.EnumCodecUtil;
 import com.mojang.serialization.Codec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.StringRepresentable;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public enum TaskInfo implements ITaskInfo<Mods>, StringRepresentable {
+public enum TaskInfo implements ITaskInfo<Mods> {
     /**
      * 没人有何实质作用，只是给{@link TaskClassAnalyzer}做默认值使用（骗过编译器x）
      */
@@ -55,7 +55,7 @@ public enum TaskInfo implements ITaskInfo<Mods>, StringRepresentable {
             "smelting",
             Mods.MC,
             true,
-            () -> MaidsoulKitchen.DEBUG),
+            () -> RegisterConfig.FURNACE_TASK_ENABLED),
 
     KC_POT("kc_pot",
             "pot",
@@ -181,7 +181,7 @@ public enum TaskInfo implements ITaskInfo<Mods>, StringRepresentable {
             "air_compressing",
             Mods.KK,
             true,
-            () -> MaidsoulKitchen.DEBUG),
+            () -> RegisterConfig.KK_AIR_COMPRESSOR),
 
     DB_BEER("drinkbeer_beerbarrel",
             "beer_barrel",
@@ -195,7 +195,7 @@ public enum TaskInfo implements ITaskInfo<Mods>, StringRepresentable {
             "crock_pot_cooking",
             Mods.CP,
             true,
-            () -> MaidsoulKitchen.DEBUG),
+            () -> RegisterConfig.CP_CROk_POT_TASK_ENABLED),
 
     DFC_STOVE("stove",
             Mods.DFC,
@@ -306,7 +306,7 @@ public enum TaskInfo implements ITaskInfo<Mods>, StringRepresentable {
     ;
 
     public static final TaskInfo[] VALUES = values();
-    public static final Codec<TaskInfo> CODEC = StringRepresentable.fromEnum(() -> VALUES);
+    public static final Codec<TaskInfo> CODEC = EnumCodecUtil.fromEnum(() -> VALUES);
 
     private String oldName = "";
     private final ResourceLocation uid;
@@ -320,28 +320,28 @@ public enum TaskInfo implements ITaskInfo<Mods>, StringRepresentable {
     }
 
     TaskInfo(String oldName, String uid, Mods bindMod, boolean concatModId, Supplier<ModConfigSpec.BooleanValue> bindConfig) {
-        this.oldName = VResourceLocation.createMod(oldName).toString();
+        this.oldName = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, oldName).toString();
         this.uid = convertUid(oldName, uid, bindMod, concatModId);
         this.bindMod = bindMod;
         this.bindConfig = () -> bindConfig.get().get();
     }
 
     TaskInfo(String oldName, String uid, Mods bindMod, boolean concatModId, Config bindConfig) {
-        this.oldName = VResourceLocation.createMod(oldName).toString();
+        this.oldName = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, oldName).toString();
         this.uid = convertUid(oldName, uid, bindMod, concatModId);
         this.bindMod = bindMod;
         this.bindConfig = () -> bindConfig.canLoad();
     }
 
     TaskInfo(String oldName, String blockId, String recipeId, Mods bindMod, boolean concatModId, Supplier<ModConfigSpec.BooleanValue> bindConfig) {
-        this.oldName = VResourceLocation.createMod(oldName).toString();
+        this.oldName = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, oldName).toString();
         this.uid = convertUid(oldName, blockId + "_" + recipeId, bindMod, concatModId);
         this.bindMod = bindMod;
         this.bindConfig = () -> bindConfig.get().get();
     }
 
     TaskInfo(String oldName, String blockId, String recipeId, Mods bindMod, boolean concatModId, Config bindConfig) {
-        this.oldName = VResourceLocation.createMod(oldName).toString();
+        this.oldName = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, oldName).toString();
         this.uid = convertUid(oldName, blockId + "_" + recipeId, bindMod, concatModId);
         this.bindMod = bindMod;
         this.bindConfig = () -> bindConfig.canLoad();
@@ -380,7 +380,7 @@ public enum TaskInfo implements ITaskInfo<Mods>, StringRepresentable {
 
     private static ResourceLocation convertUid(String oldName, String uid, Mods bindMod, boolean concatModId) {
 //        if (oldName.isEmpty()) {
-        return concatModId ? VResourceLocation.createMod(bindMod.modId() + "_" + uid) : VResourceLocation.createMod(uid);
+        return concatModId ? ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, bindMod.modId() + "_" + uid) : ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, uid);
 //        }
 //        return VResourceLocation.createMod(oldName);
     }

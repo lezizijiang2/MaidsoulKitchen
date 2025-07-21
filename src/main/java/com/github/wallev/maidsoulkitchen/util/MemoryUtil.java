@@ -193,4 +193,17 @@ public class MemoryUtil {
         return ImmutableMap.copyOf(map);
     }
 
+    public static void makePlacePicnicFoodState(EntityMaid maid) {
+        maid.getBrain().setMemory(MkEntities.MAID_PLACE_PICNIC_FOOD.get(), true);
+    }
+
+    public static void erasePlacePicnicFoodState(EntityMaid maid) {
+        maid.getBrain().eraseMemory(MkEntities.MAID_PLACE_PICNIC_FOOD.get());
+    }
+
+    public static boolean isPlacePicnicFoodState(EntityMaid maid) {
+        return maid.getBrain().hasMemoryValue(MkEntities.MAID_PLACE_PICNIC_FOOD.get());
+    }
+
+
 }

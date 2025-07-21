@@ -57,6 +57,13 @@ public class CookMakeTask<B extends BlockEntity, R extends Recipe<? extends Reci
                 }
                 return false;
             }
+
+            // @fixme: 避免偶发情况cookbe未初始化，等待后续查证原因
+            if (cookBe.getBe() == null) {
+                MemoryUtil.resetCookWorkState(maid);
+                cm.resetState();
+                return false;
+            }
             return true;
         }).orElse(false);
     }
