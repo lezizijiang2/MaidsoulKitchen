@@ -13,7 +13,7 @@ plugins {
 
 // 加载配置
 // [1.21,)
-def minecraft_version= "1.21.1"
+def minecraft_version = "1.21.1"
 loadProperties(minecraft_version)
 loadGradle(minecraft_version)
 
@@ -136,7 +136,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_id                 : mod_id,
             mod_name               : mod_name,
             mod_license            : mod_license,
-            mod_version: actualModVersion,
+            mod_version            : actualModVersion,
             mod_credits            : mod_credits,
             mod_authors            : mod_authors,
             mod_description        : mod_description,
@@ -198,8 +198,6 @@ dependencies {
 }
 
 
-
-
 // util
 def loadGradle(String minecraft_version) {
     apply from: "setting/common/neoforge/repositories.gradle"
@@ -220,22 +218,5 @@ def loadCustomProperties(String path) {
         customProperties.each { key, value ->
             project.ext.set(key, value)
         }
-    }
-}
-
-def printProjectInfo(Project project) {
-    String[] projectInfo = ['minecraft_version', 'minecraft_version_range', 'forge_version', 'forge_version_range', 'loader_version', 'loader_version_range', 'mapping_channel', 'mapping_version']
-    println "> Minecraft Version"
-    for (final def info in projectInfo) {
-        if (project.hasProperty(info)) {
-            println "${info} = ${project.property(info)}"
-        }
-    }
-}
-
-def printProperties(Project project) {
-    println "> Custom Properties"
-    project.properties.each { key, value ->
-        println ">- ${key} = ${value}"
     }
 }
