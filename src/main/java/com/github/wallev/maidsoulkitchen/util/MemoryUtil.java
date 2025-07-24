@@ -134,4 +134,25 @@ public class MemoryUtil {
         return ImmutableMap.copyOf(map);
     }
 
+    // Enhanced picnic food placement system from upstream 1.20.1 integration (commit 24440d9)
+    
+    /**
+     * Sets the maid into picnic food placement state
+     */
+    public static void setPlacePicnicFoodState(EntityMaid maid, boolean state) {
+        Brain<EntityMaid> brain = maid.getBrain();
+        if (state) {
+            brain.setMemory(MkEntities.MAID_PLACE_PICNIC_FOOD.get(), true);
+        } else {
+            brain.eraseMemory(MkEntities.MAID_PLACE_PICNIC_FOOD.get());
+        }
+    }
+
+    /**
+     * Checks if the maid is in picnic food placement state
+     */
+    public static boolean isPlacePicnicFoodState(EntityMaid maid) {
+        return maid.getBrain().getMemory(MkEntities.MAID_PLACE_PICNIC_FOOD.get()).orElse(false);
+    }
+
 }

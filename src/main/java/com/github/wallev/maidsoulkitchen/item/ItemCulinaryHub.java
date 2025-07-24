@@ -216,6 +216,35 @@ public class ItemCulinaryHub extends Item implements MenuProvider {
         return !centerPos.closerToCenterThan(pos.getCenter(), maxDistance);
     }
 
+    // Enhanced methods from upstream 1.20.1 integration (commit 24440d9)
+    
+    /**
+     * Gets valid output positions for the maid
+     */
+    public static List<BlockPos> getValidOutputPoses(EntityMaid maid) {
+        ItemStack hubItem = getItem(maid);
+        if (hubItem.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return getValidOutputPoses(hubItem, maid);
+    }
+
+    /**
+     * Gets valid output positions for the given hub item and maid
+     */
+    public static List<BlockPos> getValidOutputPoses(ItemStack hubItem, EntityMaid maid) {
+        Map<BagType, List<BlockPos>> bindPoses = getBindPoses(hubItem);
+        List<BlockPos> outputPoses = bindPoses.get(BagType.OUTPUT);
+        if (outputPoses == null) {
+            return Collections.emptyList();
+        }
+        
+        return outputPoses.stream()
+                .filter(pos -> !isExtraZone(maid, pos))
+                .toList();
+    }
+
     public static String getBindMode(ItemStack stack) {
         if (stack.is(MkItems.CULINARY_HUB.get())) {
             CompoundTag tag = stack.get(STORAGE_DATA_TAG);

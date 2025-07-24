@@ -17,5 +17,9 @@ public final class MkEntities {
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<List<Vec3>>> CURRENT_WORK_POSES = MEMORY_MODULE_TYPES.register("current_poses", () -> new MemoryModuleType<>(Optional.empty()));
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<Boolean>> CET_CHEST_ITEMHANDLER = MEMORY_MODULE_TYPES.register("cet_chest_itemhandler", () -> new MemoryModuleType<>(Optional.empty()));
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<Boolean>> GENERATE_RECS = MEMORY_MODULE_TYPES.register("generate_recs", () -> new MemoryModuleType<>(Optional.empty()));
+    
+    // Enhanced memory types from upstream 1.20.1 integration (commit 24440d9)
+    public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<Boolean>> MAID_PLACE_PICNIC_FOOD = MEMORY_MODULE_TYPES.register("maid_place_picnic_food", () -> new MemoryModuleType<>(Optional.empty()));
+    
     // 可根据需要添加更多实体相关注册
 }

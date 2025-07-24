@@ -17,6 +17,7 @@
     "kitchkarrot.AirCompressorBlockEntityAccessor",
     "kitchkarrot.BrewingBarrelBlockEntityMixin",
     "minecraft.AbstractFurnaceBlockEntityMixin",
+    "touhoulittlemaid.EntityMaidMixin",
     "youkaishomecoming.BasePotBlockEntityMixin",
     "youkaishomecoming.KettleBlockAccessor"
   ]
