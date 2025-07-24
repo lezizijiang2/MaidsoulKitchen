@@ -70,10 +70,10 @@ public class RegisterConfig {
         MD_COOK_POT_TASK_ENABLED = builder.define("MdCookPotTaskEnabled", true);
         builder.comment("This can make the bnc key task enabled or not.");
         BNC_KEY_TASK_ENABLED = builder.define("BncKeyTaskEnabled", true);
-        builder.comment("This can make the cd basin task enabled or not.");
-        BD_BASIN_TASK_ENABLED = builder.define("CdBasinTaskEnabled", true);
-        builder.comment("This can make the cd grill task enabled or not.");
-        BD_GRILL_TASK_ENABLED = builder.define("CdGrillTaskEnabled", true);
+        builder.comment("This can make the bd basin task enabled or not.");
+        BD_BASIN_TASK_ENABLED = builder.define("BdBasinTaskEnabled", true);
+        builder.comment("This can make the bd grill task enabled or not.");
+        BD_GRILL_TASK_ENABLED = builder.define("BdGrillTaskEnabled", true);
         builder.comment("This can make the fr kettle task enabled or not.");
         FR_KETTLE_TASK_ENABLED = builder.define("FrKettleTaskEnabled", true);
         builder.comment("This can make the yhc moka task enabled or not.");
