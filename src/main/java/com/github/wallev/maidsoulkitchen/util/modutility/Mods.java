@@ -47,6 +47,7 @@ public enum Mods {
     CP("crockpot"),
     DB("drinkbeer"),
     KK("kitchenkarrot"),
+    KK_LEGACY("kitchenkarrot_legacy", "[,0.5.5)"),
 
     TWT("thirst"),
 
