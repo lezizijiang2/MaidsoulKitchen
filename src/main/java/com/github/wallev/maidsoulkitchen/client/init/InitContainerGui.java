@@ -1,6 +1,6 @@
 package com.github.wallev.maidsoulkitchen.client.init;
 
-import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.cook.CookConfigGui;
+import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.cook.CookConfigGuiV1;
 import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.farm.BerryFarmConfigGui;
 import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.farm.CompatMelonConfigGui;
 import com.github.wallev.maidsoulkitchen.client.gui.entity.maid.farm.FruitFarmConfigGui;
@@ -21,7 +21,7 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 public final class InitContainerGui {
     @SubscribeEvent
     public static void clientSetup(RegisterMenuScreensEvent evt) {
-        evt.register(CookConfigContainer.TYPE, CookConfigGui::new);
+        evt.register(CookConfigContainer.TYPE, CookConfigGuiV1::new);
         evt.register(BerryFarmConfigContainer.TYPE, BerryFarmConfigGui::new);
         evt.register(FruitFarmConfigContainer.TYPE, FruitFarmConfigGui::new);
         evt.register(CompatMelonConfigContainer.TYPE, CompatMelonConfigGui::new);

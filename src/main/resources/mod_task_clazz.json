@@ -268,6 +268,31 @@
         ]
       }
     },
+    "maidsoulkitchen:kitchenkarrot_brewing_barrel_brewing_barrel": {
+      "bindMod": "KK",
+      "clazzInfo": {
+        "classes": [
+          "io.github.tt432.kitchenkarrot.blockentity.BrewingBarrelBlockEntity",
+          "io.github.tt432.kitchenkarrot.capability.KKItemStackHandler",
+          "io.github.tt432.kitchenkarrot.recipes.recipe.BrewingBarrelRecipe",
+          "io.github.tt432.kitchenkarrot.registries.ModBlocks",
+          "io.github.tt432.kitchenkarrot.registries.ModItems",
+          "io.github.tt432.kitchenkarrot.registries.RecipeTypes"
+        ],
+        "methods": [
+          "io.github.tt432.kitchenkarrot.blockentity.BrewingBarrelBlockEntity#getInput()Lio/github/tt432/kitchenkarrot/capability/KKItemStackHandler;",
+          "io.github.tt432.kitchenkarrot.blockentity.BrewingBarrelBlockEntity#getRecipe()Lnet/minecraft/world/item/crafting/RecipeHolder;",
+          "io.github.tt432.kitchenkarrot.blockentity.BrewingBarrelBlockEntity#hasEnoughWater(Lio/github/tt432/kitchenkarrot/recipes/recipe/BrewingBarrelRecipe;)Z",
+          "io.github.tt432.kitchenkarrot.blockentity.BrewingBarrelBlockEntity#result()Lnet/neoforged/neoforge/items/IItemHandler;",
+          "io.github.tt432.kitchenkarrot.recipes.recipe.BrewingBarrelRecipe#getIngredient()Ljava/util/List;"
+        ],
+        "fields": [
+          "io.github.tt432.kitchenkarrot.registries.ModBlocks#BREWING_BARREL",
+          "io.github.tt432.kitchenkarrot.registries.ModItems#WATER",
+          "io.github.tt432.kitchenkarrot.registries.RecipeTypes#BREWING_BARREL"
+        ]
+      }
+    },
     "maidsoulkitchen:youkaishomecoming_moka_pot_moka_pot": {
       "bindMod": "YHCD",
       "clazzInfo": {
@@ -299,31 +324,6 @@
         ]
       }
     },
-    "maidsoulkitchen:kitchenkarrot_brewing_barrel_brewing_barrel": {
-      "bindMod": "KK",
-      "clazzInfo": {
-        "classes": [
-          "io.github.tt432.kitchenkarrot.blockentity.BrewingBarrelBlockEntity",
-          "io.github.tt432.kitchenkarrot.capability.KKItemStackHandler",
-          "io.github.tt432.kitchenkarrot.recipes.recipe.BrewingBarrelRecipe",
-          "io.github.tt432.kitchenkarrot.registries.ModBlocks",
-          "io.github.tt432.kitchenkarrot.registries.ModItems",
-          "io.github.tt432.kitchenkarrot.registries.RecipeTypes"
-        ],
-        "methods": [
-          "io.github.tt432.kitchenkarrot.blockentity.BrewingBarrelBlockEntity#getInput()Lio/github/tt432/kitchenkarrot/capability/KKItemStackHandler;",
-          "io.github.tt432.kitchenkarrot.blockentity.BrewingBarrelBlockEntity#getRecipe()Lnet/minecraft/world/item/crafting/RecipeHolder;",
-          "io.github.tt432.kitchenkarrot.blockentity.BrewingBarrelBlockEntity#hasEnoughWater(Lio/github/tt432/kitchenkarrot/recipes/recipe/BrewingBarrelRecipe;)Z",
-          "io.github.tt432.kitchenkarrot.blockentity.BrewingBarrelBlockEntity#result()Lnet/neoforged/neoforge/items/IItemHandler;",
-          "io.github.tt432.kitchenkarrot.recipes.recipe.BrewingBarrelRecipe#getIngredient()Ljava/util/List;"
-        ],
-        "fields": [
-          "io.github.tt432.kitchenkarrot.registries.ModBlocks#BREWING_BARREL",
-          "io.github.tt432.kitchenkarrot.registries.ModItems#WATER",
-          "io.github.tt432.kitchenkarrot.registries.RecipeTypes#BREWING_BARREL"
-        ]
-      }
-    },
     "maidsoulkitchen:kaleidoscope_cookery_pot_pot": {
       "bindMod": "KC",
       "clazzInfo": {
@@ -351,6 +351,14 @@
       }
     },
     "maidsoulkitchen:berry_minecraft": {
+      "bindMod": "MC",
+      "clazzInfo": {
+        "classes": [],
+        "methods": [],
+        "fields": []
+      }
+    },
+    "maidsoulkitchen:berry_compat": {
       "bindMod": "MC",
       "clazzInfo": {
         "classes": [],
@@ -422,14 +430,6 @@
           "dev.xkmc.cuisinedelight.init.registrate.CDMisc#RT_CUISINE",
           "vectorwing.farmersdelight.common.registry.ModSounds#BLOCK_SKILLET_SIZZLE"
         ]
-      }
-    },
-    "maidsoulkitchen:berry_compat": {
-      "bindMod": "MC",
-      "clazzInfo": {
-        "classes": [],
-        "methods": [],
-        "fields": []
       }
     },
     "maidsoulkitchen:youkaishomecoming_drying_rack_drying_rack": {
@@ -686,14 +686,14 @@
           "taskUid": "maidsoulkitchen:cuisinedelight_cuisine_skillet_cuisine",
           "compatMod": "CD",
           "mixinList": [
-            "dev.xkmc.cuisinedelight.content.logic.CookingData$CookingEntry"
+            "dev.xkmc.cuisinedelight.content.logic.CookingData"
           ]
         },
         {
           "taskUid": "maidsoulkitchen:cuisinedelight_cuisine_skillet_cuisine",
           "compatMod": "CD",
           "mixinList": [
-            "dev.xkmc.cuisinedelight.content.logic.CookingData"
+            "dev.xkmc.cuisinedelight.content.logic.CookingData$CookingEntry"
           ]
         }
       ],
