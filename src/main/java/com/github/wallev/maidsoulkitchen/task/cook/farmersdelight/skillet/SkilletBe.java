@@ -37,7 +37,7 @@ public class SkilletBe extends CookBeBase<SkilletBlockEntity> {
 
     @Override
     public boolean recMatch() {
-        return this.recMatchAccessor();
+        return false;
     }
 
     @Override

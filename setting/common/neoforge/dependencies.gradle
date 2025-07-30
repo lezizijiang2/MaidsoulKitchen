@@ -9,6 +9,8 @@ dependencies {
 
 // 联动(烹饪)
 dependencies {
+    if (!kaleidoscopecookery_version.isEmpty())
+        compileOnly "maven.modrinth:kaleidoscope-cookery:${kaleidoscopecookery_version}-${mod_loader},${minecraft_version}"
     /** ---------------------------------------农夫乐事--------------------------------------------------------- */
     if (!farmers_delight_version.isEmpty())
         implementation "maven.modrinth:farmers-delight:${farmers_delight_version}-${mod_loader},${minecraft_version}"
@@ -87,6 +89,8 @@ dependencies {
         implementation "maven.modrinth:serene-seasons:${serene_seasons_version}-${mod_loader},${minecraft_version}"
     if (!ecliptic_seasons_file_id.isEmpty())
         implementation "curse.maven:ecliptic-seasons-1118306:${ecliptic_seasons_file_id}"
+    if (!glitch_core_version.isEmpty())
+        implementation "maven.modrinth:glitchcore:${glitch_core_version}-${mod_loader},${minecraft_version}"
     if (!simple_farming_file_id.isEmpty())
         implementation "curse.maven:simple-farming-327554:${simple_farming_file_id}"
     if (!curios_version.isEmpty())
