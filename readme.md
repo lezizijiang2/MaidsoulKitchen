@@ -6,6 +6,9 @@
  </a>
 </h1>
 
+[![Gradle Package 1.21](https://github.com/lezizijiang2/MaidsoulKitchen/actions/workflows/gradle_publish_1.21.1.yml/badge.svg)](https://github.com/lezizijiang2/MaidsoulKitchen/actions/workflows/gradle_publish_1.21.1.yml)
+
+
 这里是一个[车万女仆](https://github.com/TartaricAcid/TouhouLittleMaid)附属模组，旨在让女仆学会使用其他模组的烹饪和作物的耕种
 
 ## 注意
