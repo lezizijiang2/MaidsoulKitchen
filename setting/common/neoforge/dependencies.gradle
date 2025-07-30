@@ -10,7 +10,7 @@ dependencies {
 // 联动(烹饪)
 dependencies {
     if (!kaleidoscopecookery_version.isEmpty())
-        compileOnly "maven.modrinth:kaleidoscope-cookery:${kaleidoscopecookery_version}-${mod_loader},${minecraft_version}"
+        implementation "maven.modrinth:kaleidoscope-cookery:${kaleidoscopecookery_version}-${mod_loader},${minecraft_version}"
     /** ---------------------------------------农夫乐事--------------------------------------------------------- */
     if (!farmers_delight_version.isEmpty())
         implementation "maven.modrinth:farmers-delight:${farmers_delight_version}-${mod_loader},${minecraft_version}"
