@@ -84,8 +84,8 @@ public enum TaskInfo implements ITaskInfo<Mods> {
             () -> MaidsoulKitchen.DEBUG),
 
     FD_SKILLET("fd_skillet",
-            "fd_skillet",
-            "",
+            "skillet",
+            "campfire_cooking",
             Mods.FD,
             true,
             () -> RegisterConfig.FD_SKILLET_TASK_ENABLED),
