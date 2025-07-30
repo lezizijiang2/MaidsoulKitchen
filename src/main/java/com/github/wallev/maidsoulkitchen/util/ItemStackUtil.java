@@ -12,28 +12,37 @@ import java.util.List;
 import java.util.Map;
 
 public final class ItemStackUtil {
-    private static final Map<Item, ItemStack> CACHE;
+    private static final Map<Item, ItemStack> CACHE = new HashMap<>();
     private static List<ItemStack> DEFAULT_FUELS;
-
-    static {
-        Map<Item, ItemStack> cache = new HashMap<>();
-        for (Item value : BuiltInRegistries.ITEM) {
-            ItemStack itemStack = value.getDefaultInstance();
-            cache.put(value, itemStack);
-        }
-        CACHE = cache;
-    }
+    private static boolean initialized = false;
 
     private ItemStackUtil() {
     }
 
+    private static void ensureInitialized() {
+        if (!initialized) {
+            try {
+                for (Item value : BuiltInRegistries.ITEM) {
+                    ItemStack itemStack = new ItemStack(value);
+                    CACHE.put(value, itemStack);
+                }
+                initialized = true;
+            } catch (Exception e) {
+                // If initialization fails during datagen, just continue
+                System.err.println("ItemStackUtil initialization failed (likely during datagen): " + e.getMessage());
+            }
+        }
+    }
+
     public static void init() {
+        ensureInitialized();
     }
 
     /**
      * 仅仅获取ItemStack实例，万万不能修改，只作用于不用修改ItemStack的情况下。
      */
     public static ItemStack getItemStack(Item item) {
+        ensureInitialized();
         return CACHE.computeIfAbsent(item, ItemStack::new);
     }
 
