@@ -15,8 +15,8 @@ import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class PlaceFoodForPicnicTask extends MaidCheckRateTask {
         boolean place = false;
         for (int i = 0; i < outputHandler.getSlots(); i++) {
             ItemStack itemStack = outputHandler.getStackInSlot(i);
-            if (!itemStack.isEmpty() && itemStack.isEdible()) {
+            if (!itemStack.isEmpty() && itemStack.getFoodProperties(null) != null) {
                 int slot = findAviFoodSlot(picnicMatHandler);
                 if (slot != -1) {
                     place = true;
@@ -117,7 +117,7 @@ public class PlaceFoodForPicnicTask extends MaidCheckRateTask {
         BlockPos blockPos = maid.getBrainSearchPos();
         PoiManager poiManager = world.getPoiManager();
         int range = (int) maid.getRestrictRadius();
-        return poiManager.getInRange(type -> type.get().equals(InitPoi.HOME_MEAL_BLOCK.get()), blockPos, range, PoiManager.Occupancy.ANY)
+        return poiManager.getInRange(type -> type.value().equals(InitPoi.HOME_MEAL_BLOCK.get()), blockPos, range, PoiManager.Occupancy.ANY)
                 .map(PoiRecord::getPos).filter(pos -> hasMaid(world, pos) && !hasFood(maid, pos))
                 .toList();
     }

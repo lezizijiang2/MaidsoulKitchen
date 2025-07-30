@@ -28,7 +28,7 @@ public class KettleRecSerializerManager extends RecSerializerManager<KettleRecip
 
     @Override
     public String getRecipeTypeId() {
-        return YHBlocks.KETTLE_RT.getId().toString();
+        return YHBlocks.KETTLE_RT.id().toString();
     }
 
     @Override

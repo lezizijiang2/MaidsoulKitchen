@@ -14,13 +14,13 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public interface IBannerRenderer {
-    ResourceLocation TEXTURE = new ResourceLocation(TouhouLittleMaid.MOD_ID, "textures/bedrock/entity/maid_banner.png");
+    ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(TouhouLittleMaid.MOD_ID, "textures/bedrock/entity/maid_banner.png");
 
     static void renderBanner(BedrockPart banner, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, ResourceLocation location) {
         VertexConsumer vc = bufferSource.getBuffer(RenderType.entitySolid(location));
@@ -35,7 +35,7 @@ public interface IBannerRenderer {
             matrixStack.scale(0.5F, 0.5F, 0.5F);
             matrixStack.mulPose(Axis.XN.rotationDegrees(5));
             VertexConsumer buffer = bufferIn.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
-            bannerModel.renderToBuffer(matrixStack, buffer, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            bannerModel.renderToBuffer(matrixStack, buffer, packedLightIn, OverlayTexture.NO_OVERLAY);
             renderBanner(bannerModel.getPart("banner"), matrixStack, bufferIn, packedLightIn, bannerLocation);
             matrixStack.popPose();
 
@@ -54,7 +54,7 @@ public interface IBannerRenderer {
             matrixStack.mulPose(Axis.YN.rotationDegrees(180));
             matrixStack.mulPose(Axis.XN.rotationDegrees(5));
             VertexConsumer buffer = bufferIn.getBuffer(RenderType.entitySolid(TEXTURE));
-            bannerModel.renderToBuffer(matrixStack, buffer, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            bannerModel.renderToBuffer(matrixStack, buffer, packedLightIn, OverlayTexture.NO_OVERLAY);
             renderBanner(bannerModel.getPart("banner"), matrixStack, bufferIn, packedLightIn, bannerLocation);
             matrixStack.popPose();
 

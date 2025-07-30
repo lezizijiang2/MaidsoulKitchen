@@ -21,7 +21,7 @@ public class MokaRecSerializerManager extends RecSerializerManager<MokaRecipe> {
 
     @Override
     public String getRecipeTypeId() {
-        return YHBlocks.MOKA_RT.getId().toString();
+        return YHBlocks.MOKA_RT.id().toString();
     }
 
     @Override

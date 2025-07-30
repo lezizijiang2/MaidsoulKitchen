@@ -9,7 +9,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@TaskMixin(task = TaskInfo.KK_BREW_BARREL)
+@TaskMixin(TaskInfo.KK_BREW_BARREL)
 @Mixin(value = BrewingBarrelBlockEntity.class, remap = false)
 public abstract class BrewingBarrelBlockEntityMixin implements ICookBeAccessor {
     @Shadow

@@ -35,14 +35,14 @@ public interface IMaidsoulKitchenTask extends IMaidTask {
 
     @Override
     default List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createRideBrainTasks(EntityMaid maid) {
-        List<Pair<Integer, BehaviorControl>> rideBrainTasks = vCreateRideBrainTasks(maid);
+        List<Pair<Integer, BehaviorControl<? super EntityMaid>>> rideBrainTasks = vCreateRideBrainTasks(maid);
         if (!rideBrainTasks.isEmpty()) {
             return (List) rideBrainTasks;
         }
         return IMaidTask.super.createRideBrainTasks(maid);
     }
 
-    default List<Pair<Integer, BehaviorControl>> vCreateRideBrainTasks(EntityMaid entityMaid) {
+    default List<Pair<Integer, BehaviorControl<? super EntityMaid>>> vCreateRideBrainTasks(EntityMaid entityMaid) {
         return Collections.emptyList();
     }
 

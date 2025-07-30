@@ -1,5 +1,7 @@
 package com.github.wallev.maidsoulkitchen.network;
 
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.berryfruit.v1.BerryFruitData;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.cook.v1.KitchenData;
 import com.github.wallev.maidsoulkitchen.network.packet.c2s.*;
 import com.github.wallev.maidsoulkitchen.network.packet.s2c.RenderMaidHubZoneS2CPackage;
 import com.github.wallev.maidsoulkitchen.network.packet.s2c.SetCookBagBindModeS2CPackage;
@@ -30,6 +32,11 @@ public final class NetworkHandler {
         registrar.playToServer(SetCookDataC2SPackage.TYPE, SetCookDataC2SPackage.STREAM_CODEC, SetCookDataC2SPackage::handle);
         registrar.playToServer(SetFruitFarmSearchYOffsetC2SPackage.TYPE, SetFruitFarmSearchYOffsetC2SPackage.STREAM_CODEC, SetFruitFarmSearchYOffsetC2SPackage::handle);
         registrar.playToServer(ToggleCookBagGuiSideTabC2SPackage.TYPE, ToggleCookBagGuiSideTabC2SPackage.STREAM_CODEC, ToggleCookBagGuiSideTabC2SPackage::handle);
+        registrar.playToServer(SyncKitchenDataC2SPackage.TYPE, SyncKitchenDataC2SPackage.STREAM_CODEC, SyncKitchenDataC2SPackage::handle);
+        registrar.playToServer(GiveRecipeIngredientC2SPackage.TYPE, GiveRecipeIngredientC2SPackage.STREAM_CODEC, GiveRecipeIngredientC2SPackage::handle);
+        registrar.playToServer(SyncBerryFruitDataMessageC2SPackage.TYPE, SyncBerryFruitDataMessageC2SPackage.STREAM_CODEC, SyncBerryFruitDataMessageC2SPackage::handle);
+        registrar.playToServer(ActionCookDataRecsC2SPackage.TYPE, ActionCookDataRecsC2SPackage.STREAM_CODEC, ActionCookDataRecsC2SPackage::handle);
+        registrar.playToServer(SetCookDataModeC2SPackage.TYPE, SetCookDataModeC2SPackage.STREAM_CODEC, SetCookDataModeC2SPackage::handle);
 
         registrar.playToClient(SetCookBagBindModeS2CPackage.TYPE, SetCookBagBindModeS2CPackage.STREAM_CODEC, SetCookBagBindModeS2CPackage::handle);
         registrar.playToClient(RenderMaidHubZoneS2CPackage.TYPE, RenderMaidHubZoneS2CPackage.STREAM_CODEC, RenderMaidHubZoneS2CPackage::handle);
@@ -99,7 +106,7 @@ public final class NetworkHandler {
         }
 
         public static void syncBerryFruitData(int maidId, ResourceLocation taskId, BerryFruitData data) {
-            sendToServer(new SyncBerryFruitDataC2SPackage(maidId, taskId, data));
+            sendToServer(new SyncBerryFruitDataMessageC2SPackage(maidId, taskId, data));
         }
 
         public static void syncKitchenData2(int maidId, KitchenData data) {

@@ -5,20 +5,21 @@ import com.github.wallev.maidsoulkitchen.task.cook.common.inv.item.ItemInventory
 import com.github.wallev.maidsoulkitchen.task.cook.common.inv.maid.IMaidCookInventory;
 import com.github.wallev.maidsoulkitchen.task.cook.common.manager.MaidCookManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.MaidRec;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
-public class FluidPotCookRule1Copy<B extends BlockEntity, R extends Recipe<? extends Container>> extends AbstractCookRule<B, R> {
+
+public class FluidPotCookRule1Copy<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends AbstractCookRule<B, R> {
     @SuppressWarnings("rawtypes")
     private static final FluidPotCookRule1Copy INSTANCE = new FluidPotCookRule1Copy<>();
 
     @SuppressWarnings("unchecked")
-    public static <B extends BlockEntity, R extends Recipe<? extends Container>> FluidPotCookRule1Copy<B, R> getInstance() {
+    public static <B extends BlockEntity, R extends Recipe<? extends RecipeInput>> FluidPotCookRule1Copy<B, R> getInstance() {
         return (FluidPotCookRule1Copy<B, R>) INSTANCE;
     }
 

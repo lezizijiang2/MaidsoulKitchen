@@ -59,7 +59,7 @@ public class BubbleUtil {
 
     public static MutableComponent getBubbleText(EntityMaid maid, ItemStack food) {
         LivingEntity owner = maid.getOwner();
-        String ownerName = owner == null ? VComponent.translatable("chat_bubble.maidsoulkitchen.cook.master").getString() : owner.getDisplayName().getString();
+        String ownerName = owner == null ? Component.translatable("chat_bubble.maidsoulkitchen.cook.master").getString() : owner.getDisplayName().getString();
         String name = food.getHoverName().getString();
         int count = food.getCount();
 

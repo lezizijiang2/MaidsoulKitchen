@@ -107,7 +107,7 @@ public class ItemDefinition {
             if (o instanceof ItemDefinition that) {
                 return Objects.equals(item, that.item) && Objects.equals(tag, that.tag);
             } else if (o instanceof ItemStack that) {
-                return Objects.equals(item, that.getItem()) && Objects.equals(tag, that.getTag());
+                return Objects.equals(item, that.getItem()) && Objects.equals(tag, that.getComponentsPatch());
             }
         }
         return false;

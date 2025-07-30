@@ -11,12 +11,12 @@ import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CookConfigContainer;
 import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.TaskInfo;
-import com.github.wallev.maidsoulkitchen.vhelper.server.ai.VBehaviorControl;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -28,12 +28,12 @@ import java.util.Optional;
 public class TaskCook implements IMaidsoulKitchenTask, IDataTask<KitchenData> {
 
     @Override
-    public List<Pair<Integer, VBehaviorControl>> vCreateBrainTasks(EntityMaid maid) {
+    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid maid) {
         return this.getOrIdleTask(maid).vCreateBrainTasks(maid);
     }
 
     @Override
-    public List<Pair<Integer, VBehaviorControl>> vCreateRideBrainTasks(EntityMaid maid) {
+    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> vCreateRideBrainTasks(EntityMaid maid) {
         return this.getOrIdleTask(maid).vCreateRideBrainTasks(maid);
     }
 

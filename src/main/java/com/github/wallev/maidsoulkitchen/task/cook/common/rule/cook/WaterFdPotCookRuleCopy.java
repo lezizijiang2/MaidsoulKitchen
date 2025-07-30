@@ -6,20 +6,20 @@ import com.github.wallev.maidsoulkitchen.task.cook.common.inv.maid.IMaidCookInve
 import com.github.wallev.maidsoulkitchen.task.cook.common.manager.MaidCookManager;
 import com.github.wallev.maidsoulkitchen.util.ItemStackUtil;
 import com.github.wallev.maidsoulkitchen.util.MaidUtil;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 
-public class WaterFdPotCookRuleCopy<B extends BlockEntity, R extends Recipe<? extends Container>> extends AbstractCookRule<B, R> {
+public class WaterFdPotCookRuleCopy<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> extends AbstractCookRule<B, R> {
     @SuppressWarnings("rawtypes")
     private static final WaterFdPotCookRuleCopy INSTANCE = new WaterFdPotCookRuleCopy<>();
 
     @SuppressWarnings("unchecked")
-    public static <B extends BlockEntity, R extends Recipe<? extends Container>> WaterFdPotCookRuleCopy<B, R> getInstance() {
+    public static <B extends BlockEntity, R extends Recipe<? extends RecipeInput>> WaterFdPotCookRuleCopy<B, R> getInstance() {
         return (WaterFdPotCookRuleCopy<B, R>) INSTANCE;
     }
 

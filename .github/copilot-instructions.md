@@ -1,45 +1,117 @@
-# Copilot Instructions
+# Instructions
 
-## Scratchpad
+During your interaction with the user, if you find anything reusable in this project (e.g. version of a library, model
+name), especially about a fix to a mistake you made or a correction you received, you should take note in the `Lessons`
+section in the `.github/copilot-instructions.md` file so you will not make the same mistake again.
 
-### Current Task: 根据错误日志修复 mod_task_clazz.json 中的方法签名
+You should also use the `.github/copilot-instructions.md` file's "scratchpad" section as a Scratchpad to organize your
+thoughts. Especially when you receive a new task, you should first review the content of the Scratchpad, clear old
+different task if necessary, first explain the task, and plan the steps you need to take to complete the task. You can
+use todo markers to indicate the progress, e.g.
+[X] Task 1
+[ ] Task 2
 
-[X] 分析 maidsoul_kitchen_task_class_analysis.txt 中的错误信息
-[X] 识别需要从 minecraftforge 更新到 neoforged 的方法签名
-[X] 标记并修复错误的方法签名和字段
-[X] 验证修改完成
+Also update the progress of the task in the Scratchpad when you finish a subtask.
+Especially when you finished a milestone, it will help to improve your depth of task accomplishment to use the
+Scratchpad to reflect and plan.
+The goal is to help you maintain a big picture as well as the progress of the task. Always refer to the Scratchpad when
+you plan the next step.
 
-**任务完成总结**：
+# Tools
 
-经过详细分析，我发现了一个重要情况：JSON配置文件中的**方法签名都已经是正确的neoforged格式**，但存在**类和字段不存在**的问题。
+Note all the tools are in python. So in the case you need to do batch processing, you can always consult the python
+files and write your own script.
 
-**已完成的修复工作**：
+[NOTE TO CURSOR: Since no API key is configured, please ignore both the Screenshot Verification and LLM sections below.]
+[NOTE TO USER: If you have configured or plan to configure an API key in the future, simply delete these two notice lines to enable these features.]
 
-1. **标记了不存在的类**：
-    - `dev.xkmc.l2library.base.tile.BaseTank` - 已注释掉
-    - `dev.xkmc.youkaishomecoming.content.pot.ferment.FermentationDummyContainer` - 已注释掉
+## Screenshot Verification
 
-2. **标记了不存在的方法**：
-    - `dev.xkmc.l2library.base.tile.BaseTank#isEmpty()Z` - 已注释掉
-    - `dev.xkmc.youkaishomecoming.content.pot.ferment.FermentationDummyContainer#<init>` - 已注释掉
+The screenshot verification workflow allows you to capture screenshots of web pages and verify their appearance using
+LLMs. The following tools are available:
 
-3. **标记了不存在的字段**：
-    - `dev.xkmc.youkaishomecoming.content.pot.ferment.SimpleFermentationRecipe#defaultContainer` - 已注释掉
-    - `dev.xkmc.youkaishomecoming.content.pot.ferment.SimpleFermentationRecipe#defaultBottle` - 已注释掉
+1. Screenshot Capture:
 
-4. **同时更新了allClazzs数组**，移除了不存在的类引用
+```bash
+venv/bin/python tools/screenshot_utils.py URL [--output OUTPUT] [--width WIDTH] [--height HEIGHT]
+```
 
-**关键发现**：
+2. LLM Verification with Images:
 
-- 所有方法签名都已经正确使用neoforged格式（`Lnet/neoforged/neoforge/`）
-- 错误的根本原因是某些类和字段在当前版本中不存在
-- 共修复了与错误日志中14个错误相关的问题
+```bash
+venv/bin/python tools/llm_api.py --prompt "Your verification question" --provider {openai|anthropic} --image path/to/screenshot.png
+```
 
-**结果**：配置文件现在只包含存在的类、方法和字段，应该能消除类分析工具报告的错误。
+Example workflow:
 
-## Lessons
+```python
+from screenshot_utils import take_screenshot_sync
+from llm_api import query_llm
 
-### User Specified Lessons
+# Take a screenshot
+screenshot_path = take_screenshot_sync('https://example.com', 'screenshot.png')
+
+# Verify with LLM
+response = query_llm(
+    "What is the background color and title of this webpage?",
+    provider="openai",  # or "anthropic"
+    image_path=screenshot_path
+)
+print(response)
+```
+
+## LLM
+
+You always have an LLM at your side to help you with the task. For simple tasks, you could invoke the LLM by running the
+following command:
+
+```
+venv/bin/python ./tools/llm_api.py --prompt "What is the capital of France?" --provider "anthropic"
+```
+
+The LLM API supports multiple providers:
+
+- OpenAI (default, model: gpt-4o)
+- Azure OpenAI (model: configured via AZURE_OPENAI_MODEL_DEPLOYMENT in .env file, defaults to gpt-4o-ms)
+- DeepSeek (model: deepseek-chat)
+- Anthropic (model: claude-3-sonnet-20240229)
+- Gemini (model: gemini-pro)
+- Local LLM (model: Qwen/Qwen2.5-32B-Instruct-AWQ)
+
+But usually it's a better idea to check the content of the file and use the APIs in the `tools/llm_api.py` file to
+invoke the LLM if needed.
+
+## Web browser
+
+You could use the `tools/web_scraper.py` file to scrape the web.
+
+```
+venv/bin/python ./tools/web_scraper.py --max-concurrent 3 URL1 URL2 URL3
+```
+
+This will output the content of the web pages.
+
+## Search engine
+
+You could use the `tools/search_engine.py` file to search the web.
+
+```
+venv/bin/python ./tools/search_engine.py "your search keywords"
+```
+
+This will output the search results in the following format:
+
+```
+URL: https://example.com
+Title: This is the title of the search result
+Snippet: This is a snippet of the search result
+```
+
+If needed, you can further use the `web_scraper.py` file to scrape the web page content.
+
+# Lessons
+
+## User Specified Lessons
 
 - You have a python venv in ./venv. Use it.
 - Include info useful for debugging in the program output.
@@ -48,10 +120,52 @@
   message in a file, and then use `git commit -F <filename>` or similar command to commit. And then remove the file.
   Include "[Cursor] " in the commit message and PR title.
 
-### Cursor learned
+## Cursor learned
 
 - For search results, ensure proper handling of different character encodings (UTF-8) for international queries
 - Add debug information to stderr while keeping the main output clean in stdout for better pipeline integration
 - When using seaborn styles in matplotlib, use 'seaborn-v0_8' instead of 'seaborn' as the style name due to recent
   seaborn version changes
 - Use 'gpt-4o' as the model name for OpenAI's GPT-4 with vision capabilities
+- NeoForge packet format requires implementing CustomPacketPayload interface with TYPE and STREAM_CODEC static fields
+- Use IPayloadContext instead of NetworkEvent.Context for packet handling in NeoForge
+- StreamCodec.composite() requires proper parameter count matching - use separate codec creation methods for complex
+  types
+
+# Scratchpad
+
+## Current Task
+
+Task: 类似的，重写SyncKitchenDataC2SMessage为NeoForge格式
+
+## Analysis
+
+Current SyncKitchenDataC2SMessage uses old Forge format:
+
+- Record with manual encode/decode/handle methods
+- Uses NetworkEvent.Context and FriendlyByteBuf
+- Complex nested data structure (KitchenData containing Map<ResourceLocation, CookDataV1>)
+- Uses context.setPacketHandled(true) (old Forge pattern)
+
+Need to convert to NeoForge format like SetFruitFarmSearchYOffsetC2SPackage:
+
+- Implement CustomPacketPayload interface
+- Add TYPE and STREAM_CODEC static fields
+- Use IPayloadContext in handle method
+- Create custom StreamCodec for complex KitchenData type
+- Remove manual encode/decode methods
+
+## Steps to Complete
+
+[X] Analyze current file structure
+[X] Identify complex data serialization needs
+[ ] Create StreamCodec for CookDataV1
+[ ] Create StreamCodec for KitchenData
+[ ] Convert to CustomPacketPayload format
+[ ] Update handle method with IPayloadContext
+[ ] Fix API changes (sender.level to sender.level())
+[ ] Remove old encode/decode methods
+
+## Progress
+
+Starting conversion of SyncKitchenDataC2SMessage to NeoForge format...

@@ -8,10 +8,10 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.LoadingModList;
-import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.LoadingModList;
+import net.neoforged.fml.loading.modscan.ModAnnotation;
+import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class ClassAnalyzerManager {
                     }
                     List<ModAnnotation.EnumHolder> tasks = getEnumHolders(data, "value");
                     for (ModAnnotation.EnumHolder taskVal : tasks) {
-                        ITaskInfo<?> task = checkManager.taskInfoByKey(taskVal.getValue());
+                        ITaskInfo<?> task = checkManager.taskInfoByKey(taskVal.value());
                         clazzMap.addTaskMixin(task, memberName);
                     }
                 }
@@ -101,7 +101,7 @@ public class ClassAnalyzerManager {
     }
 
     private static String getEnumHolderValue(ModFileScanData.AnnotationData data, String name) {
-        return ((ModAnnotation.EnumHolder) data.annotationData().get(name)).getValue();
+        return ((ModAnnotation.EnumHolder) data.annotationData().get(name)).value();
     }
 
     @SuppressWarnings("unchecked")

@@ -14,9 +14,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class PlaceFoodForPicnicWithRideIdleTask extends MaidCheckRateTask {
         if (hudItem.isEmpty()) {
             outputHandler = maid.getAvailableBackpackInv();
         } else {
-            handlers = ItemCulinaryHub.getContainers(hudItem);
+            handlers = ItemCulinaryHub.getContainers(maid.level.registryAccess(), hudItem);
             if (handlers.isEmpty()) {
                 return;
             }
@@ -78,7 +78,7 @@ public class PlaceFoodForPicnicWithRideIdleTask extends MaidCheckRateTask {
 
         if (outputHandler != null && placeFood(outputHandler, picnicMatHandler)) {
             if (handlers != null) {
-                ItemCulinaryHub.setContainer(hudItem, handlers);
+                ItemCulinaryHub.setContainer(maid.level.registryAccess(), hudItem, handlers);
             }
             MaidUtil.pickupAction(maid);
             TileUtil.makeChanged(picnicMat);
@@ -105,7 +105,7 @@ public class PlaceFoodForPicnicWithRideIdleTask extends MaidCheckRateTask {
 
             for (int i = 0; i < beInv.getSlots(); i++) {
                 ItemStack itemStack = beInv.getStackInSlot(i);
-                if (!itemStack.isEmpty() && itemStack.isEdible()) {
+                if (!itemStack.isEmpty() && itemStack.getFoodProperties(maid) != null) {
                     if (aviSlots.isEmpty()) {
                         break placeEnd;
                     }
@@ -141,7 +141,7 @@ public class PlaceFoodForPicnicWithRideIdleTask extends MaidCheckRateTask {
         boolean place = false;
         for (int i = 0; i < outputHandler.getSlots(); i++) {
             ItemStack itemStack = outputHandler.getStackInSlot(i);
-            if (!itemStack.isEmpty() && itemStack.isEdible()) {
+            if (!itemStack.isEmpty() && itemStack.getFoodProperties(null) != null) {
                 int slot = findAviFoodSlot(picnicMatHandler);
                 if (slot != -1) {
                     place = true;

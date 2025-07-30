@@ -12,8 +12,8 @@ import com.github.wallev.maidsoulkitchen.entity.data.inner.task.cook.v1.KitchenD
 import com.github.wallev.maidsoulkitchen.init.MkItems;
 import com.github.wallev.maidsoulkitchen.task.cook.common.task.CookTaskManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.task.TaskCook;
-import com.github.wallev.maidsoulkitchen.vhelper.client.chat.VComponent;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.Slot;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -48,7 +48,7 @@ public class RenderSlotHighEvent {
             }
             MaidTabButton configButton = new MaidTabButton(guiLeft + 119, guiTop + 5 + 5, 0, "", b -> {
             });
-            TipsHelper.renderTips(graphics, configButton, VComponent.translatable("gui.maidsoulkitchen.to_setting_cook_task"));
+            TipsHelper.renderTips(graphics, configButton, Component.translatable("gui.maidsoulkitchen.to_setting_cook_task"));
         }
     }
 

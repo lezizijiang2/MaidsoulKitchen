@@ -48,7 +48,7 @@ public class FermentationRecSerializerManager extends FluidRecSerializerManager<
 
     @Override
     public String getRecipeTypeId() {
-        return YHBlocks.FERMENT_RT.getId().toString();
+        return YHBlocks.FERMENT_RT.id().toString();
     }
 
     @Override

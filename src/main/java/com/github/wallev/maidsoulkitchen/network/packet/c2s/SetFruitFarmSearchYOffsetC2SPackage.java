@@ -3,7 +3,6 @@ package com.github.wallev.maidsoulkitchen.network.packet.c2s;
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.data.TaskDataRegister;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.FruitData;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -41,8 +40,8 @@ public record SetFruitFarmSearchYOffsetC2SPackage(int entityId, ResourceLocation
                 ServerPlayer sender = (ServerPlayer) context.player();
                 Entity entity = sender.level.getEntity(message.entityId);
                 if (entity instanceof EntityMaid maid && maid.isOwnedBy(sender)) {
-                    TaskDataKey<FruitData> value = TaskDataRegister.getValue(message.dataKey);
-                    FruitData fruitData = maid.getOrCreateData(value, new FruitData());
+                    TaskDataKey<com.github.wallev.maidsoulkitchen.entity.data.inner.task.berryfruit.v0.FruitData> value = TaskDataRegister.getValue(message.dataKey);
+                    com.github.wallev.maidsoulkitchen.entity.data.inner.task.berryfruit.v0.FruitData fruitData = maid.getOrCreateData(value, new com.github.wallev.maidsoulkitchen.entity.data.inner.task.berryfruit.v0.FruitData());
                     fruitData.setSearchYOffset(message.searchYOffset);
                     maid.setAndSyncData(value, fruitData);
                 }

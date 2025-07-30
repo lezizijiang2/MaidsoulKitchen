@@ -3,7 +3,7 @@ package com.github.wallev.maidsoulkitchen.network.packet.c2s;
 import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
 import com.github.tartaricacid.touhoulittlemaid.entity.data.TaskDataRegister;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import com.github.wallev.maidsoulkitchen.entity.data.inner.task.CookData;
+import com.github.wallev.maidsoulkitchen.entity.data.inner.task.cook.v1.CookDataV1;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -42,8 +42,8 @@ public record ActionCookDataRecC2SPackage(int entityId, ResourceLocation dataKey
                 ServerPlayer sender = (ServerPlayer) context.player();
                 Entity entity = sender.level.getEntity(message.entityId);
                 if (entity instanceof EntityMaid maid && maid.isOwnedBy(sender)) {
-                    TaskDataKey<CookData> value = TaskDataRegister.getValue(message.dataKey);
-                    CookData cookData = maid.getOrCreateData(value, new CookData());
+                    TaskDataKey<CookDataV1> value = TaskDataRegister.getValue(message.dataKey);
+                    CookDataV1 cookData = maid.getOrCreateData(value, new CookDataV1());
                     cookData.addOrRemoveRec(message.rec, message.mode);
                     maid.setAndSyncData(value, cookData);
                 }

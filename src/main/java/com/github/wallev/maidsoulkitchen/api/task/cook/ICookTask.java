@@ -21,7 +21,6 @@ import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.TickCookRule
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.RecSerializerManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
 import com.github.wallev.maidsoulkitchen.util.MemoryUtil;
-import com.github.wallev.maidsoulkitchen.vhelper.server.ai.VBehaviorControl;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -105,18 +104,18 @@ public abstract class ICookTask<B extends BlockEntity, R extends Recipe<? extend
 
     @SuppressWarnings("all")
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createRideBrainTasks(EntityMaid maid) {
-        List<Pair<Integer, VBehaviorControl>> rideBrainTasks = vCreateRideBrainTasks(maid);
+        List<Pair<Integer, BehaviorControl<? super EntityMaid>>> rideBrainTasks = vCreateRideBrainTasks(maid);
         if (!rideBrainTasks.isEmpty()) {
             return (List) rideBrainTasks;
         }
         return List.of();
     }
 
-    public List<Pair<Integer, VBehaviorControl>> vCreateRideBrainTasks(EntityMaid entityMaid) {
+    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> vCreateRideBrainTasks(EntityMaid entityMaid) {
         return Collections.emptyList();
     }
 
-    public List<Pair<Integer, VBehaviorControl>> vCreateBrainTasks(EntityMaid maid) {
+    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> vCreateBrainTasks(EntityMaid maid) {
         MemoryUtil.resetCookWorkState(maid);
         List<Pair<Integer, BehaviorControl<? super EntityMaid>>> controlTasks = new ArrayList<>();
 

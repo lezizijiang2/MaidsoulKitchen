@@ -1,7 +1,7 @@
 package com.github.wallev.maidsoulkitchen.util;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.nio.file.Path;
 

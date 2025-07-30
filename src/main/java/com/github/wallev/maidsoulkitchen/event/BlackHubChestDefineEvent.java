@@ -2,19 +2,18 @@ package com.github.wallev.maidsoulkitchen.event;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.config.subconfig.TaskConfig;
-import com.github.wallev.maidsoulkitchen.vhelper.client.resources.VResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.config.ModConfigEvent;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Mod.EventBusSubscriber(modid = MaidsoulKitchen.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MaidsoulKitchen.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class BlackHubChestDefineEvent {
 
     public static final Set<Block> BLACK_HUB_CHEST_LIST = new HashSet<>();
@@ -35,9 +34,9 @@ public class BlackHubChestDefineEvent {
 
     private static void handleMelonAndStemList(List<String> config, Set<Block> output) {
         for (String blockId : config) {
-            ResourceLocation location = VResourceLocation.tryParse(blockId);
+            ResourceLocation location = ResourceLocation.tryParse(blockId);
             if (location == null) continue;
-            Block block = ForgeRegistries.BLOCKS.getValue(location);
+            Block block = BuiltInRegistries.BLOCK.get(location);
             if (block == null) continue;
             output.add(block);
         }

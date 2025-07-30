@@ -1,6 +1,6 @@
 package com.github.wallev.maidsoulkitchen.util;
 
-import com.github.wallev.maidsoulkitchen.util.modutility.Mods;
+import com.github.wallev.maidsoulkitchen.modclazzchecker.manager.Mods;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.LoadingModList;

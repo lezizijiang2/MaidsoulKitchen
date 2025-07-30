@@ -1,5 +1,7 @@
 // 直属依赖项
 dependencies {
+    if (!simplebedrockmodel_version.isEmpty())
+        compileOnly "maven.modrinth:simplebedrockmodel:${simplebedrockmodel_version}-${mod_loader},${minecraft_version}"
     if (!touhou_little_maid_version.isEmpty())
         implementation "maven.modrinth:touhou-little-maid:${touhou_little_maid_version}-${mod_loader},${minecraft_version}"
 

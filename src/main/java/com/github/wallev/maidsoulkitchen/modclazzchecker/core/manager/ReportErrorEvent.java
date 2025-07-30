@@ -1,15 +1,16 @@
 package com.github.wallev.maidsoulkitchen.modclazzchecker.core.manager;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 public class ReportErrorEvent {
     private final BaseClazzCheckManager<?, ?> checkManager;
 
     private ReportErrorEvent(BaseClazzCheckManager<?, ?> checkManager) {
         this.checkManager = checkManager;
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
     }
 
     public static void init(BaseClazzCheckManager<?, ?> checkManager) {

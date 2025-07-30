@@ -45,7 +45,7 @@ public class CuisineRecSerializerManager extends RecSerializerManager<BaseCuisin
 
     @Override
     public String getRecipeTypeId() {
-        return CDMisc.RT_CUISINE.getId().toString();
+        return CDMisc.RT_CUISINE.id().toString();
     }
 
 

@@ -3,9 +3,9 @@ package com.github.wallev.maidsoulkitchen.task.cook.common.inv.item;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -284,7 +284,7 @@ public class ItemInventory {
 
     private static class ItemCount {
         public static final Codec<ItemCount> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-                ForgeRegistries.ITEMS.getCodec().fieldOf("item").forGetter(o -> o.item),
+                BuiltInRegistries.ITEM.byNameCodec().fieldOf("item").forGetter(o -> o.item),
                 Codec.LONG.fieldOf("count").forGetter(o -> o.count)
         ).apply(ins, ItemCount::new));
         private Item item;

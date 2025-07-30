@@ -8,8 +8,8 @@ import com.github.wallev.maidsoulkitchen.modclazzchecker.core.manager.BaseClazzC
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.serialization.JsonOps;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.objectweb.asm.*;
 import org.spongepowered.asm.mixin.Mixin;
 

@@ -41,8 +41,8 @@ public record MaidRec(RecipeHolder<?> recipe, int time, ItemStack result, int am
         return new MaidRec(null, time0, result, amount, oil, tool, container, maidItems, fluidItem);
     }));
     public static ResourceLocation EMPTY_RES = ResourceLocation.fromNamespaceAndPath(MaidsoulKitchen.MOD_ID, "empty_rec");
-    public static SmokingRecipe EMPTY_REC = new SmokingRecipe(EMPTY_RES, "", CookingBookCategory.MISC, Ingredient.EMPTY, ItemStack.EMPTY, 0f, 0);
-    public static final MaidRec EMPTY = new MaidRec(EMPTY_REC, ItemStack.EMPTY, 0, Collections.emptyList(), MaidItem.EMPTY);
+    public static SmokingRecipe EMPTY_REC = new SmokingRecipe("", CookingBookCategory.MISC, Ingredient.EMPTY, ItemStack.EMPTY, 0f, 0);
+    public static final MaidRec EMPTY = new MaidRec(new RecipeHolder<>(EMPTY_RES, EMPTY_REC), ItemStack.EMPTY, 0, Collections.emptyList(), MaidItem.EMPTY);
 
     public MaidRec(RecipeHolder<?> recipe, ItemStack result, int amount, ItemStack tool, ItemStack container, List<MaidItem> maidItems, MaidItem fluidItem) {
         this(recipe, 0, result, amount, ItemStack.EMPTY, tool, container, maidItems, fluidItem);

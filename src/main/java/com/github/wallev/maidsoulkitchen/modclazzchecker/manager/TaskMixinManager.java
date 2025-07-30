@@ -1,13 +1,13 @@
 package com.github.wallev.maidsoulkitchen.modclazzchecker.manager;
 
+import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
 import com.github.wallev.maidsoulkitchen.modclazzchecker.core.classana.ModTaskMixin;
 import com.github.wallev.maidsoulkitchen.modclazzchecker.core.classana.ModTaskMixinMap;
-import com.github.wallev.maidsoulkitchen.vhelper.IModInfo;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.minecraftforge.fml.loading.LoadingModList;
+import net.neoforged.fml.loading.LoadingModList;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,7 +24,7 @@ public class TaskMixinManager {
         try {
             Map<String, List<ModTaskMixin>> map = new HashMap<>();
 
-            Path resource = LoadingModList.get().getModFileById(IModInfo.MOD_ID)
+            Path resource = LoadingModList.get().getModFileById(MaidsoulKitchen.MOD_ID)
                     .getFile()
                     .findResource(FILE_NAME);
             String json = Files.readString(resource);
