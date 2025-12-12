@@ -136,36 +136,32 @@ If needed, you can further use the `web_scraper.py` file to scrape the web page 
 
 ## Current Task
 
-Task: 类似的，重写SyncKitchenDataC2SMessage为NeoForge格式
+Task: Pull upstream code, merge 1.20.1 branch, cherry-pick changes from upstream 1.20.1 to 1.21.1 branch, and migrate forge to neoforge using context7
+
+Translation:
+1. 拉取upstream代码，合并1.20.1分支 - Pull upstream code and merge 1.20.1 branch
+2. cherry-pick上游分支中对1.20.1版本的修改到1.21.1分支中 - Cherry-pick changes from upstream 1.20.1 version to 1.21.1 branch
+3. 迁移forge到neoforge，使用context7 - Migrate forge to neoforge using context7
 
 ## Analysis
 
-Current SyncKitchenDataC2SMessage uses old Forge format:
-
-- Record with manual encode/decode/handle methods
-- Uses NetworkEvent.Context and FriendlyByteBuf
-- Complex nested data structure (KitchenData containing Map<ResourceLocation, CookDataV1>)
-- Uses context.setPacketHandled(true) (old Forge pattern)
-
-Need to convert to NeoForge format like SetFruitFarmSearchYOffsetC2SPackage:
-
-- Implement CustomPacketPayload interface
-- Add TYPE and STREAM_CODEC static fields
-- Use IPayloadContext in handle method
-- Create custom StreamCodec for complex KitchenData type
-- Remove manual encode/decode methods
+Current state:
+- We're on branch: copilot/cherry-pick-forge-to-neoforge
+- Only one remote: origin (https://github.com/lezizijiang2/MaidsoulKitchen)
+- The original upstream repository is likely: Wall-ev/MaidsoulKitchen (based on readme.md)
+- Need to add upstream remote and fetch branches
+- Need to understand what "context7" means for neoforge migration
 
 ## Steps to Complete
 
-[X] Analyze current file structure
-[X] Identify complex data serialization needs
-[ ] Create StreamCodec for CookDataV1
-[ ] Create StreamCodec for KitchenData
-[ ] Convert to CustomPacketPayload format
-[ ] Update handle method with IPayloadContext
-[ ] Fix API changes (sender.level to sender.level())
-[ ] Remove old encode/decode methods
+[ ] Add upstream remote (Wall-ev/MaidsoulKitchen)
+[ ] Fetch upstream branches
+[ ] Find and checkout 1.20.1 branch
+[ ] Merge upstream 1.20.1 changes
+[ ] Identify changes to cherry-pick to 1.21.1
+[ ] Apply forge to neoforge migration with context7
+[ ] Test and verify changes
 
 ## Progress
 
-Starting conversion of SyncKitchenDataC2SMessage to NeoForge format...
+Starting investigation of repository structure and upstream...
