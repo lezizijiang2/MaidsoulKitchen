@@ -7,7 +7,7 @@ import com.github.tartaricacid.touhoulittlemaid.util.SoundUtil;
 import com.github.wallev.maidsoulkitchen.compat.patchouli.entry.TaskBookEntryType;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.cook.v1.CookDataV1;
 import com.github.wallev.maidsoulkitchen.entity.data.inner.task.cook.v1.KitchenData;
-import com.github.wallev.maidsoulkitchen.init.MkEntities;
+import com.github.wallev.maidsoulkitchen.init.ModEntities;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.DataRegister;
 import com.github.wallev.maidsoulkitchen.init.touhoulittlemaid.TaskRegister;
 import com.github.wallev.maidsoulkitchen.inventory.container.maid.CookConfigContainer;
@@ -21,6 +21,7 @@ import com.github.wallev.maidsoulkitchen.task.cook.common.rule.cook.TickCookRule
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.RecSerializerManager;
 import com.github.wallev.maidsoulkitchen.task.cook.common.rule.rec.mkrec.MKRecipe;
 import com.github.wallev.maidsoulkitchen.util.MemoryUtil;
+import com.github.wallev.maidsoulkitchen.vhelper.server.ai.VBehaviorControl;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -28,6 +29,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.player.Inventory;
@@ -35,17 +37,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
 
-public abstract class ICookTask<B extends BlockEntity, R extends Recipe<? extends RecipeInput>> {
+public abstract class ICookTask<B extends BlockEntity, R extends Recipe<? extends Container>> {
     public static final float MOVE_SPEED = 0.5f;
     public static final int VERTICAL_SEARCH_RANGE = 2;
     private static final Map<ResourceLocation, ICookTask<?, ?>> TASK = new LinkedHashMap<>();
@@ -104,20 +105,20 @@ public abstract class ICookTask<B extends BlockEntity, R extends Recipe<? extend
 
     @SuppressWarnings("all")
     public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createRideBrainTasks(EntityMaid maid) {
-        List<Pair<Integer, BehaviorControl<? super EntityMaid>>> rideBrainTasks = vCreateRideBrainTasks(maid);
+        List<Pair<Integer, VBehaviorControl>> rideBrainTasks = vCreateRideBrainTasks(maid);
         if (!rideBrainTasks.isEmpty()) {
             return (List) rideBrainTasks;
         }
         return List.of();
     }
 
-    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> vCreateRideBrainTasks(EntityMaid entityMaid) {
+    public List<Pair<Integer, VBehaviorControl>> vCreateRideBrainTasks(EntityMaid entityMaid) {
         return Collections.emptyList();
     }
 
-    public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> vCreateBrainTasks(EntityMaid maid) {
+    public List<Pair<Integer, VBehaviorControl>> vCreateBrainTasks(EntityMaid maid) {
         MemoryUtil.resetCookWorkState(maid);
-        List<Pair<Integer, BehaviorControl<? super EntityMaid>>> controlTasks = new ArrayList<>();
+        List<Pair<Integer, VBehaviorControl>> controlTasks = new ArrayList<>();
 
         CookBeBase<B> cookBe = this.createCookBe(maid);
         AbstractCookRule<B, R> rule = this.cookRule.getOrCreate();
@@ -206,11 +207,6 @@ public abstract class ICookTask<B extends BlockEntity, R extends Recipe<? extend
             public AbstractContainerMenu createMenu(int index, Inventory playerInventory, Player player) {
                 return new CookConfigContainer(index, playerInventory, entityId);
             }
-
-            @Override
-            public boolean shouldTriggerClientSideContainerClosingOnOpen() {
-                return false;
-            }
         };
     }
 
@@ -238,14 +234,14 @@ public abstract class ICookTask<B extends BlockEntity, R extends Recipe<? extend
 
     public boolean enableLookAndRandomWalk(EntityMaid maid) {
         // 工作中禁止游走
-        return !maid.getBrain().hasMemoryValue(MkEntities.WORK_POS.get());
+        return !maid.getBrain().hasMemoryValue(ModEntities.WORK_POS.get());
     }
 
     public boolean enableEating(EntityMaid maid) {
 //        return false;
 
         // 工作中禁止吃饭
-        return !maid.getBrain().hasMemoryValue(MkEntities.WORK_POS.get());
+        return !maid.getBrain().hasMemoryValue(ModEntities.WORK_POS.get());
     }
 
     public List<Component> getDescription() {
@@ -287,11 +283,11 @@ public abstract class ICookTask<B extends BlockEntity, R extends Recipe<? extend
         return this.getIcon().getHoverName();
     }
 
-    public String getBindModName() {
-        return bindModName;
-    }
-
     public final void setBindModName(String modName) {
         this.bindModName = modName;
+    }
+
+    public String getBindModName() {
+        return bindModName;
     }
 }

@@ -16,9 +16,8 @@ public interface ICompatFarmHandler {
     class Builder<T extends ICompatFarmHandler> {
         private T head;
         private T tail;
-
         public Builder<T> addHandler(T handler) {
-            if (head == null) {
+            if (head == null){
                 head = tail = handler;
                 return this;
             }
@@ -28,7 +27,7 @@ public interface ICompatFarmHandler {
             return this;
         }
 
-        public T build() {
+        public T build(){
             return this.head;
         }
     }
@@ -36,6 +35,6 @@ public interface ICompatFarmHandler {
     enum Result {
         DENY,
         ALLOW,
-        DEFAULT
+        DEFAULT;
     }
 }
