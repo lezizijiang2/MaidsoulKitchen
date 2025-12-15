@@ -50,21 +50,36 @@ Comprehensive code migration from `upstream/1.20.1-1.0-dev` (Forge, v0.3.0.9) to
 
 ---
 
-## Next: Phase 2 Batch 3 (Pending)
+## Next: Phase 2 Batch 3 (Analysis Complete - Ready to Port)
 
-### Container Registers (~5 files, ~250 lines)
-- [ ] Small Cooking Pot container
-- [ ] Blender container
-- [ ] Glass Drink Cup container
-- [ ] Mini Fridge container
-- [ ] Cooking Pan container
+### Part A: Infrastructure (7 files, ~400 lines) - REQUIRED FIRST
+**Inventory System**:
+- [ ] InvHandlerRegister.java - Registration annotation
+- [ ] IInvHandlerFactory.java - Base factory (needs NeoForge migration)
+- [ ] InvHandlersHelper.java - Helper utilities
+- [ ] WorldlyContainerInvHandlerFactory.java - Factory implementation
 
-### Language Files (~3 files, ~150 lines)
+**Language System**:
+- [ ] ModLang.java - Mod language annotation
+- [ ] TypeLang.java - Type language annotation
+- [ ] MsmLangUtil.java - Language utilities (~200 lines)
+
+### Part B: Container Registers (5 files, ~100 lines) - Depends on Part A
+- [ ] SmallCookingPotBlockEntityContainerInvRegister.java
+- [ ] BlenderBlockEntityContainerInvRegister.java
+- [ ] GlassDrinkCupBlockEntityContainerInvRegister.java
+- [ ] MiniFridgeBlockEntityContainerInvRegister.java
+- [ ] CookingPanBlockEntityContainerInvRegister.java
+
+### Part C: Language Files (4 files, ~60 lines) - Depends on Part A
 - [ ] BakeryLang.java
-- [ ] CandleLightLang.java
+- [ ] BakeriesLang.java
 - [ ] BeachPartyLang.java
+- [ ] CandleLightLang.java
 
-**Estimated Batch 3**: 8 files, ~400 lines
+**Revised Batch 3 Total**: 16 files, ~560 lines
+
+**Note**: Initial estimate was 8 files, but analysis revealed infrastructure dependencies that must be ported first.
 
 ---
 
