@@ -79,15 +79,38 @@
 
 ## Priority 3: Client Features
 
-### [ ] Todo: Event System Refactor (0.3.0.9)
+### ✅ COMPLETED: Event System Refactor (0.3.0.9)
 **Commit**: 9360b94
-**Changes**:
-- Remove: `RenderSlotHighEvent.java`
-- Add: `RenderSlotHighEventLegacy.java`
-- Add: `RenderSlotHighEventModern.java`
-- Add: `SlotRenderAndTipsHandler.java`
+**Issue**: Event system needed to be split to support different TouhouLittleMaid versions
 
-**Status**: Pending
+**Changes Applied**:
+1. **RenderSlotHighEvent.java** - Removed ✅
+   - Old monolithic event handler removed
+
+2. **RenderSlotHighEventLegacy.java** - Created ✅
+   - Event handler for legacy TLM versions (TLM_SLOT_LEGACY)
+   - Adapted to NeoForge: `net.minecraftforge` → `net.neoforged`
+
+3. **RenderSlotHighEventModern.java** - Created ✅
+   - Event handler for modern TLM versions (TLM_SLOT_MODERN)
+   - Additional logic for IBackpackContainerScreen filtering
+   - Adapted to NeoForge: `net.minecraftforge` → `net.neoforged`
+
+4. **SlotRenderAndTipsHandler.java** - Created ✅
+   - Central handler for slot highlighting and tips rendering
+   - Version detection: Chooses Legacy vs Modern based on Mods.TLM_SLOT_*
+   - Adapted to NeoForge: `MinecraftForge.EVENT_BUS` → `NeoForge.EVENT_BUS`
+
+5. **ClientSetupEvent.java** - Updated ✅
+   - Added SlotRenderAndTipsHandler.init() call in FMLClientSetupEvent
+   - Ensures proper event handler registration at startup
+
+**API Migrations**:
+- ✅ `net.minecraftforge.api.distmarker` → `net.neoforged.api.distmarker`
+- ✅ `net.minecraftforge.eventbus.api` → `net.neoforged.bus.api`
+- ✅ `MinecraftForge.EVENT_BUS` → `NeoForge.EVENT_BUS`
+
+**Status**: ✅ Complete
 
 ---
 

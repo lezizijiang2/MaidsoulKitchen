@@ -1,6 +1,7 @@
 package com.github.wallev.maidsoulkitchen.client.init;
 
 import com.github.wallev.maidsoulkitchen.MaidsoulKitchen;
+import com.github.wallev.maidsoulkitchen.client.event.SlotRenderAndTipsHandler;
 import com.github.wallev.maidsoulkitchen.client.overlay.CulinaryHubOverlay;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
@@ -16,6 +17,7 @@ import static net.neoforged.neoforge.client.gui.VanillaGuiLayers.CROSSHAIR;
 public final class ClientSetupEvent {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(SlotRenderAndTipsHandler::init);
     }
 
     @SubscribeEvent
