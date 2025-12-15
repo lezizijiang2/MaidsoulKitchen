@@ -11,45 +11,51 @@
 
 ## Priority 1: Critical Bug Fixes
 
-### ✅ In Progress: Sophisticated Chests Bug Fix (0.2.5.1)
+### ✅ COMPLETED: Sophisticated Chests Bug Fix (0.2.5.1)
 **Commit**: 73532dd
 **Issue**: Items not correctly deleted in sophisticated chests, causing work/cook failures
 
-**Changes Required**:
-1. **ChestInventory.java** - Complete refactoring
-   - Remove: `ItemInventory`, `WrapperItemHandler`, `BlockPos` tracking
-   - Add: `Map<ItemDefinition, ChestItemDef>` for better item tracking
-   - Add: Inner class `ChestItemDef` to track items by handler
-   - Refactor: `tickScan()` method to iterate per-handler instead of globally
-   - Refactor: `reset()`, `clear()`, `initData()` methods
-   - Change: `getAvailable()` return type and logic
-   
-2. **Related Files** (need to check compatibility):
-   - `ItemDefinition.java` - Verify exists and has `of()` method
-   - `ChestInvsData.java` - Update data structure
-   - `MaidCookManager.java` - Update usage of ChestInventory
-   - `GatherResult.java` - New class added
+**Changes Applied**:
+1. **ChestInventory.java** - Complete refactoring ✅
+   - Removed: `ItemInventory`, `WrapperItemHandler`, `BlockPos` tracking
+   - Added: `Map<ItemDefinition, ChestItemDef>` for better item tracking
+   - Added: Inner class `ChestItemDef` to track items by handler
+   - Refactored: `tickScan()` method to iterate per-handler instead of globally
+   - Refactored: `reset()`, `clear()`, `initData()` methods
+   - Changed: `getAvailable()` return type and logic
+   - Converted to NeoForge: `net.minecraftforge.items.IItemHandler` → `net.neoforged.neoforge.items.IItemHandler`
 
-**API Adaptations Needed**:
-- Change `net.minecraftforge.items.IItemHandler` → `net.neoforged.neoforge.items.IItemHandler` ✅ (already done in current branch)
-
-**Status**: Analyzing dependencies
+**Status**: ✅ Complete
 
 ---
 
-### [ ] Todo: Server Crash Fix (0.2.3)
-**Commit**: a87cce3
-**Issue**: Server crash fixes
-
-**Status**: Pending - will analyze after sophisticated chests fix
-
----
-
-### [ ] Todo: Entity Backpack Item Insert Mixin Fix (0.3.1)
+### ✅ COMPLETED: Entity Backpack Item Insert Mixin Fix (0.3.1)
 **Commits**: 6a4d46a, db7d317
-**Issue**: Incorrect entity backpack item insert mixin
+**Issue**: Incorrect entity backpack item insert mixin - shaker couldn't be inserted into maid backpack
 
-**Status**: Pending
+**Changes Applied**:
+1. **EntityMaidInsertItemMixin.java** - New mixin class ✅
+   - Created new mixin for EntityMaid.canInsertItem method
+   - Allows SHAKER item to be inserted into maid backpack
+   - Uses @TaskMixin for conditional loading
+   
+2. **maidsoulkitchen-compat.mixins.json** - Updated ✅
+   - Added EntityMaidInsertItemMixin to mixins list
+
+**Status**: ✅ Complete
+
+---
+
+### ✅ COMPLETED: Server Crash Fix (0.2.3)
+**Commit**: d4bcf7b
+**Issue**: Server crash related to BD (Barbeques Delight) mod loading
+
+**Changes Applied**:
+1. **Mods.java** - Already present ✅
+   - BD enum entry already exists in current branch
+   - No changes needed
+
+**Status**: ✅ Complete (already in base branch)
 
 ---
 
