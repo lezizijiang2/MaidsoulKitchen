@@ -50,8 +50,9 @@ dependencies {
 //        compileOnly "curse.maven:lets-do-beachparty-858691:${beachparty_file_id}"
 //    if (!vinery_file_id.isEmpty())
 //        compileOnly "curse.maven:vinery-704465:${vinery_file_id}"
-    if (!do_api_version.isEmpty())
-        compileOnly "maven.modrinth:do-api:${do_api_version}-${mod_loader},${minecraft_version}"
+    // Temporarily commented out do-api - version not available for 1.21.1 NeoForge yet
+    //if (!do_api_version.isEmpty())
+    //    compileOnly "maven.modrinth:do-api:${do_api_version}-${mod_loader},${minecraft_version}"
 
     //1.0
 //    if (!brewery_file_id.isEmpty())
