@@ -140,49 +140,44 @@ If needed, you can further use the `web_scraper.py` file to scrape the web page 
 - ✅ Phase 1: 8 files (Critical bugs)
 - ✅ Phase 2: 68 files (12 mods without storage dependencies)
 - ✅ Phase 3 Planning: REMAINING_FILES_ANALYSIS.md created
-- 🔴 Phase 3 Batch 10: BEGIN - Infrastructure foundation files
-- ⏳ Phase 3 Batches 11-23: 60 infrastructure files total
-- ⏳ Phase 4 Batches 24-40: 39 mod integration files
+- ✅ Phase 3 Batch 10: Foundation utilities (2 files) - TargetUtil, FailCraftGuideStepData
+- 🔴 Phase 3 Batch 11: IN PROGRESS - Craft base actions (3 files)
+- ⏳ Phase 3 Batches 12-22: 55 infrastructure files remaining
+- ⏳ Phase 4 Batches 23-40: 39 mod integration files
 
-**Current**: 76/184 files (41% complete)
+**Current**: 78/184 files (42% complete) → 81/184 (44% after Batch 11)
 
-### Phase 3 Batch 10 - Dependency Analysis Complete
+### Phase 3 Batch 11 - Craft Base Actions (Simple Ones)
 
-**Problem Discovered**: Circular dependencies in initial plan
-- Utility Actions → Craft Base Classes → IFailGuideUseActionContext → Craft Actions (circular!)
+**Ported Files**:
+1. ✅ IFailGuideUseActionContext.java (~78 lines) - Interface for failure handling
+   - Depends on: TargetUtil ✅, FailCraftGuideStepData ✅
+   - Forward references: EnchantCommonPlaceItemAction, EnchantCommonSplitItemAction, FailAction, FailTakeAction
+   - These forward references will be resolved in Batches 12-13
 
-**Revised Strategy**: Port in dependency order, breaking cycles where needed
+2. ✅ EnchantCommonIdleAction.java (~47 lines) - Idle/waiting action
+   - Extends CommonIdleAction from maid_storage_manager
+   - Implements IFailGuideUseActionContext
+   - No Forge APIs, pure NeoForge compatible
 
-#### Foundation Layer (No internal dependencies)
-1. ✅ maid_storage_manager NeoForge 1.21.1 available (external dep)
-2. TargetUtil - only depends on storage_manager.storage.Target
-3. CraftGuideOperator2 - check dependencies
-4. FailCraftGuideStepData - uses Codec, CompoundTag
+3. ✅ EnchantCommonPickupItemAction.java (~55 lines) - Item pickup action
+   - Extends CommonPickupItemAction from maid_storage_manager
+   - Implements IFailGuideUseActionContext
+   - Uses TargetUtil for step creation
+   - No Forge APIs, pure NeoForge compatible
 
-#### Craft Layer (Depends on foundation + maid_storage_manager)
-5. Craft Base Classes (8 files) - extend maid_storage_manager classes
-6. Craft Custom Classes (11 files) - extend maid_storage_manager classes  
-7. IFailGuideUseActionContext - depends on craft classes
+**NeoForge Migration Notes**:
+- All files use standard Minecraft/Mojang APIs
+- No Forge-specific code to migrate
+- Dependencies on maid_storage_manager NeoForge 1.21.1
 
-#### Utility Layer (Depends on craft layer)
-8. Utility Actions (6 files) - use craft classes
-9. General Utilities (3 files)
+### Next Steps for Batch 12
 
-### Next Steps for Batch 10
+**Remaining Craft Base Classes** (5 files):
+1. EnchantCommonPlaceItemAction.java (~120 lines) - Place items in containers
+2. EnchantCommonSplitItemAction.java (~80 lines) - Split item stacks
+3. EnchantCommonTakeItemAction.java (~100 lines) - Take items from containers
+4. EnchantCommonThrowItemAction.java (~60 lines) - Throw items
+5. EnchantCommonAttackAction.java (~90 lines) - Attack actions
 
-**Option A - Foundation First** (RECOMMENDED):
-1. Port TargetUtil (simple, no internal deps)
-2. Port CraftGuideOperator2 (if simple)
-3. Port FailCraftGuideStepData utility
-
-**Option B - Craft Classes First** (breaks cycles):
-1. Port 3 simplest Craft Base Classes
-2. Port stub IFailGuideUseActionContext (minimal impl)
-3. Complete interface in next batch
-
-**Decision**: Will port foundation utilities first (Option A)
-
-## Batch 10 File List (Pending)
-1. TargetUtil.java (~30 lines, LOW complexity)
-2. CraftGuideOperator2.java (TBD - check dependencies)
-3. FailCraftGuideStepData.java (~80 lines, MEDIUM complexity)
+**Target**: Port 3-4 files in Batch 12
