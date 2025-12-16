@@ -134,34 +134,55 @@ If needed, you can further use the `web_scraper.py` file to scrape the web page 
 
 # Scratchpad
 
-## Current Task
+## Current Task: Phase 3 Infrastructure Porting
 
-Task: Pull upstream code, merge 1.20.1 branch, cherry-pick changes from upstream 1.20.1 to 1.21.1 branch, and migrate forge to neoforge using context7
+### Overall Progress
+- ✅ Phase 1: 8 files (Critical bugs)
+- ✅ Phase 2: 68 files (12 mods without storage dependencies)
+- ✅ Phase 3 Planning: REMAINING_FILES_ANALYSIS.md created
+- 🔴 Phase 3 Batch 10: BEGIN - Infrastructure foundation files
+- ⏳ Phase 3 Batches 11-23: 60 infrastructure files total
+- ⏳ Phase 4 Batches 24-40: 39 mod integration files
 
-Translation:
-1. 拉取upstream代码，合并1.20.1分支 - Pull upstream code and merge 1.20.1 branch
-2. cherry-pick上游分支中对1.20.1版本的修改到1.21.1分支中 - Cherry-pick changes from upstream 1.20.1 version to 1.21.1 branch
-3. 迁移forge到neoforge，使用context7 - Migrate forge to neoforge using context7
+**Current**: 76/184 files (41% complete)
 
-## Analysis
+### Phase 3 Batch 10 - Dependency Analysis Complete
 
-Current state:
-- We're on branch: copilot/cherry-pick-forge-to-neoforge
-- Only one remote: origin (https://github.com/lezizijiang2/MaidsoulKitchen)
-- The original upstream repository is likely: Wall-ev/MaidsoulKitchen (based on readme.md)
-- Need to add upstream remote and fetch branches
-- Need to understand what "context7" means for neoforge migration
+**Problem Discovered**: Circular dependencies in initial plan
+- Utility Actions → Craft Base Classes → IFailGuideUseActionContext → Craft Actions (circular!)
 
-## Steps to Complete
+**Revised Strategy**: Port in dependency order, breaking cycles where needed
 
-[ ] Add upstream remote (Wall-ev/MaidsoulKitchen)
-[ ] Fetch upstream branches
-[ ] Find and checkout 1.20.1 branch
-[ ] Merge upstream 1.20.1 changes
-[ ] Identify changes to cherry-pick to 1.21.1
-[ ] Apply forge to neoforge migration with context7
-[ ] Test and verify changes
+#### Foundation Layer (No internal dependencies)
+1. ✅ maid_storage_manager NeoForge 1.21.1 available (external dep)
+2. TargetUtil - only depends on storage_manager.storage.Target
+3. CraftGuideOperator2 - check dependencies
+4. FailCraftGuideStepData - uses Codec, CompoundTag
 
-## Progress
+#### Craft Layer (Depends on foundation + maid_storage_manager)
+5. Craft Base Classes (8 files) - extend maid_storage_manager classes
+6. Craft Custom Classes (11 files) - extend maid_storage_manager classes  
+7. IFailGuideUseActionContext - depends on craft classes
 
-Starting investigation of repository structure and upstream...
+#### Utility Layer (Depends on craft layer)
+8. Utility Actions (6 files) - use craft classes
+9. General Utilities (3 files)
+
+### Next Steps for Batch 10
+
+**Option A - Foundation First** (RECOMMENDED):
+1. Port TargetUtil (simple, no internal deps)
+2. Port CraftGuideOperator2 (if simple)
+3. Port FailCraftGuideStepData utility
+
+**Option B - Craft Classes First** (breaks cycles):
+1. Port 3 simplest Craft Base Classes
+2. Port stub IFailGuideUseActionContext (minimal impl)
+3. Complete interface in next batch
+
+**Decision**: Will port foundation utilities first (Option A)
+
+## Batch 10 File List (Pending)
+1. TargetUtil.java (~30 lines, LOW complexity)
+2. CraftGuideOperator2.java (TBD - check dependencies)
+3. FailCraftGuideStepData.java (~80 lines, MEDIUM complexity)
