@@ -204,10 +204,25 @@ If needed, you can further use the `web_scraper.py` file to scrape the web page 
 
 **Craft Base Classes Status**: 9/9 complete (100%) ✅✅
 
-### Next Steps for Batch 14
+### Phase 3 Batch 14-15 - Craft Custom Classes (COMPLETE)
 
-Start craft custom classes (11 files):
-- FailAction, FailTakeAction, FailThrowAction
-- Plus 8 more custom action variations
+**Ported Files**: 7 files (analysis estimated 11, actual 7)
 
-**Target**: Port 3-4 files in Batch 14
+1. ✅ FailAction.java - Generic failure recovery (85 lines)
+2. ✅ FailTakeAction.java - Failed take with fallback (126 lines)  
+3. ✅ EmptyAction.java - Empty/no-op action (57 lines)
+4. ✅ JumpAction.java - Jump mechanics (103 lines)
+5. ✅ LimitIdleAction.java - Limited idle (23 lines)
+6. ✅ SneakCommonUseAction.java - Sneak-enabled use (67 lines)
+7. ✅ TakeItemAction.java - Advanced take (114 lines)
+
+**NeoForge Migrations**:
+- FailTakeAction: ForgeCapabilities.ITEM_HANDLER → Capabilities.ItemHandler.BLOCK ✅
+- JumpAction/SneakCommonUseAction: new ResourceLocation() → ResourceLocation.parse() ✅
+- FailTakeAction: maid.level → maid.level() ✅
+
+**Craft Custom Classes Status**: 7/7 complete (100%) ✅✅
+
+### Next Steps for Batch 16-17
+
+Port utility actions + general utilities (9 files total)
