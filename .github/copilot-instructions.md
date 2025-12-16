@@ -141,43 +141,53 @@ If needed, you can further use the `web_scraper.py` file to scrape the web page 
 - ✅ Phase 2: 68 files (12 mods without storage dependencies)
 - ✅ Phase 3 Planning: REMAINING_FILES_ANALYSIS.md created
 - ✅ Phase 3 Batch 10: Foundation utilities (2 files) - TargetUtil, FailCraftGuideStepData
-- 🔴 Phase 3 Batch 11: IN PROGRESS - Craft base actions (3 files)
-- ⏳ Phase 3 Batches 12-22: 55 infrastructure files remaining
+- ✅ Phase 3 Batch 11: Craft base actions - simple (3 files)
+- 🔴 Phase 3 Batch 12: IN PROGRESS - Craft base actions part 2 (5 files)
+- ⏳ Phase 3 Batches 13-22: 50 infrastructure files remaining
 - ⏳ Phase 4 Batches 23-40: 39 mod integration files
 
-**Current**: 78/184 files (42% complete) → 81/184 (44% after Batch 11)
+**Current**: 81/184 files (44% complete) → 86/184 (47% after Batch 12)
 
-### Phase 3 Batch 11 - Craft Base Actions (Simple Ones)
+### Phase 3 Batch 12 - Craft Base Actions Part 2
 
 **Ported Files**:
-1. ✅ IFailGuideUseActionContext.java (~78 lines) - Interface for failure handling
-   - Depends on: TargetUtil ✅, FailCraftGuideStepData ✅
-   - Forward references: EnchantCommonPlaceItemAction, EnchantCommonSplitItemAction, FailAction, FailTakeAction
-   - These forward references will be resolved in Batches 12-13
-
-2. ✅ EnchantCommonIdleAction.java (~47 lines) - Idle/waiting action
-   - Extends CommonIdleAction from maid_storage_manager
+1. ✅ EnchantCommonPlaceItemAction.java (~50 lines) - Place items in containers
+   - Extends CommonPlaceItemAction from maid_storage_manager
    - Implements IFailGuideUseActionContext
-   - No Forge APIs, pure NeoForge compatible
-
-3. ✅ EnchantCommonPickupItemAction.java (~55 lines) - Item pickup action
-   - Extends CommonPickupItemAction from maid_storage_manager
+   - Custom superStart() and superTick() methods for failure handling
+   
+2. ✅ EnchantCommonSplitItemAction.java (~42 lines) - Split item stacks
+   - Extends CommonSplitItemAction from maid_storage_manager
    - Implements IFailGuideUseActionContext
-   - Uses TargetUtil for step creation
-   - No Forge APIs, pure NeoForge compatible
+   - Standard failure recovery pattern
+   
+3. ✅ EnchantCommonTakeItemAction.java (~47 lines) - Take items from containers
+   - Extends CommonTakeItemAction from maid_storage_manager
+   - Implements IFailGuideUseActionContext
+   - Timeout handling: fails after 20 ticks if not successful
+   
+4. ✅ EnchantCommonThrowItemAction.java (~42 lines) - Throw items
+   - Extends CommonThrowItemAction from maid_storage_manager
+   - Implements IFailGuideUseActionContext
+   - Standard failure recovery pattern
+   
+5. ✅ EnchantCommonAttackAction.java (~84 lines) - Attack/destroy actions
+   - Extends CommonAttackAction from maid_storage_manager
+   - Implements IFailGuideUseActionContext
+   - Multiple createStep() factory methods with various input/output combinations
+   - Uses TargetUtil for target creation
 
 **NeoForge Migration Notes**:
 - All files use standard Minecraft/Mojang APIs
 - No Forge-specific code to migrate
 - Dependencies on maid_storage_manager NeoForge 1.21.1
+- All follow the same architectural pattern with failure recovery
 
-### Next Steps for Batch 12
+**Craft Base Classes Status**: 8/8 complete (100%) ✅
 
-**Remaining Craft Base Classes** (5 files):
-1. EnchantCommonPlaceItemAction.java (~120 lines) - Place items in containers
-2. EnchantCommonSplitItemAction.java (~80 lines) - Split item stacks
-3. EnchantCommonTakeItemAction.java (~100 lines) - Take items from containers
-4. EnchantCommonThrowItemAction.java (~60 lines) - Throw items
-5. EnchantCommonAttackAction.java (~90 lines) - Attack actions
+### Next Steps for Batch 13
 
-**Target**: Port 3-4 files in Batch 12
+Only 1 remaining craft base file:
+1. EnchantCommonUseAction.java (~412 lines) - Complex use action with many patterns
+
+**Target**: Port in Batch 13 as single large file
