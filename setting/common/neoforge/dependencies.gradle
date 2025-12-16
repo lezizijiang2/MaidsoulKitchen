@@ -42,6 +42,8 @@ dependencies {
         implementation "curse.maven:crock-pot-404523:${crock_pot_file_id}"
 
     /** ---------------------------------------Let's do--------------------------------------------------------- */
+    // NOTE: Let's Do series (including do-api, do-a-barrel-roll) do NOT have NeoForge versions for 1.21.1
+    // All Let's Do dependencies are disabled for 1.21.1 branch
 //    if (!lets_do_meadow_version.isEmpty())
 //        compileOnly "maven.modrinth:lets-do-meadow:${lets_do_meadow_version}"
 //    if (!herbal_brews_file_id.isEmpty())
@@ -50,8 +52,9 @@ dependencies {
 //        compileOnly "curse.maven:lets-do-beachparty-858691:${beachparty_file_id}"
 //    if (!vinery_file_id.isEmpty())
 //        compileOnly "curse.maven:vinery-704465:${vinery_file_id}"
-    if (!do_api_version.isEmpty())
-        compileOnly "maven.modrinth:do-api:${do_api_version}-${mod_loader},${minecraft_version}"
+    // do-api removed - not available for 1.21.1 NeoForge
+    //if (!do_api_version.isEmpty())
+    //    compileOnly "maven.modrinth:do-api:${do_api_version}-${mod_loader},${minecraft_version}"
 
     //1.0
 //    if (!brewery_file_id.isEmpty())

@@ -134,38 +134,121 @@ If needed, you can further use the `web_scraper.py` file to scrape the web page 
 
 # Scratchpad
 
-## Current Task
+## Current Task: Phase 3 Infrastructure Porting
 
-Task: 类似的，重写SyncKitchenDataC2SMessage为NeoForge格式
+### Overall Progress
+- ✅ Phase 1: 8 files (Critical bugs)
+- ✅ Phase 2: 68 files (12 mods without storage dependencies)
+- ✅ Phase 3 Planning: REMAINING_FILES_ANALYSIS.md created
+- ✅ Phase 3 Batch 10: Foundation utilities (2 files) - TargetUtil, FailCraftGuideStepData
+- ✅ Phase 3 Batch 11: Craft base actions - simple (3 files)
+- 🔴 Phase 3 Batch 12: IN PROGRESS - Craft base actions part 2 (5 files)
+- ⏳ Phase 3 Batches 13-22: 50 infrastructure files remaining
+- ⏳ Phase 4 Batches 23-40: 39 mod integration files
 
-## Analysis
+**Current**: 81/184 files (44% complete) → 86/184 (47% after Batch 12)
 
-Current SyncKitchenDataC2SMessage uses old Forge format:
+### Phase 3 Batch 12 - Craft Base Actions Part 2
 
-- Record with manual encode/decode/handle methods
-- Uses NetworkEvent.Context and FriendlyByteBuf
-- Complex nested data structure (KitchenData containing Map<ResourceLocation, CookDataV1>)
-- Uses context.setPacketHandled(true) (old Forge pattern)
+**Ported Files**:
+1. ✅ EnchantCommonPlaceItemAction.java (~50 lines) - Place items in containers
+   - Extends CommonPlaceItemAction from maid_storage_manager
+   - Implements IFailGuideUseActionContext
+   - Custom superStart() and superTick() methods for failure handling
+   
+2. ✅ EnchantCommonSplitItemAction.java (~42 lines) - Split item stacks
+   - Extends CommonSplitItemAction from maid_storage_manager
+   - Implements IFailGuideUseActionContext
+   - Standard failure recovery pattern
+   
+3. ✅ EnchantCommonTakeItemAction.java (~47 lines) - Take items from containers
+   - Extends CommonTakeItemAction from maid_storage_manager
+   - Implements IFailGuideUseActionContext
+   - Timeout handling: fails after 20 ticks if not successful
+   
+4. ✅ EnchantCommonThrowItemAction.java (~42 lines) - Throw items
+   - Extends CommonThrowItemAction from maid_storage_manager
+   - Implements IFailGuideUseActionContext
+   - Standard failure recovery pattern
+   
+5. ✅ EnchantCommonAttackAction.java (~84 lines) - Attack/destroy actions
+   - Extends CommonAttackAction from maid_storage_manager
+   - Implements IFailGuideUseActionContext
+   - Multiple createStep() factory methods with various input/output combinations
+   - Uses TargetUtil for target creation
 
-Need to convert to NeoForge format like SetFruitFarmSearchYOffsetC2SPackage:
+**NeoForge Migration Notes**:
+- All files use standard Minecraft/Mojang APIs
+- No Forge-specific code to migrate
+- Dependencies on maid_storage_manager NeoForge 1.21.1
+- All follow the same architectural pattern with failure recovery
 
-- Implement CustomPacketPayload interface
-- Add TYPE and STREAM_CODEC static fields
-- Use IPayloadContext in handle method
-- Create custom StreamCodec for complex KitchenData type
-- Remove manual encode/decode methods
+**Craft Base Classes Status**: 8/8 complete (100%) ✅
 
-## Steps to Complete
+### Phase 3 Batch 13 - Craft Base Actions Part 3 (Complex)
 
-[X] Analyze current file structure
-[X] Identify complex data serialization needs
-[ ] Create StreamCodec for CookDataV1
-[ ] Create StreamCodec for KitchenData
-[ ] Convert to CustomPacketPayload format
-[ ] Update handle method with IPayloadContext
-[ ] Fix API changes (sender.level to sender.level())
-[ ] Remove old encode/decode methods
+**Ported Files**:
+1. ✅ EnchantCommonUseAction.java (~412 lines) - Complex use action
+   - Extends CommonUseAction from maid_storage_manager
+   - Handles right-click/use interactions on blocks and items
+   - Multiple use patterns: SINGLE (instant) and LONG (held/eating)
+   - Fake player system for interaction simulation
+   - Complex raycasting for target hit detection
+   - Power point management integration
+   - **NeoForge Migrations**:
+     - ForgeHooks.onRightClickBlock → CommonHooks.onRightClickBlock ✅
+     - ForgeCapabilities.FLUID_HANDLER_ITEM → Capabilities.FluidHandler.ITEM ✅
+     - net.minecraftforge.event → net.neoforged.neoforge.event ✅
+     - net.minecraftforge.items → net.neoforged.neoforge.items ✅
+     - Event.Result.DENY → stays the same ✅
 
-## Progress
+**Craft Base Classes Status**: 9/9 complete (100%) ✅✅
 
-Starting conversion of SyncKitchenDataC2SMessage to NeoForge format...
+### Phase 3 Batch 14-15 - Craft Custom Classes (COMPLETE)
+
+**Ported Files**: 7 files (analysis estimated 11, actual 7)
+
+1. ✅ FailAction.java - Generic failure recovery (85 lines)
+2. ✅ FailTakeAction.java - Failed take with fallback (126 lines)  
+3. ✅ EmptyAction.java - Empty/no-op action (57 lines)
+4. ✅ JumpAction.java - Jump mechanics (103 lines)
+5. ✅ LimitIdleAction.java - Limited idle (23 lines)
+6. ✅ SneakCommonUseAction.java - Sneak-enabled use (67 lines)
+7. ✅ TakeItemAction.java - Advanced take (114 lines)
+
+**NeoForge Migrations**:
+- FailTakeAction: ForgeCapabilities.ITEM_HANDLER → Capabilities.ItemHandler.BLOCK ✅
+- JumpAction/SneakCommonUseAction: new ResourceLocation() → ResourceLocation.parse() ✅
+- FailTakeAction: maid.level → maid.level() ✅
+
+**Craft Custom Classes Status**: 7/7 complete (100%) ✅✅
+
+### Phase 3 Batch 16-17 - Utility Actions + General Utils (IN PROGRESS)
+
+**Plan**: Port 6 utility action files + 2 general utility files = 8 files total
+
+**Utility Actions** (common/util/action/):
+1. EmptyUseStepUtil.java (~254 lines) - Empty use step builder
+2. IdleStepUtil.java (~119 lines) - Idle step builder  
+3. ItemPickupUtil.java (~205 lines) - Item pickup step builder
+4. ItemUseStepUtil.java - Use action step builder
+5. ToolUseStepUtil.java - Tool use step builder
+6. (Skip StoneCutter files - seem test/special)
+
+**General Utilities** (common/util/):
+7. CraftGuideOperator2.java (~500+ lines) - Main step generator/builder
+8. RecipeFinderUtil.java (~36 lines) - Recipe finder with Forge migration needed
+
+**NeoForge Migrations Needed**:
+- RecipeFinderUtil: ForgeRegistries.RECIPE_TYPES → BuiltInRegistries.RECIPE_TYPE ✅
+
+**Ported Files** (Batch 16 - 4 files):
+1. ✅ EmptyUseStepUtil.java (~254 lines) - Empty use step builder
+2. ✅ IdleStepUtil.java (~119 lines) - Idle step builder
+3. ✅ ItemPickupUtil.java (~205 lines) - Item pickup step builder
+4. ✅ RecipeFinderUtil.java (~36 lines) - Recipe finder with NeoForge migration
+
+**NeoForge Migration**:
+- RecipeFinderUtil: ForgeRegistries.RECIPE_TYPES → BuiltInRegistries.RECIPE_TYPE ✅
+
+**Current Progress**: 94 → 98 files (53%)

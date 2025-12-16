@@ -18,6 +18,7 @@
     "kaleidoscope.ChoppingBoardBlockEntityAccessor",
     "kitchkarrot.AirCompressorBlockEntityAccessor",
     "kitchkarrot.BrewingBarrelBlockEntityMixin",
+    "kitchkarrot.EntityMaidInsertItemMixin",
     "minecraft.AbstractFurnaceBlockEntityMixin",
     "youkaishomecoming.BasePotBlockEntityMixin",
     "youkaishomecoming.KettleBlockAccessor"
