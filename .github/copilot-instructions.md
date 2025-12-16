@@ -185,9 +185,29 @@ If needed, you can further use the `web_scraper.py` file to scrape the web page 
 
 **Craft Base Classes Status**: 8/8 complete (100%) ✅
 
-### Next Steps for Batch 13
+### Phase 3 Batch 13 - Craft Base Actions Part 3 (Complex)
 
-Only 1 remaining craft base file:
-1. EnchantCommonUseAction.java (~412 lines) - Complex use action with many patterns
+**Ported Files**:
+1. ✅ EnchantCommonUseAction.java (~412 lines) - Complex use action
+   - Extends CommonUseAction from maid_storage_manager
+   - Handles right-click/use interactions on blocks and items
+   - Multiple use patterns: SINGLE (instant) and LONG (held/eating)
+   - Fake player system for interaction simulation
+   - Complex raycasting for target hit detection
+   - Power point management integration
+   - **NeoForge Migrations**:
+     - ForgeHooks.onRightClickBlock → CommonHooks.onRightClickBlock ✅
+     - ForgeCapabilities.FLUID_HANDLER_ITEM → Capabilities.FluidHandler.ITEM ✅
+     - net.minecraftforge.event → net.neoforged.neoforge.event ✅
+     - net.minecraftforge.items → net.neoforged.neoforge.items ✅
+     - Event.Result.DENY → stays the same ✅
 
-**Target**: Port in Batch 13 as single large file
+**Craft Base Classes Status**: 9/9 complete (100%) ✅✅
+
+### Next Steps for Batch 14
+
+Start craft custom classes (11 files):
+- FailAction, FailTakeAction, FailThrowAction
+- Plus 8 more custom action variations
+
+**Target**: Port 3-4 files in Batch 14
