@@ -223,6 +223,32 @@ If needed, you can further use the `web_scraper.py` file to scrape the web page 
 
 **Craft Custom Classes Status**: 7/7 complete (100%) ✅✅
 
-### Next Steps for Batch 16-17
+### Phase 3 Batch 16-17 - Utility Actions + General Utils (IN PROGRESS)
 
-Port utility actions + general utilities (9 files total)
+**Plan**: Port 6 utility action files + 2 general utility files = 8 files total
+
+**Utility Actions** (common/util/action/):
+1. EmptyUseStepUtil.java (~254 lines) - Empty use step builder
+2. IdleStepUtil.java (~119 lines) - Idle step builder  
+3. ItemPickupUtil.java (~205 lines) - Item pickup step builder
+4. ItemUseStepUtil.java - Use action step builder
+5. ToolUseStepUtil.java - Tool use step builder
+6. (Skip StoneCutter files - seem test/special)
+
+**General Utilities** (common/util/):
+7. CraftGuideOperator2.java (~500+ lines) - Main step generator/builder
+8. RecipeFinderUtil.java (~36 lines) - Recipe finder with Forge migration needed
+
+**NeoForge Migrations Needed**:
+- RecipeFinderUtil: ForgeRegistries.RECIPE_TYPES → BuiltInRegistries.RECIPE_TYPE ✅
+
+**Ported Files** (Batch 16 - 4 files):
+1. ✅ EmptyUseStepUtil.java (~254 lines) - Empty use step builder
+2. ✅ IdleStepUtil.java (~119 lines) - Idle step builder
+3. ✅ ItemPickupUtil.java (~205 lines) - Item pickup step builder
+4. ✅ RecipeFinderUtil.java (~36 lines) - Recipe finder with NeoForge migration
+
+**NeoForge Migration**:
+- RecipeFinderUtil: ForgeRegistries.RECIPE_TYPES → BuiltInRegistries.RECIPE_TYPE ✅
+
+**Current Progress**: 94 → 98 files (53%)
